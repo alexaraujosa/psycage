@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "*.ejs": "html",
+        "*.tpp": "cpp",
+        "render.h": "c",
+        "stdio.h": "c",
+        "ncurses.h": "c",
+        "entity.h": "c",
+        "map.h": "c",
+        "cstdlib": "c",
+        "common.h": "c",
+        "math.h": "c",
+        "math2.h": "c"
+    },
+    "terminal.integrated.shell.windows": "cmd.exe",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/jorge/trabalhos/2º Semestre/C/bin",
+            "binaryPath": "/home/jorge/trabalhos/2º Semestre/C/bin/main",
+            "binaryArgs": []
+        }
+    ],
+    "vim.vimrc.enable": true
+}

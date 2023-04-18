@@ -1,0 +1,31 @@
+/***************************************************************
+ * ENTITY MODULE                                               *
+ *                                                             *
+ * This module handles the entity behavior, both for player    *
+ *   controlled characters, mobs, dropped items and all other  *
+ *   miscelaneous entities                                     *
+ ***************************************************************/
+
+#ifndef __RL_ENTITY_H
+#define __RL_ENTITY_H
+
+#include "common.h"
+#include "util/math.h"
+#include "../map/map.h"
+
+typedef struct entity {
+    Coords coords;
+    int maxHealth;
+    int health;
+    int armor;
+} ENTITY, *Entity;
+
+// #define ENTITY_SIZE sizeof(Coords) + sizeof(int)*3 // sizeof(Entity) + sizeof(Coords)
+
+/* FUNCTION SIGNATURES */
+Entity defaultEntity();
+void destroyEntity(Entity entity);
+void damageEntity(Entity entity, int hp);
+void healEntity(Entity entity, int hp);
+
+#endif

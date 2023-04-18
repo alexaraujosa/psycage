@@ -30,7 +30,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/main",
-            "preLaunchTask": "Build C project",
+            "preLaunchTask": "Debug C project",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

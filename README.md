@@ -1,5 +1,15 @@
 # Roguelite
 
+## Debugger
+The VSCode debugger is completely and utterly fucked. To debug, manually use gdb.
+
+1. Run the command `make debug`
+2. Run the command `gdb bin/main`
+3. Run the gdb command `layout src`
+4. Run the gdb command `break main`
+5. Run the gdb command `run`
+6. Debug the program
+
 ## Debugger Tests
 
 ### Memory Leaks

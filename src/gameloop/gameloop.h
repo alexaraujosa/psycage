@@ -9,7 +9,14 @@
 #ifndef __RL_GAMELOOP_H
 #define __RL_GAMELOOP_H
 
-void init();
+#include "common.h"
+
+// Import paths from main
+extern char* BIN_PATH;
+extern char ASSET_DIR[PATH_MAX];
+
+/* FUNCTION SIGNATURES */
+void init_gameloop();
 void tick();
 
 #endif

@@ -10,7 +10,9 @@
         "cstdlib": "c",
         "common.h": "c",
         "math.h": "c",
-        "math2.h": "c"
+        "math2.h": "c",
+        "string.h": "c",
+        "stdlib.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

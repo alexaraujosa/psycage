@@ -1,9 +1,9 @@
 #include "gameloop.h"
 
-void init() {
-
+void init_gameloop() {
+    printf("Init gameloop.\nASSET PATH: %s\n", ASSET_DIR);
 }
 
 void tick() {
-    
+
 }

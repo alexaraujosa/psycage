@@ -1,14 +1,16 @@
 CC        := gcc
-C_FLAGS := -Wall -Wextra -pedantic -O2 # -Wall -Wextra -std=c11 -g
-C_DEBUG_FLAGS := -g
-
+# C_FLAGS := -Wall -Wextra -pedantic -O2
+_C_FLAGS := -Wall -Wextra -pedantic
+C_OPT_FLAGS := -O2
+C_DEBUG_FLAGS := -O -g
+C_FLAGS := $(_C_FLAGS) $(C_OPT_FLAGS)
 
 BIN		:= bin
 SRC		:= src
 INCLUDE	:= include
 LIB		:= lib
 
-LIBRARIES	:=-lm -lcurses
+LIBRARIES	:=-lm -lpanel -lcurses
 EXECUTABLE	:= main
 
 
@@ -18,7 +20,8 @@ run: clean all
 	clear
 	./$(BIN)/$(EXECUTABLE)
 
-debug: C_FLAGS += $(C_DEBUG_FLAGS)
+# debug: C_FLAGS += $(C_DEBUG_FLAGS)
+debug: C_FLAGS = $(_C_FLAGS) $(C_DEBUG_FLAGS)
 debug: $(BIN)/$(EXECUTABLE)
 
 $(BIN)/$(EXECUTABLE): $(shell find ./$(SRC) -name '*.c')

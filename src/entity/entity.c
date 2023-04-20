@@ -34,7 +34,5 @@ void damageEntity(Entity entity, int hp) {
 }
 
 void healEntity(Entity entity, int hp) {
-    // printf("%d\n", AAA);
-    // int a = testmeth(); //imin(1, 2);
     entity->health += imin(hp, entity->maxHealth - entity->health);
 }

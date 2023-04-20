@@ -1,9 +1,105 @@
+#include <stdio.h>
 #include "gameloop.h"
 
-void init_gameloop() {
-    printf("Init gameloop.\nASSET PATH: %s\n", ASSET_DIR);
+Gamestate g_gamestate;
+
+Gamestate init_gameloop() {
+	Gamestate gs = (Gamestate)malloc(sizeof(GAMESTATE));
+	
+	Player player = defaultPlayer();
+	gs->player = player;
+
+	g_gamestate = gs;
+	return gs;
 }
 
 void tick() {
+	handle_keybinds();
 
+	if (isInMenu()) {
+		Menu active_menu = getActiveMenu();
+		if (active_menu == NULL) return;
+
+		tick_menu(active_menu);
+	} else {
+
+	}
+}
+
+void handle_keybinds() {
+	int key = getch();
+
+	if (isInMenu()) { menu_keybinds(key); return; }
+	{ game_keybinds(key); return; }
+}
+
+void game_keybinds(int key) {
+	mvaddch(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, ' ');
+
+	switch(key) {
+		case KEY_A1:
+		case '7': 
+			move_player(-1, -1); 
+			break;
+		case KEY_UP:
+		case '8': 
+			move_player(-1, +0); 
+			break;
+		case KEY_A3:
+		case '9': 
+			move_player(-1, +1);
+			break;
+		case KEY_LEFT:
+		case '4': 
+			move_player(+0, -1);
+			break;
+		case KEY_B2:
+		case '5': 
+			if (isInMenu()) {
+				closeMenu(MENU_MAIN_MENU);
+			} else {
+				displayMenu(MENU_MAIN_MENU);
+			}
+			break;
+		case KEY_RIGHT:
+		case '6': 
+			move_player(+0, +1);
+			break;
+		case KEY_C1:
+		case '1': 
+			move_player(+1, -1);
+			break;
+		case KEY_DOWN:
+		case '2': 
+			move_player(+1, +0);
+			break;
+		case KEY_C3:
+		case '3': 
+			move_player(+1, +1);
+			break;
+		case 'q': 
+			endwin(); 
+			exit(0); 
+			break;
+	}
+}
+
+void menu_keybinds(int key) {
+	switch (key) {
+		case KEY_B2:
+		case '5': 
+			closeMenu(MENU_MAIN_MENU);
+			break;
+		default: {
+			Menu active_menu = getActiveMenu();
+			if (active_menu == NULL) break;
+			
+			handle_menu_keybinds(active_menu, key);
+		}
+	}
+}
+
+void move_player(int dx, int dy) {
+	g_gamestate->player->entity->coords->x += dx;
+	g_gamestate->player->entity->coords->y += dy;
 }

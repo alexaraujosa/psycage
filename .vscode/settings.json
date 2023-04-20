@@ -12,7 +12,16 @@
         "math.h": "c",
         "math2.h": "c",
         "string.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "compare": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "player.h": "c",
+        "gameloop.h": "c",
+        "ui.h": "c",
+        "mainmenu.h": "c",
+        "panel.h": "c",
+        "menulist.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

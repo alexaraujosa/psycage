@@ -9,14 +9,27 @@
 #ifndef __RL_GAMELOOP_H
 #define __RL_GAMELOOP_H
 
+#include <ncurses.h>
 #include "common.h"
+#include "../entity/player/player.h"
+#include "../render/render.h"
 
 // Import paths from main
 extern char* BIN_PATH;
 extern char ASSET_DIR[PATH_MAX];
 
+typedef struct gamestate {
+    Player player;
+} GAMESTATE, *Gamestate;
+
+extern Gamestate g_gamestate;
+
 /* FUNCTION SIGNATURES */
-void init_gameloop();
+Gamestate init_gameloop();
 void tick();
+void handle_keybinds();
+void game_keybinds(int key);
+void menu_keybinds(int key);
+void move_player(int dx, int dy);
 
 #endif

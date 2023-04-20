@@ -20,8 +20,6 @@ typedef struct entity {
     int armor;
 } ENTITY, *Entity;
 
-// #define ENTITY_SIZE sizeof(Coords) + sizeof(int)*3 // sizeof(Entity) + sizeof(Coords)
-
 /* FUNCTION SIGNATURES */
 Entity defaultEntity();
 void destroyEntity(Entity entity);

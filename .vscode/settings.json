@@ -21,7 +21,8 @@
         "ui.h": "c",
         "mainmenu.h": "c",
         "panel.h": "c",
-        "menulist.h": "c"
+        "menulist.h": "c",
+        "dialog.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

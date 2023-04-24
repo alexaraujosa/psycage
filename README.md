@@ -10,6 +10,22 @@ The VSCode debugger is completely and utterly fucked. To debug, manually use gdb
 5. Run the gdb command `run`
 6. Debug the program
 
+## Debugger script
+In case gdb decides to fuck up as well:
+
+### Installation
+1. `sudo apt install tmux`
+2. `sudo apt install gdbserver`
+
+### Usage
+1. Open a new terminal window.
+2. Navigate to the project root.
+3. Run the command `./scripts/debug.sh`
+4. Press ENTER if required.
+5. Write `c` and press ENTER.
+6. Press CTRL + B and then the right arrow to switch to the app.
+7. Press CTRL + B and then the left arrow to switch to the debugger.
+
 ## Debugger Tests
 
 ### Memory Leaks

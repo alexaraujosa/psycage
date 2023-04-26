@@ -20,6 +20,7 @@ Renderstate init_render() {
 
 	cbreak();
 	noecho();
+    curs_set(0);
 	nonl();
 	intrflush(stdscr, false);
 	keypad(stdscr, true);

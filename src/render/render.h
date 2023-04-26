@@ -7,6 +7,7 @@
 #ifndef __RL_RENDER_H
 #define __RL_RENDER_H
 
+// #include <locale.h>
 #include <ncurses.h>
 #include <panel.h>
 #include "common.h"

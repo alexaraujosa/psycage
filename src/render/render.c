@@ -5,6 +5,8 @@ Renderstate g_renderstate;
 Renderstate init_render() {
     Renderstate rs = (Renderstate)malloc(sizeof(RENDERSTATE));
 
+    // setlocale(LC_ALL, "");
+
     // Initialize window
     WINDOW *wnd = initscr();
 
@@ -123,6 +125,7 @@ void render_game(Gamestate gs) {
 
 	attron(COLOR_PAIR(COLOR_WHITE));
 	mvaddch(playerCoords->x, playerCoords->y, '@' | A_BOLD);
+    // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
 	attroff(COLOR_PAIR(COLOR_WHITE));
 
 	attron(COLOR_PAIR(COLOR_YELLOW));
@@ -134,6 +137,14 @@ void render_game(Gamestate gs) {
 	mvaddch(playerCoords->x + 1, playerCoords->y - 1, '.' | A_BOLD);
 	mvaddch(playerCoords->x + 1, playerCoords->y + 0, '.' | A_BOLD);
 	mvaddch(playerCoords->x + 1, playerCoords->y + 1, '.' | A_BOLD);
+    // mvaddwstr(playerCoords->x - 1, playerCoords->y - 1, L"█");
+	// mvaddwstr(playerCoords->x - 1, playerCoords->y + 0, L"█");
+	// mvaddwstr(playerCoords->x - 1, playerCoords->y + 1, L"█");
+	// mvaddwstr(playerCoords->x + 0, playerCoords->y - 1, L"█");
+	// mvaddwstr(playerCoords->x + 0, playerCoords->y + 1, L"█");
+	// mvaddwstr(playerCoords->x + 1, playerCoords->y - 1, L"█");
+	// mvaddwstr(playerCoords->x + 1, playerCoords->y + 0, L"█");
+	// mvaddwstr(playerCoords->x + 1, playerCoords->y + 1, L"█");
     attroff(COLOR_PAIR(COLOR_YELLOW));
 
 	move(playerCoords->x, playerCoords->y);

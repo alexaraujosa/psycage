@@ -23,6 +23,9 @@ typedef struct gamestate {
 } GAMESTATE, *Gamestate;
 
 extern Gamestate g_gamestate;
+extern char* g_dialog_text;
+extern char**** g_dialog_page_data;
+extern int g_dialog_control[3];
 
 /* FUNCTION SIGNATURES */
 Gamestate init_gameloop();

@@ -55,12 +55,24 @@ void game_keybinds(int key) {
 			break;
 		case KEY_B2:
 		case '5': 
-			if (isInMenu()) {
-				closeMenu(MENU_MAIN_MENU);
-			} else {
-				displayMenu(MENU_MAIN_MENU);
-			}
+			displayMenu(MENU_MAIN_MENU);
 			break;
+		case 'a':
+		case 'A': {
+			g_dialog_text = "A\nB\nLorem ipsum dolore sit amet. Some random fuckery here.\0";
+			g_ui_size[0] = 5;
+			g_ui_size[1] = 29;
+			g_dialog_control[0] = 29;
+			g_dialog_control[1] = 1;
+
+			char**** _page_data = malloc(sizeof(char****));
+			int page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
+
+			g_dialog_control[2] = page_count;
+			g_dialog_page_data = _page_data;
+			displayMenu(MENU_DIALOG);
+			break;
+		}
 		case KEY_RIGHT:
 		case '6': 
 			move_player(+0, +1);

@@ -11,4 +11,17 @@ inline int strlen_cp(char* str) {
     return c;
 }
 
+typedef struct char_node {
+    char* value;
+    struct char_node* next;
+} CharNode;
+
+
+inline CharNode* char_node(char* value) {
+    CharNode* n = calloc(1, sizeof(struct char_node));
+    n->value = value;
+    n->next = NULL;
+    return n;
+}
+
 #endif

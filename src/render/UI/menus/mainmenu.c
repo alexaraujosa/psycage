@@ -28,7 +28,7 @@ void tick_MainMenu() {
     return;
 }
 
-void handle_MainMenu_Keybinds(int key) {
+void handle_MainMenu_keybinds(int key) {
     if((selecionado == 0 && key == KEY_UP) || (selecionado == 3 && key == KEY_DOWN)) {}
     else {
         switch(key) {

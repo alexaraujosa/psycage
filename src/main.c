@@ -43,5 +43,11 @@ int main() {
         render(gs);
     }
     
+        // Initialize random seed
+    srand(time(NULL));
+    //create_dungeon();//escolhe um dos 3s
+    //create_asylum();
+    create_sewers();
+    
     return 0;
 }

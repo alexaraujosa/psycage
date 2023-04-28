@@ -25,9 +25,34 @@ Renderstate init_render() {
 	intrflush(stdscr, false);
 	keypad(stdscr, true);
 
-	init_pair(COLOR_WHITE, COLOR_WHITE, COLOR_BLACK);
-    init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
+    // COLORS
+    init_color(GREY, 400, 400, 400); 
+    init_color(DARK_DARK_GREY, 80, 80, 80);     
+    init_color(DARK_GREY, 192, 192, 180); 
+    init_color(BROWN, 624, 296, 0); 
+    init_color(DARK_RED, 400, 0, 0); 
+    init_color(DARK_GREEN, 0, 300,0);     
+    init_color(LIGHT_GREY, 160, 160, 160);
+    init_color(GREEN, 0, 700, 0);
+    init_color(BLACK, 0 ,0 , 0);
+    init_color(WHITE, 1000, 1000, 1000);
+    // PLAYER
+	init_pair(WHITE_PLAYER, COLOR_WHITE, COLOR_BLACK);
+    init_pair(YELLOW_PLAYER, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(BLUE_PLAYER, COLOR_BLUE, COLOR_BLACK);
+    // DUNGEON
+    init_pair(DUNGEON_WALLS, GREY, DARK_DARK_GREY| A_DIM); 
+    init_pair(DUNGEON_FLOOR, GREY, BLACK | A_DIM);
+    init_pair(DUNGEON_BLOOD, DARK_RED, BLACK | A_DIM);     
+    // ASYLUM
+    init_pair(ASYLUM_WALLS, BLACK, WHITE | A_DIM); 
+    init_pair(ASYLUM_FLOOR, WHITE, LIGHT_GREY | A_DIM); 
+    init_pair(ASYLUM_BLOOD, DARK_RED, LIGHT_GREY | A_DIM);
+    init_pair(NOTHING, BLACK, BLACK);    
+    // SEWERS
+    init_pair(SEWERS_BLOOD, WHITE, DARK_RED | A_DIM);
+    init_pair(SEWERS_FLOOR, BROWN, DARK_GREY | A_DIM); 
+    init_pair(SEWERS_WALLS, GREEN, DARK_GREEN | A_DIM);
 
     rs->wnd = wnd;
 
@@ -40,9 +65,10 @@ Renderstate init_render() {
 
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
+
+    print_asylum(g_renderstate->nrows, g_renderstate->ncols); // map
     render_game(gs);
     render_menu(gs);
-
     doupdate();
 }
 
@@ -115,21 +141,21 @@ void render_game(Gamestate gs) {
     Coords playerCoords = gs->player->entity->coords;
 
     move(g_renderstate->nrows - 1, 0);
-	attron(COLOR_PAIR(COLOR_BLUE));
+	attron(COLOR_PAIR(BLUE_PLAYER));
 	printw("(%d, %d) %d %d", 
         playerCoords->x, 
         playerCoords->y, 
         g_renderstate->ncols, 
         g_renderstate->nrows
     );
-	attroff(COLOR_PAIR(COLOR_BLUE));
+	attroff(COLOR_PAIR(BLUE_PLAYER));
 
-	attron(COLOR_PAIR(COLOR_WHITE));
-	mvaddch(playerCoords->x, playerCoords->y, '@' | A_BOLD);
+	attron(COLOR_PAIR(WHITE_PLAYER));
+	mvaddch(playerCoords->x, playerCoords->y, '@' | COLOR_PAIR(WHITE_PLAYER));
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
-	attroff(COLOR_PAIR(COLOR_WHITE));
+	attroff(COLOR_PAIR(WHITE_PLAYER));
 
-	attron(COLOR_PAIR(COLOR_YELLOW));
+	attron(COLOR_PAIR(YELLOW_PLAYER));
 	mvaddch(playerCoords->x - 1, playerCoords->y - 1, '.' | A_BOLD);
 	mvaddch(playerCoords->x - 1, playerCoords->y + 0, '.' | A_BOLD);
 	mvaddch(playerCoords->x - 1, playerCoords->y + 1, '.' | A_BOLD);
@@ -146,7 +172,7 @@ void render_game(Gamestate gs) {
 	// mvaddwstr(playerCoords->x + 1, playerCoords->y - 1, L"█");
 	// mvaddwstr(playerCoords->x + 1, playerCoords->y + 0, L"█");
 	// mvaddwstr(playerCoords->x + 1, playerCoords->y + 1, L"█");
-    attroff(COLOR_PAIR(COLOR_YELLOW));
+    attroff(COLOR_PAIR(YELLOW_PLAYER));
 
 	move(playerCoords->x, playerCoords->y);
 }

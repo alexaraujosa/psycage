@@ -4,11 +4,8 @@
 #include <time.h>
 #include "common.h"
 #include "util/string.h"
-#include "map/map.h"
-#include "entity/entity.h"
-#include "entity/player/player.h"
-#include "render/render.h"
 #include "gameloop/gameloop.h"
+#include "render/render.h"
 
 // char BIN_PATH[PATH_MAX];
 char* BIN_PATH;
@@ -32,8 +29,8 @@ int main() {
     
     srandom(time(NULL));
 
-    Gamestate gs = init_gameloop();
     Renderstate rs = init_render();
+    Gamestate gs = init_gameloop();
     
     gs->player->entity->coords->x = rs->nrows / 2;
     gs->player->entity->coords->y = rs->ncols / 2;
@@ -42,12 +39,6 @@ int main() {
         tick();
         render(gs);
     }
-    
-        // Initialize random seed
-    srand(time(NULL));
-    //create_dungeon();//escolhe um dos 3s
-    //create_asylum();
-    create_sewers();
     
     return 0;
 }

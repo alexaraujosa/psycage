@@ -22,7 +22,8 @@
         "mainmenu.h": "c",
         "panel.h": "c",
         "menulist.h": "c",
-        "dialog.h": "c"
+        "dialog.h": "c",
+        "map_render.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

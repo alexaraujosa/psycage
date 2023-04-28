@@ -1,11 +1,5 @@
-#include <stdlib.h>
+#include "common.h"
 #include "map.h"
-#include <stdio.h>
-#include <ncurses.h>
-#include <stdbool.h>
-#define WIDTH 100
-#define HEIGHT 30
-
 
 Coords defaultCoords() {
     Coords coords = (Coords)malloc(sizeof(COORDS));
@@ -21,54 +15,58 @@ void destroyCoords(Coords coords) {
     free(coords);
 }
 
-// void make_borders(int **matrix){
+void make_borders(int **matrix, int HEIGHT, int WIDTH) {
+    
+    // Iterate over the matrix and update the border
+    for (int i = 0; i < HEIGHT; i++) {
+        
+        for (int j = 0; j < WIDTH; j++) {      
+            
+            if(i == 0 && (matrix[i+1][j] == 1 || matrix[i+1][j] == 3)) matrix[i][j] = 3;
+            if(i == HEIGHT-1 && (matrix[i-1][j] == 1 || matrix[i-1][j] == 3)) matrix[i][j] = 3;
+            if(j == WIDTH-1 && (matrix[i][j-1] == 1 || matrix[i][j-1] == 3)) matrix[i][j] = 3;
+            if(j == 0 && (matrix[i][j+1] == 1 || matrix[i][j+1] == 3)) matrix[i][j] = 3;
 
-//     // Iterate over the matrix and update the border
-//     for (int i = 1; i < HEIGHT - 1; i++) {
-//         for (int j = 1; j < WIDTH - 1; j++) {
-//             if (matrix[i][j] == 0 && (
-//                 matrix[i-1][j] == 1 || 
-//                 matrix[i+1][j] == 1 || 
-//                 matrix[i][j-1] == 1 || 
-//                 matrix[i][j+1] == 1)) {
-//                     matrix[i][j] = 1;
-//             }
-//         }
-//     }
-
-//     // Iterate over the matrix again and fill any remaining 0s with 3s
-//     for (int i = 0; i < HEIGHT; i++) {
-//         for (int j = 0; j < WIDTH; j++) {
-//             if (matrix[i][j] == 0) {
-//                 matrix[i][j] = 3;
-//             }
-//         }
-//     }
-// }
+            if(i > 0 && i < HEIGHT-1 && j > 0 && j < WIDTH-1){
+                
+                if(matrix[i][j] == 1 && 
+                    (matrix[i-1][j] == 1 || matrix[i-1][j] == 3) && 
+                    (matrix[i+1][j] == 1 || matrix[i+1][j] == 3) && 
+                    (matrix[i][j+1] == 1 || matrix[i][j+1] == 3) && 
+                    (matrix[i][j-1] == 1 || matrix[i][j-1] == 3)){
+                        matrix[i][j] = 3;
+                }
+            }
+        }
+    }
+}
 
 //====================================
 // Dungeon
 //====================================
 
-#define WALL '#'
-#define FLOOR '.'
-
-int dungeon[HEIGHT][WIDTH];
+int **dungeon;
 
 // Initialize the dungeon to all walls
-void init_dungeon() {
+void init_dungeon(int HEIGHT, int WIDTH) {
+
+    // Allocate space for matrix "dungeon"
+    dungeon = (int **)malloc(HEIGHT * sizeof(int *));
+    for (int i = 0; i < HEIGHT; i++) {
+        dungeon[i] = (int *)malloc(WIDTH * sizeof(int));
+    }
     
     for (int y = 0; y < HEIGHT; y++) {
         
         for (int x = 0; x < WIDTH; x++) {
             
-            dungeon[y][x] = WALL;
+            dungeon[y][x] = 1;
         }
     }
 }
 
 
-void generate_dungeon() {    
+void generate_dungeon(int HEIGHT, int WIDTH) {    
     
     // Initialize the dungeon with random floors and walls
     for (int y = 1; y < HEIGHT - 1; y++) {
@@ -77,11 +75,11 @@ void generate_dungeon() {
             
             if (rand() % 100 < 60) { // % of the floor
                 
-                dungeon[y][x] = FLOOR;
+                dungeon[y][x] = 0;
             } 
             else {
                 
-                dungeon[y][x] = WALL;
+                dungeon[y][x] = 1;
             }
         }
     }
@@ -101,16 +99,16 @@ void generate_dungeon() {
                     
                     for (int dx = -1; dx <= 1; dx++) {
                         
-                        if (dungeon[y+dy][x+dx] == FLOOR) {
+                        if (dungeon[y+dy][x+dx] == 0) {
                             count++;
                         }
                     }
                 }
                 if (count >= 5) {
-                    new_dungeon[y][x] = FLOOR;
+                    new_dungeon[y][x] = 0;
                 } 
                 else {
-                    new_dungeon[y][x] = WALL;
+                    new_dungeon[y][x] = 1;
                 }
             }
         }
@@ -125,18 +123,15 @@ void generate_dungeon() {
     }
 }
 
-void blood_stains_dungeon() {
-    
-    init_pair(2, COLOR_RED, 7 | A_DIM); // por no render
-    attron(COLOR_PAIR(2));
+void blood_stains_dungeon(int HEIGHT, int WIDTH) {
 
     // Random stains in floor
     for (int y = 1; y < HEIGHT - 1; y++) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (dungeon[y][x] == FLOOR && rand() % 100 < 5){ // % of blood
-                mvaddch(y, x, '*' | COLOR_PAIR(2));
+            if (dungeon[y][x] == 0 && rand() % 100 < 5){ // % of blood
+                dungeon[y][x] = 3;
             }
         }
     }
@@ -156,7 +151,7 @@ void blood_stains_dungeon() {
                     
                     for (int dx = -1; dx <= 1; dx++) {
                         
-                        if (dungeon[y+dy][x+dx] == FLOOR) {
+                        if (dungeon[y+dy][x+dx] == 0) {
                             
                             count++;
                         }
@@ -164,10 +159,10 @@ void blood_stains_dungeon() {
                 }
                 
                 if (count >= 5) {
-                    new_dungeon[y][x] = FLOOR;
+                    new_dungeon[y][x] = 0;
                 } 
                 else {
-                    new_dungeon[y][x] = WALL;
+                    new_dungeon[y][x] = 1;
                 }
             }
         }
@@ -186,83 +181,44 @@ void blood_stains_dungeon() {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (dungeon[y][x] == FLOOR) {
+            if (dungeon[y][x] == 0) {
                 
                 if (rand() % 100 < 5){ // % of blood
-                    mvaddch(y, x, '*' | COLOR_PAIR(2));
+                    dungeon[y][x] = 3;
                 }
             }
         }
     }
-
-    attroff(COLOR_PAIR(2));
 }
 
-void print_dungeon(){
+void create_dungeon( int HEIGHT, int WIDTH){
     
-    initscr(); // a ser retirado
-    start_color(); // 
-    init_color(6, 400, 400, 400); // a por render (dark grey)
-    init_color(7, 10, 10, 10); /// a por render (+- black)
-    init_pair(1, 6, 7| A_DIM); // a por render 
-    attron(COLOR_PAIR(1));
-    
-
-    for (int y = 0; y < HEIGHT; y++) {
-        
-        for (int x = 0; x < WIDTH; x++) {
-            
-            if (dungeon[y][x] == WALL) {
-                
-                addch('#' | A_BOLD);
-            } 
-            else {
-
-                addch('.');
-            }
-        }
-        
-        printw("\n");
-    }
-
-    attroff(COLOR_PAIR(1)); 
-    blood_stains_dungeon();
-    refresh();// 
-    getch(); //
-    endwin(); // a retirar
-}
-
-void create_dungeon(){
-    
-    init_dungeon();
-    generate_dungeon();
-    print_dungeon();
+    init_dungeon(HEIGHT, WIDTH);
+    generate_dungeon(HEIGHT, WIDTH);
+    blood_stains_dungeon(HEIGHT, WIDTH);
+    print_dungeon(HEIGHT, WIDTH);
 }
 
 //==========================
 // Sewers
 //==========================
 
-#define NUM_ROOMS 6
-#define ROOM_MIN_WIDTH 4
-#define ROOM_MIN_HEIGHT 4
+#define NUM_ROOMS 10
+#define ROOM_MIN_WIDTH 7
+#define ROOM_MIN_HEIGHT 7
 #define CORRIDOR_WIDTH 3
-#define MAX_CONNECTIONS 6
+#define MAX_CONNECTIONS 10
 
-typedef struct Room {
 
-    int x;
-    int y;
-    int width;
-    int height;
-    struct Room* left;
-    struct Room* right;
+int **maze;
 
-} Room;
-
-int maze[HEIGHT][WIDTH];
-
-void init_maze(){
+void init_maze(int HEIGHT, int WIDTH){
+    
+    // Allocate space for the matrix "maze"
+    maze = (int **)malloc(HEIGHT * sizeof(int *));
+    for (int i = 0; i < HEIGHT; i++) {
+        maze[i] = (int *)malloc(WIDTH * sizeof(int));
+    }
     
     // Initialize all cells as walls
     for (int i = 0; i < WIDTH; i++) {
@@ -271,42 +227,6 @@ void init_maze(){
             maze[j][i] = 1;
         }
     }
-}
-
-void print_maze(){
-
-
-    initscr(); // retirar
-    start_color(); //
-    init_color(11, 660, 540, 168); // a por render (brown)
-    init_pair(9, COLOR_RED, COLOR_BLACK | A_DIM); // por no render
-    init_pair(12, 11, COLOR_BLACK); // por no render
-    init_pair(10, COLOR_GREEN, COLOR_BLACK | A_DIM); // por no render
-    attron(COLOR_PAIR(10));
-    
-    // Print the maze
-    for (int j = 0; j < HEIGHT; j++) {
-        
-        for (int i = 0; i < WIDTH; i++) {
-            
-            if (maze[j][i] == 1) {
-                addch('#');
-            }
-            else if (maze[j][i] == 2) {
-                mvaddch(j, i, '~' | COLOR_PAIR(9));//
-            }
-            else {
-                mvaddch(j, i, '.' | COLOR_PAIR(12));//
-            }
-        }
-    
-        printw("\n");
-    }
-
-    attroff(COLOR_PAIR(10)); 
-    refresh();// 
-    getch(); //
-    endwin(); // a retirar
 }
 
 Room* create_room_sewers(int x, int y, int width, int height) {
@@ -328,7 +248,7 @@ Room* create_room_sewers(int x, int y, int width, int height) {
     return room;
 }
 
-void split_room_sewers(Room* room) {
+void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
     
     int split_horizontal = rand() % 2; // Split either horizontally or vertically
     int max_size = (split_horizontal ? room->height : room->width); // Leave 1 cell border
@@ -338,12 +258,14 @@ void split_room_sewers(Room* room) {
         return;
     }
     
+    // Randomly determines the position of the split
     int split_position = (rand() % (max_size - ROOM_MIN_WIDTH)) + ROOM_MIN_WIDTH + (split_horizontal ? room->y : room->x);
 
     // Randomize the order in which the rooms are split
     Room* left_room = NULL;
     Room* right_room = NULL;
     
+    // Creates two new sub-rooms based on the split and randomly shuffles the order of the sub-rooms
     if (rand() % 2 == 0) {
         if (split_horizontal) {
             left_room = create_room_sewers(room->x, room->y, room->width, split_position - room->y);
@@ -365,6 +287,7 @@ void split_room_sewers(Room* room) {
     }
     
     // Check that the resulting rooms are not too small to split
+    // If the sub-rooms are too small to split, the function returns without creating a corridor
     if (left_room != NULL && right_room != NULL &&
         ((split_horizontal && (left_room->height < ROOM_MIN_HEIGHT * 2 || right_room->height < ROOM_MIN_HEIGHT * 2))
         || (!split_horizontal && (left_room->width < ROOM_MIN_WIDTH * 2 || right_room->width < ROOM_MIN_WIDTH * 2)))) {
@@ -372,16 +295,17 @@ void split_room_sewers(Room* room) {
         free(right_room);
         return;
     }
-    
+
+    // Otherwise, creates a corridor between the sub-rooms, and recursively calls split_room_sewers() on each of the sub-rooms
     if (left_room != NULL && right_room != NULL) {
-        create_corridor(left_room, right_room, MAX_CONNECTIONS, CORRIDOR_WIDTH);
-        split_room_sewers(left_room);
-        split_room_sewers(right_room);
+        create_corridor(left_room, right_room, MAX_CONNECTIONS, CORRIDOR_WIDTH, HEIGHT, WIDTH);
+        split_room_sewers(left_room, HEIGHT, WIDTH);
+        split_room_sewers(right_room, HEIGHT, WIDTH);
     }
 }
 
 
-void create_corridor(Room* room1, Room* room2, int max_connections, int corridor_width) {
+void create_corridor(Room* room1, Room* room2, int max_connections, int corridor_width, int HEIGHT, int WIDTH) {
     
     static int num_connections = 0;
     static int prev_x = -1;
@@ -418,12 +342,13 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
         source_x = prev_x;
         source_y = prev_y;
     }
-    
+
     // Create a corridor between the two points
     int dx = target_x - source_x;
     int dy = target_y - source_y;
     
-     if (dx != 0) {
+    // Horizontal
+    if (dx != 0) {
         
         int step = (dx > 0) ? 1 : -1;
         
@@ -433,10 +358,10 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
                 
                 if (y > 0 && y < HEIGHT-1) {
                     if (y == source_y) {
-                        maze[y][x] = 2; // Change middle values to 2
+                        maze[y][x] = 2; 
                     } 
                     else {
-                        maze[y][x] = 0; // Change rest of the values to 0
+                        maze[y][x] = 0; 
                     }
                 }
             }
@@ -446,6 +371,7 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
         prev_y = source_y;
     }
     
+    // Vertical
     if (dy != 0) {
         int step = (dy > 0) ? 1 : -1;
     
@@ -473,13 +399,14 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
     num_connections++;
 }
 
-void create_sewers(){
+void create_sewers(int HEIGHT, int WIDTH){
     
-    init_maze();
+    init_maze(HEIGHT, WIDTH);
 
+    // The root_room is the starting point of the dungeon generation process, which is a single room that occupies the entire maze
     Room* root_room = create_room_sewers(0, 0, WIDTH, HEIGHT);
 
-    split_room_sewers(root_room);
+    split_room_sewers(root_room, HEIGHT, WIDTH);
 
     Room* rooms = (Room*)malloc(NUM_ROOMS * sizeof(Room));
     Room* prev_room = NULL;
@@ -494,7 +421,7 @@ void create_sewers(){
         rooms[i] = *create_room_sewers(room_x, room_y, room_width, room_height);
 
         if (prev_room != NULL) {
-            create_corridor(prev_room, &rooms[i], MAX_CONNECTIONS, CORRIDOR_WIDTH);
+            create_corridor(prev_room, &rooms[i], MAX_CONNECTIONS, CORRIDOR_WIDTH, HEIGHT, WIDTH);
         }
         
         prev_room = &rooms[i];
@@ -512,9 +439,8 @@ void create_sewers(){
         maze[HEIGHT-1][j] = 1;
     }
 
-    make_borders(maze);
-
-    print_maze();
+    make_borders(maze, HEIGHT, WIDTH);
+    print_sewers(HEIGHT, WIDTH);
 }
 
 
@@ -526,10 +452,16 @@ void create_sewers(){
 #define MIN_SIZE 12
 #define MAX_SIZE 17
 
-int asylum[HEIGHT][WIDTH];
+int **asylum;
 
 // Initialize the "asylum" array with all cells set to 1 (representing walls).
-void init_asylum(){
+void init_asylum(int HEIGHT, int WIDTH){
+    
+    // Allocate space for matrix "asylum"
+    asylum = (int **)malloc(HEIGHT * sizeof(int *));
+    for (int i = 0; i < HEIGHT; i++) {
+        asylum[i] = (int *)malloc(WIDTH * sizeof(int));
+    }
     
     for (int y = 0; y < HEIGHT; y++) {
         
@@ -541,7 +473,7 @@ void init_asylum(){
 }
 
 // Create a Room struct with random values for its x and y position, width, and height.
-Room create_room() {
+Room create_room(int HEIGHT, int WIDTH) {
     
     Room room;
 
@@ -572,16 +504,21 @@ void connect_rooms(Room source, Room destination) {
 
     while (x != destination.x + (destination.width / 2)) {
         
-        asylum[y][x] = 0;
+        for (int i = y - 2; i <= y + 2; i++) {
+            asylum[i][x] = 0;
+        }
         x += (x < destination.x + (destination.width / 2)) ? 1 : -1;
     }
 
     while (y != destination.y + (destination.height / 2)) {
         
-        asylum[y][x] = 0;
+        for (int i = x - 2; i <= x + 2; i++) {
+            asylum[y][i] = 0;
+        }
         y += (y < destination.y + (destination.height / 2)) ? 1 : -1;
     }
 }
+
 
 // Carve out corridors to connect all the rooms in the "rooms" array.
 void carve_corridors(Room rooms[], int num_rooms) {
@@ -591,10 +528,7 @@ void carve_corridors(Room rooms[], int num_rooms) {
     }
 }
 
-void blood_stains_asylum() {
-    
-    init_pair(5, COLOR_RED, 8 | A_DIM); // por no render
-    attron(COLOR_PAIR(5));
+void blood_stains_asylum(int HEIGHT, int WIDTH) {
 
     // Random stains in floor
     for (int y = 1; y < HEIGHT - 1; y++) {
@@ -602,7 +536,7 @@ void blood_stains_asylum() {
         for (int x = 1; x < WIDTH - 1; x++) {
             
             if (asylum[y][x] == 0 && rand() % 100 < 10){ // % of blood
-                mvaddch(y, x, '*' | COLOR_PAIR(5));
+                asylum[y][x] = 4;
             }
         }
     }
@@ -652,63 +586,31 @@ void blood_stains_asylum() {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (asylum[y][x] == FLOOR) {
+            if (asylum[y][x] == 0) {
                 
                 if (rand() % 100 < 10){ // % of blood
-                    mvaddch(y, x, '*' | COLOR_PAIR(5));
+                    asylum[y][x] = 4;
                 }
             }
         }
     }
-
-    attroff(COLOR_PAIR(5));
 }
 
-// Print the current state of the "asylum" array to the console.
-void print_asylum() {
-    
-    initscr(); // retirar
-    start_color(); //
-    init_color(8, 1020,1020,1020); // por no render (light grey)
-    init_pair(3, COLOR_BLACK, COLOR_WHITE | A_DIM); // por no render
-    init_pair(4, COLOR_WHITE, 8 | A_DIM); // por no render
-    attron(COLOR_PAIR(3));
-    
-    for (int y = 0; y < HEIGHT; y++) {
-        
-        for (int x = 0; x < WIDTH; x++) {
-            
-            if (asylum[y][x] == 1) {
-                addch('#' | A_BOLD);
-            } 
-            else {
-                mvaddch(y, x, '.' | COLOR_PAIR(4));
-            }
-        }
-        
-        printw("\n");
-    }
-
-    attroff(COLOR_PAIR(3));
-    blood_stains_asylum();
-    refresh(); //
-    getch(); //
-    endwin(); // retirar
-}
-
-void create_asylum(){
+void create_asylum(int HEIGHT, int WIDTH){
  
-    init_asylum();
+    init_asylum(HEIGHT, WIDTH);
 
     Room rooms[MAX_ROOMS];
     int num_rooms = rand() % (MAX_ROOMS - 1) + 2;
 
     for (int i = 0; i < num_rooms; i++) {
         
-        rooms[i] = create_room();
+        rooms[i] = create_room(HEIGHT, WIDTH);
         carve_room(rooms[i]);
     }
 
     carve_corridors(rooms, num_rooms);
-    print_asylum();
+    blood_stains_asylum(HEIGHT, WIDTH);
+    make_borders(asylum, HEIGHT, WIDTH);
+    print_asylum(HEIGHT, WIDTH);
 }

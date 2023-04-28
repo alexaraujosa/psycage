@@ -5,11 +5,11 @@ Gamestate g_gamestate;
 
 Gamestate init_gameloop() {
 	Gamestate gs = (Gamestate)malloc(sizeof(GAMESTATE));
-	
 	Player player = defaultPlayer();
 	gs->player = player;
-
+	create_asylum(g_renderstate->nrows, g_renderstate->ncols); // map
 	g_gamestate = gs;
+	
 	return gs;
 }
 

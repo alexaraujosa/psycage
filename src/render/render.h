@@ -29,7 +29,7 @@ typedef struct renderstate {
 
 enum colors{
     // Colors
-    GREY,
+    GREY = 8,
     DARK_GREY,
     BROWN,
     DARK_RED,
@@ -39,6 +39,12 @@ enum colors{
     GREEN,
     BLACK,
     WHITE,
+    ORANGE,
+    LIGHT_ORANGE,
+    DARK_ORANGE,
+    LIGHTPLUS_GREY,
+    YELLOW_ORANGE,
+    DARKPLUS_GREY,
     // Dungeon
     DUNGEON_BLOOD,
     DUNGEON_WALLS,
@@ -52,10 +58,17 @@ enum colors{
     ASYLUM_BLOOD,
     ASYLUM_WALLS,
     ASYLUM_FLOOR,
-    //Player
+    // Player
     WHITE_PLAYER,
     YELLOW_PLAYER,
-    BLUE_PLAYER
+    BLUE_PLAYER,
+    // Ascii
+    ORANGE_LOGO,
+    LIGHT_ORANGE_LOGO,
+    DARK_ORANGE_LOGO,
+    LIGHTPLUS_GREY_LOGO,
+    YELLOW_ORANGE_LOGO,
+    DARKPLUS_GREY_LOGO
 };
 
 

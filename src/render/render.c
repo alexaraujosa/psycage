@@ -36,6 +36,12 @@ Renderstate init_render() {
     init_color(GREEN, 0, 700, 0);
     init_color(BLACK, 0 ,0 , 0);
     init_color(WHITE, 1000, 1000, 1000);
+    init_color(ORANGE, 830, 470, 0);
+    init_color(LIGHT_ORANGE, 800, 500, 0);
+    init_color(DARK_ORANGE, 760, 390, 0);
+    init_color(LIGHTPLUS_GREY, 768, 768, 768);
+    init_color(YELLOW_ORANGE, 870, 580, 0);
+    init_color(DARKPLUS_GREY, 420, 420, 420);
     // PLAYER
 	init_pair(WHITE_PLAYER, COLOR_WHITE, COLOR_BLACK);
     init_pair(YELLOW_PLAYER, COLOR_YELLOW, COLOR_BLACK);
@@ -53,7 +59,13 @@ Renderstate init_render() {
     init_pair(SEWERS_BLOOD, WHITE, DARK_RED | A_DIM);
     init_pair(SEWERS_FLOOR, BROWN, DARK_GREY | A_DIM); 
     init_pair(SEWERS_WALLS, GREEN, DARK_GREEN | A_DIM);
-
+    // MENUS
+    init_pair(ORANGE_LOGO, ORANGE, NULL);
+    init_pair(LIGHT_ORANGE_LOGO, LIGHT_ORANGE, NULL);
+    init_pair(DARK_ORANGE_LOGO, DARK_ORANGE, NULL);
+    init_pair(LIGHTPLUS_GREY_LOGO, LIGHTPLUS_GREY, NULL);
+    init_pair(YELLOW_ORANGE_LOGO, YELLOW_ORANGE, NULL);
+    init_pair(DARKPLUS_GREY_LOGO, DARKPLUS_GREY, NULL);
     rs->wnd = wnd;
 
     rs->activeMenus = 0;
@@ -141,29 +153,29 @@ void render_game(Gamestate gs) {
     Coords playerCoords = gs->player->entity->coords;
 
     move(g_renderstate->nrows - 1, 0);
-	attron(COLOR_PAIR(BLUE_PLAYER));
+	wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 	printw("(%d, %d) %d %d", 
         playerCoords->x, 
         playerCoords->y, 
         g_renderstate->ncols, 
         g_renderstate->nrows
     );
-	attroff(COLOR_PAIR(BLUE_PLAYER));
+	wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 
-	attron(COLOR_PAIR(WHITE_PLAYER));
-	mvaddch(playerCoords->x, playerCoords->y, '@' | COLOR_PAIR(WHITE_PLAYER));
+	wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
+	mvwaddch(g_renderstate->wnd, playerCoords->x, playerCoords->y, '@' | COLOR_PAIR(WHITE_PLAYER));
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
-	attroff(COLOR_PAIR(WHITE_PLAYER));
+	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
 
-	attron(COLOR_PAIR(YELLOW_PLAYER));
-	mvaddch(playerCoords->x - 1, playerCoords->y - 1, '.' | A_BOLD);
-	mvaddch(playerCoords->x - 1, playerCoords->y + 0, '.' | A_BOLD);
-	mvaddch(playerCoords->x - 1, playerCoords->y + 1, '.' | A_BOLD);
-	mvaddch(playerCoords->x + 0, playerCoords->y - 1, '.' | A_BOLD);
-	mvaddch(playerCoords->x + 0, playerCoords->y + 1, '.' | A_BOLD);
-	mvaddch(playerCoords->x + 1, playerCoords->y - 1, '.' | A_BOLD);
-	mvaddch(playerCoords->x + 1, playerCoords->y + 0, '.' | A_BOLD);
-	mvaddch(playerCoords->x + 1, playerCoords->y + 1, '.' | A_BOLD);
+	wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
+	mvwaddch(g_renderstate->wnd, playerCoords->x - 1, playerCoords->y - 1, '.' | A_BOLD);
+	mvwaddch(g_renderstate->wnd, playerCoords->x - 1, playerCoords->y + 0, '.' | A_BOLD);
+	mvwaddch(g_renderstate->wnd, playerCoords->x - 1, playerCoords->y + 1, '.' | A_BOLD);
+	mvwaddch(g_renderstate->wnd, playerCoords->x + 0, playerCoords->y - 1, '.' | A_BOLD);
+	mvwaddch(g_renderstate->wnd, playerCoords->x + 0, playerCoords->y + 1, '.' | A_BOLD);
+	mvwaddch(g_renderstate->wnd, playerCoords->x + 1, playerCoords->y - 1, '.' | A_BOLD);
+	mvwaddch(g_renderstate->wnd, playerCoords->x + 1, playerCoords->y + 0, '.' | A_BOLD);
+	mvwaddch(g_renderstate->wnd, playerCoords->x + 1, playerCoords->y + 1, '.' | A_BOLD);
     // mvaddwstr(playerCoords->x - 1, playerCoords->y - 1, L"█");
 	// mvaddwstr(playerCoords->x - 1, playerCoords->y + 0, L"█");
 	// mvaddwstr(playerCoords->x - 1, playerCoords->y + 1, L"█");
@@ -172,7 +184,7 @@ void render_game(Gamestate gs) {
 	// mvaddwstr(playerCoords->x + 1, playerCoords->y - 1, L"█");
 	// mvaddwstr(playerCoords->x + 1, playerCoords->y + 0, L"█");
 	// mvaddwstr(playerCoords->x + 1, playerCoords->y + 1, L"█");
-    attroff(COLOR_PAIR(YELLOW_PLAYER));
+    wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
 	move(playerCoords->x, playerCoords->y);
 }

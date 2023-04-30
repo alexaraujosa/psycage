@@ -1,5 +1,7 @@
 #include "ui.h"
 #include "menus/mainmenu.h"
+#include "menus/optionsmenu.h"
+#include "menus/pausemenu.h"
 #include "menus/dialog.h"
 
 int g_ui_size[2] = { 0 };
@@ -29,6 +31,24 @@ void drawMenu(Menu menu) {
 
             drawDialog(menu);
             break;
+        case MENU_OPTIONS: {
+            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+            PANEL * panel = new_panel(win);
+            menu->wnd = win;
+            menu->panel = panel;
+
+            drawOptionsMenu(menu);
+            break;
+        }
+        case MENU_PAUSE: {
+            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+            PANEL * panel = new_panel(win);
+            menu->wnd = win;
+            menu->panel = panel;
+
+            drawPauseMenu(menu);
+            break;
+        }
         default:
             break;
     }
@@ -43,6 +63,14 @@ void tick_menu(Menu menu) {
         }
         case MENU_DIALOG: {
             tick_dialog();
+            break;
+        }
+        case MENU_OPTIONS: {
+            tick_OptionsMenu();
+            break;
+        }
+        case MENU_PAUSE: {
+            tick_PauseMenu();
             break;
         }
         default:
@@ -61,6 +89,14 @@ void handle_menu_keybinds(Menu menu, int key) {
         }
         case MENU_DIALOG: {
             handle_dialog_keybinds(key);
+            break;
+        }
+        case MENU_OPTIONS: {
+            handle_OptionsMenu_keybinds(key);
+            break;
+        }
+        case MENU_PAUSE: {
+            handle_PauseMenu_keybinds(key);
             break;
         }
         default:

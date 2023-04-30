@@ -6,7 +6,9 @@
 typedef enum {
     MENU_NONE,
     MENU_MAIN_MENU,
-    MENU_DIALOG
+    MENU_DIALOG,
+    MENU_OPTIONS,
+    MENU_PAUSE
 } MenuId;
 
 typedef struct menu {

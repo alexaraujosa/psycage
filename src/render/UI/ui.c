@@ -49,6 +49,15 @@ void drawMenu(Menu menu) {
             drawPauseMenu(menu);
             break;
         }
+        case MENU_DEAD: {
+           WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+            PANEL * panel = new_panel(win);
+            menu->wnd = win;
+            menu->panel = panel;
+
+            drawDeadMenu(menu);
+            break; 
+        }
         default:
             break;
     }
@@ -73,13 +82,16 @@ void tick_menu(Menu menu) {
             tick_PauseMenu();
             break;
         }
+        case MENU_DEAD: {
+            tick_DeadMenu();
+            break;
+        }
         default:
             break;
     }
 }
 
 void handle_menu_keybinds(Menu menu, int key) {
-    // mvwprintw(menu->wnd, 5, 5, "%d", key);
 
     switch (menu->id) {
         case MENU_NONE: break;
@@ -97,6 +109,10 @@ void handle_menu_keybinds(Menu menu, int key) {
         }
         case MENU_PAUSE: {
             handle_PauseMenu_keybinds(key);
+            break;
+        }
+        case MENU_DEAD: {
+            handle_DeadMenu_keybinds(key);
             break;
         }
         default:

@@ -17,7 +17,7 @@ void drawPauseMenu(Menu menu) {
         "  8888888b.      d8888 888     888  .d8888b.  8888888888    ",
         "  888   Y88b    d88888 888     888 d88P  Y88b 888           ",
         "  888    888   d88P888 888     888 Y88b.      888           ",
-        "  888   d88P  d88P 888 888     888  \"Y888b.   8888888      ",  
+        "  888   d88P  d88P 888 888     888  \"Y888b.   8888888   ",  
         "  8888888P\"  d88P  888 888     888     \"Y88b. 888         ",   
         "  888       d88P   888 888     888       \"888 888          ",  
         "  888      d8888888888 Y88b. .d88P Y88b  d88P 888           ", 
@@ -38,21 +38,21 @@ void drawPauseMenu(Menu menu) {
     int y_pause = g_renderstate->nrows   - altura_pause*4/3;
 
 
-    /* Criar o retângulo que liga as duas ASCII (Logo e Pause) */
+    /* Criar o retângulo que liga as duas ASCII (Logo e Pause). O -1 serve para alinhar o traço inferior do retângulo com o traço do meio do E */
 
     rectangle(menu->wnd,
               sizeof(logo)/sizeof(logo[0])  , x_pause - 8, 
-              y_pause + altura_pause/2      , x_pause + largura_pause + 7
+              y_pause + altura_pause/2 -1   , x_pause + largura_pause + 7
     );
 
 
-    /* Printer da ASCII - Pause em Negrito */
+    /* Printer da ASCII - Pause em Negrito, com efeito Itálico */
     
     wattron(menu->wnd, A_BOLD);
 
     for(int i = 0 ; i < altura_pause ; i++)
         for(int j = 0 ; j < largura_pause ; j++)
-            mvwprintw(menu->wnd, y_pause + i, x_pause + j, "%c", pause[i][j]);
+            mvwprintw(menu->wnd, y_pause + i, x_pause + j + i, "%c", pause[i][j]);
 
     wattroff(menu->wnd, A_BOLD);
 

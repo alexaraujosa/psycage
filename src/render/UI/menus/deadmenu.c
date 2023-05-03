@@ -3,14 +3,25 @@
 #include "../../render.h"
 
 #define BOTOES 3
+#define TAMANHO_MAX_BOTAO 20
 
-static char *botoes[] = {"   New   Game   ", "    Settings    ", "      Exit      "};
-static int botao_selecionado = 0, effect = 0;
+static unsigned short int botao_selecionado = 0, effect = 0;
 
 void drawDeadMenu(Menu menu) {
 
+    char **botoes = malloc(BOTOES * sizeof(char *));
+
+    for (int i = 0; i < BOTOES; i++)
+        botoes[i] = malloc(TAMANHO_MAX_BOTAO * sizeof(char));
+
+    
+    strcpy(botoes[0], "   New   Game   ");
+    strcpy(botoes[1], "    Settings    ");
+    strcpy(botoes[2], "      Exit      ");
+
+
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    int tamanhoBotaoMaior = strlen(botaoMaior);
+    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
     static char *death[] = {
@@ -69,18 +80,18 @@ void drawDeadMenu(Menu menu) {
 
     /* Obter altura e largura da ASCII - Death e da ASCII - Died */
 
-    int altura_death = sizeof(death) / sizeof(death[0]);
-    int largura_death = strlen(death[0]);
+    unsigned short int altura_death = sizeof(death) / sizeof(death[0]);
+    unsigned short int largura_death = strlen(death[0]);
 
-    int altura_died = sizeof(died) / sizeof(died[0]);
-    int largura_died = strlen(died[1]);
+    unsigned short int altura_died = sizeof(died) / sizeof(died[0]);
+    unsigned short int largura_died = strlen(died[1]);
 
 
     /* Obter onde vai ser colocada a ASCII - Death e a ASCII - Died em x */
 
-    int x_death = g_renderstate->ncols - largura_death*2.5;
+    unsigned short int x_death = g_renderstate->ncols - largura_death*2.5;
 
-    int x_died = g_renderstate->ncols  - largura_died*1.1;
+    unsigned short int x_died = g_renderstate->ncols  - largura_died*1.1;
 
 
 
@@ -153,6 +164,12 @@ void drawDeadMenu(Menu menu) {
             wattroff(menu->wnd, A_REVERSE);
             
     }
+
+
+    for (int i = 0; i < BOTOES; i++)
+        free(botoes[i]);
+
+    free(botoes);
 
 }
 

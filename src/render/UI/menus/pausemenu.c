@@ -2,15 +2,26 @@
 #include "util/ncurses.h"
 #include "../../render.h"
 
-#define BOTOES 2
+#define BOTOES 3
+#define TAMANHO_MAX_BOTAO 20
 
-static char *botoes[] = {"   Return   ", "    Exit    "};   // resume, save, options, exit
-static int botao_selecionado = 0, effect = 0;
+static unsigned short int botao_selecionado = 0, effect = 0;
 
 void drawPauseMenu(Menu menu) {
+
+    char **botoes = malloc(BOTOES * sizeof(char *));
+
+    for (int i = 0; i < BOTOES; i++)
+        botoes[i] = malloc(TAMANHO_MAX_BOTAO * sizeof(char));
+
     
+    strcpy(botoes[0], "   Return   ");
+    strcpy(botoes[1], "   Options  ");  // Falta o save
+    strcpy(botoes[2], "    Exit    ");
+
+
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    int tamanhoBotaoMaior = strlen(botaoMaior);
+    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
     static char *pause[] = {
@@ -28,14 +39,14 @@ void drawPauseMenu(Menu menu) {
 
     /* Obter altura e largura da ASCII - Pause */
 
-    int altura_pause = sizeof(pause) / sizeof(pause[0]);
-    int largura_pause = strlen(pause[4]);
+    unsigned short int altura_pause = sizeof(pause) / sizeof(pause[0]);
+    unsigned short int largura_pause = strlen(pause[4]);
 
 
     /* Obter onde vai ser colocada a ASCII - Pause em xOy */
 
-    int x_pause = g_renderstate->ncols/2 - largura_pause/2;
-    int y_pause = g_renderstate->nrows   - altura_pause*4/3;
+    unsigned short int x_pause = g_renderstate->ncols/2 - largura_pause/2;
+    unsigned short int y_pause = g_renderstate->nrows   - altura_pause*4/3;
 
 
     /* Criar o retângulo que liga as duas ASCII (Logo e Pause). O -1 serve para alinhar o traço inferior do retângulo com o traço do meio do E */
@@ -87,7 +98,10 @@ void drawPauseMenu(Menu menu) {
     }
 
 
+    for (int i = 0; i < BOTOES; i++)
+        free(botoes[i]);
 
+    free(botoes);
 
 }
 
@@ -131,7 +145,8 @@ void handle_PauseMenu_keybinds(int key) {
         case 10 : case 13 : switch(botao_selecionado) {
 
                             case 0 : break; //return
-                            case 1 : closeMenu(MENU_PAUSE); displayMenu(MENU_MAIN_MENU); break; //exit
+                            case 1 : closeMenu(MENU_PAUSE); displayMenu(MENU_OPTIONS); break;
+                            case 2 : closeMenu(MENU_PAUSE); displayMenu(MENU_MAIN_MENU); break;
 
                         }
 

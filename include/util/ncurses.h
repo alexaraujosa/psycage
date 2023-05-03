@@ -25,7 +25,7 @@ static char *logo[] = {
         ".JMML.             OOb\"                       Ybmmmd'                "
     };
 
-inline void printer(WINDOW* win) {
+static inline void printer(WINDOW* win) {
     
 
     /* Obter a altura e a largura da ASCII ART */

@@ -3,6 +3,8 @@
 #include "menus/optionsmenu.h"
 #include "menus/pausemenu.h"
 #include "menus/dialog.h"
+#include "menus/deadmenu.h"
+#include "menus/charactersmenu.h"
 
 int g_ui_size[2] = { 0 };
 
@@ -50,13 +52,22 @@ void drawMenu(Menu menu) {
             break;
         }
         case MENU_DEAD: {
-           WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
             PANEL * panel = new_panel(win);
             menu->wnd = win;
             menu->panel = panel;
 
             drawDeadMenu(menu);
             break; 
+        }
+        case MENU_CHARACTERS: {
+            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+            PANEL * panel = new_panel(win);
+            menu->wnd = win;
+            menu->panel = panel;
+
+            drawCharactersMenu(menu);
+            break;
         }
         default:
             break;
@@ -86,6 +97,10 @@ void tick_menu(Menu menu) {
             tick_DeadMenu();
             break;
         }
+        case MENU_CHARACTERS: {
+            tick_CharactersMenu();
+            break;
+        }
         default:
             break;
     }
@@ -113,6 +128,10 @@ void handle_menu_keybinds(Menu menu, int key) {
         }
         case MENU_DEAD: {
             handle_DeadMenu_keybinds(key);
+            break;
+        }
+        case MENU_CHARACTERS: {
+            handle_CharactersMenu_keybinds(key);
             break;
         }
         default:

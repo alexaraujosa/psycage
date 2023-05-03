@@ -60,12 +60,12 @@ Renderstate init_render() {
     init_pair(SEWERS_FLOOR, BROWN, DARK_GREY | A_DIM); 
     init_pair(SEWERS_WALLS, GREEN, DARK_GREEN | A_DIM);
     // MENUS
-    init_pair(ORANGE_LOGO, ORANGE, NULL);
-    init_pair(LIGHT_ORANGE_LOGO, LIGHT_ORANGE, NULL);
-    init_pair(DARK_ORANGE_LOGO, DARK_ORANGE, NULL);
-    init_pair(LIGHTPLUS_GREY_LOGO, LIGHTPLUS_GREY, NULL);
-    init_pair(YELLOW_ORANGE_LOGO, YELLOW_ORANGE, NULL);
-    init_pair(DARKPLUS_GREY_LOGO, DARKPLUS_GREY, NULL);
+    init_pair(ORANGE_LOGO, ORANGE, 0);
+    init_pair(LIGHT_ORANGE_LOGO, LIGHT_ORANGE, 0);
+    init_pair(DARK_ORANGE_LOGO, DARK_ORANGE, 0);
+    init_pair(LIGHTPLUS_GREY_LOGO, LIGHTPLUS_GREY, 0);
+    init_pair(YELLOW_ORANGE_LOGO, YELLOW_ORANGE, 0);
+    init_pair(DARKPLUS_GREY_LOGO, DARKPLUS_GREY, 0);
     rs->wnd = wnd;
 
     rs->activeMenus = 0;

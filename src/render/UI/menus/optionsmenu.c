@@ -2,15 +2,26 @@
 #include "util/ncurses.h"
 #include "../../render.h"
 
-#define BOTOES 1
+#define BOTOES 2
+#define TAMANHO_MAX_BOTAO 20
 
-static char *botoes[] = {"   Return   "};   // return, language
-static int botao_selecionado = 0, effect = 0;
+
+static unsigned short int botao_selecionado = 0, effect = 0;
 
 void drawOptionsMenu(Menu menu) {
+    
+    char **botoes = malloc(BOTOES * sizeof(char *));
+
+    for (int i = 0; i < BOTOES; i++)
+        botoes[i] = malloc(TAMANHO_MAX_BOTAO * sizeof(char));
+
+
+    strcpy(botoes[0], "   Return   ");
+    strcpy(botoes[1], "  Language  ");
+
 
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    int tamanhoBotaoMaior = strlen(botaoMaior);
+    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
     static char *options[] = {
@@ -27,14 +38,14 @@ void drawOptionsMenu(Menu menu) {
 
     /* Obter altura e largura da ASCII - Options */
 
-    int altura_options = sizeof(options) / sizeof(options[0]);
-    int largura_options = strlen(options[4]);
+    unsigned short int altura_options = sizeof(options) / sizeof(options[0]);
+    unsigned short int largura_options = strlen(options[4]);
 
 
     /* Obter onde vai ser colocada a ASCII - Options em xOy */
 
-    int x_options = g_renderstate->ncols/2 - largura_options/2;
-    int y_options = g_renderstate->nrows   - altura_options*4/3;
+    unsigned short int x_options = g_renderstate->ncols/2 - largura_options/2;
+    unsigned short int y_options = g_renderstate->nrows   - altura_options*4/3;
 
 
     /* Criar o retângulo que liga as duas ASCII (Logo e Options) */
@@ -83,6 +94,12 @@ void drawOptionsMenu(Menu menu) {
             wattroff(menu->wnd, A_REVERSE);
 
     }
+
+
+    for (int i = 0; i < BOTOES; i++)
+        free(botoes[i]);
+
+    free(botoes);
 
 }
 

@@ -1,16 +1,30 @@
 #include "mainmenu.h"
 #include "util/ncurses.h"
 #include "../../render.h"
+#include <stdlib.h>
 
 #define BOTOES 5
+#define TAMANHO_MAX_BOTAO 20
 
-static char *botoes[] = {"New  Game", "Load Game", "Tutorial ", " Options ", "Quit Game"};
-static int botao_selecionado = 0, effect = 0;
+static unsigned short int botao_selecionado = 0, effect = 0;
 
 void drawMainMenu(Menu menu) {
     
+    char **botoes = malloc(BOTOES * sizeof(char *));
+
+    for (int i = 0; i < BOTOES; i++)
+        botoes[i] = malloc(TAMANHO_MAX_BOTAO * sizeof(char));
+
+
+    strcpy(botoes[0], "New  Game");
+    strcpy(botoes[1], "Load Game");
+    strcpy(botoes[2], "Tutorial ");
+    strcpy(botoes[3], " Options ");
+    strcpy(botoes[4], "Quit Game");
+
+
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    int tamanhoBotaoMaior = strlen(botaoMaior);
+    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
     static char *cage[] = {
@@ -50,14 +64,14 @@ void drawMainMenu(Menu menu) {
 
     /* Obter altura e largura da ASCII - Cage */
 
-    int altura_cage = sizeof(cage) / sizeof(cage[0]);
-    int largura_cage = strlen(cage[0]);
+    unsigned short int altura_cage = sizeof(cage) / sizeof(cage[0]);
+    unsigned short int largura_cage = strlen(cage[0]);
 
 
     /* Obter onde vai ser colocada a ASCII - Cage em xOy */
 
-    int x_cage = g_renderstate->ncols/2 - largura_cage/2;
-    int y_cage = g_renderstate->nrows/2 - altura_cage/3;
+    unsigned short int x_cage = g_renderstate->ncols/2 - largura_cage/2;
+    unsigned short int y_cage = g_renderstate->nrows/2 - altura_cage/3;
 
 
     /* Printer da ASCII - Cage */
@@ -66,7 +80,7 @@ void drawMainMenu(Menu menu) {
 
         for(int j = 0 ; j < largura_cage ; j++) {
 
-            int pair = 0;
+            unsigned short int pair = 0;
 
             switch(cage[i][j]) {
                 case '&' : case '(' : case '/' : case '*' : pair = LIGHTPLUS_GREY_LOGO; break;
@@ -109,6 +123,12 @@ void drawMainMenu(Menu menu) {
             wattroff(menu->wnd, A_REVERSE);
             
     }
+
+
+    for (int i = 0; i < BOTOES; i++)
+        free(botoes[i]);
+
+    free(botoes);
 
 }
 

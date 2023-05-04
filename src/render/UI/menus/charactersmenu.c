@@ -3,27 +3,36 @@
 #include "../../render.h"
 
 #define BOTOES 3
+#define CLASSES 3
+
 #define ESPACAMENTO 2
+
 #define TAMANHO_MAX_BOTAO 20
+#define TAMANHO_MAX_CLASSE 20
 
 static unsigned short int botao_selecionado = 0, effect = 0;
 
 void drawCharactersMenu(Menu menu) {
     
-    char **botoes = malloc(BOTOES * sizeof(char *));
+    static char *botoes[BOTOES] = {"  Priest   ", " Detective ", " Mercenary "};
 
-    for (int i = 0; i < BOTOES; i++)
-        botoes[i] = malloc(TAMANHO_MAX_BOTAO * sizeof(char));
+    if(g_renderstate->language == pt_PT) {
+        
+        for(int i = 0 ; i < BOTOES ; i++)
+            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
+        strcpy(botoes[0], "   Padre    ");
+        strcpy(botoes[1], "  Detetive  ");
+        strcpy(botoes[2], " Mercenario ");
 
-    strcpy(botoes[0], "New  Game");
-    strcpy(botoes[1], "Load Game");
-    strcpy(botoes[2], "Tutorial ");     // Botoes por alterar !!!!
+    }
 
 
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
-    char classes[] = "Choose your Character Class:";
+
+    static char *classeMessage = NULL;
+    classeMessage = (g_renderstate->language == en_US) ? "Choose your Character Class:" : "Escolha a Classe do seu Jogador:";
 
 
     /* Print do logo */
@@ -34,15 +43,15 @@ void drawCharactersMenu(Menu menu) {
     /* Print da frase para escolher a classe do personagem com effect A_UNDERLINE */
 
     wattron(menu->wnd, A_UNDERLINE);
-    mvwprintw(menu->wnd, g_renderstate->nrows/3, g_renderstate->ncols/2 - strlen(classes)/2 + 1, "%s", classes);
+    mvwprintw(menu->wnd, yMAX/3, xMAX/2 - strlen(classeMessage)/2 + 1, "%s", classeMessage);
     wattroff(menu->wnd, A_UNDERLINE);
 
 
     /* Cria o retângulo à volta das classes */
 
     rectangle(menu->wnd, 
-              g_renderstate->nrows/3 + ESPACAMENTO           , g_renderstate->ncols/2 - tamanhoBotaoMaior/2 -1,
-              g_renderstate->nrows/3 + ESPACAMENTO + BOTOES*2, g_renderstate->ncols/2 + tamanhoBotaoMaior/2 +1
+              yMAX/3 + ESPACAMENTO           , xMAX/2 - tamanhoBotaoMaior/2 -1,
+              yMAX/3 + ESPACAMENTO + BOTOES*2, xMAX/2 + tamanhoBotaoMaior/2 + (g_renderstate->language == en_US ? 1 : 0)
              );
 
 
@@ -54,7 +63,7 @@ void drawCharactersMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, g_renderstate->nrows/3 + ESPACAMENTO + separador + i +1, g_renderstate->ncols/2 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, yMAX/3 + ESPACAMENTO + separador + i +1, xMAX/2 - strlen(botoes[i])/2, "%s", botoes[i]);
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -66,8 +75,8 @@ void drawCharactersMenu(Menu menu) {
 
         WINDOW *info = malloc(sizeof(WINDOW));
         info = newwin(
-                      g_renderstate->nrows/3                             , g_renderstate->ncols/2, 
-                      g_renderstate->nrows/3 + ESPACAMENTO + BOTOES*2 + 2, g_renderstate->ncols/4
+                      yMAX/3                             , xMAX/2, 
+                      yMAX/3 + ESPACAMENTO + BOTOES*2 + 2, xMAX/4
         );
 
         /* Retângulo à volta da janela */
@@ -83,21 +92,21 @@ void drawCharactersMenu(Menu menu) {
         switch(botao_selecionado) {
             
             case 0 : {
-                mvwprintw(info, 1, 2, "Priest");
+                mvwprintw(info, 1, 2, "%s", botoes[0]);
                 wattroff(info, A_BOLD | A_UNDERLINE);
                 // Print da descrição da class
                 break;
             }
             
             case 1 : {
-                mvwprintw(info, 1, 2, "AA");            // Nomes da classe a colocar !!!!!
+                mvwprintw(info, 1, 2, "%s", botoes[1]);
                 wattroff(info, A_BOLD | A_UNDERLINE);
                 // Print da descrição da class
                 break;
             }
             
             case 2 : {
-                mvwprintw(info, 1, 2, "BB");            // Nomes da classe a colocar !!!!!
+                mvwprintw(info, 1, 2, "%s", botoes[2]);
                 wattroff(info, A_BOLD | A_UNDERLINE);
                 // Print da descrição da class
                 break;
@@ -109,12 +118,6 @@ void drawCharactersMenu(Menu menu) {
 
         wrefresh(menu->wnd);
         wrefresh(info);
-
-
-    for (int i = 0; i < BOTOES; i++)
-        free(botoes[i]);
-
-    free(botoes);
 
 }
 

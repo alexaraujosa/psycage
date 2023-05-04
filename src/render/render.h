@@ -24,6 +24,7 @@ typedef struct renderstate {
     int nrows;
     int ncols;
     int activeMenus;
+    int language;   // 0 - en_US || 1 - pt_PT
     Menu menus[MENU_STACK_MAX];
 } RENDERSTATE, *Renderstate;
 
@@ -69,6 +70,11 @@ enum colors{
     LIGHTPLUS_GREY_LOGO,
     YELLOW_ORANGE_LOGO,
     DARKPLUS_GREY_LOGO
+};
+
+enum languages{
+    en_US,
+    pt_PT
 };
 
 

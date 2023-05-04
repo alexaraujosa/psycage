@@ -3,28 +3,34 @@
 #include "../../render.h"
 
 #define BOTOES 3
-#define TAMANHO_MAX_BOTAO 20
 
-static unsigned short int botao_selecionado = 0, effect = 0;
+static unsigned short int effect = 0;
 
 void drawPauseMenu(Menu menu) {
 
-    char **botoes = malloc(BOTOES * sizeof(char *));
+    static char *botoes[BOTOES] = {"   Return   ", "   Options  ", "    Exit    "}; 
 
-    for (int i = 0; i < BOTOES; i++)
-        botoes[i] = malloc(TAMANHO_MAX_BOTAO * sizeof(char));
+    if(g_renderstate->language == pt_PT) {
+        
+        for(int i = 0 ; i < BOTOES ; i++)
+            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
-    
-    strcpy(botoes[0], "   Return   ");
-    strcpy(botoes[1], "   Options  ");  // Falta o save
-    strcpy(botoes[2], "    Exit    ");
+        strcpy(botoes[0], "   Voltar   ");
+        strcpy(botoes[1], "   Opcoes   ");  // Falta o save
+        strcpy(botoes[2], "    Sair    ");
+        
+    }
 
 
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
-    static char *pause[] = {
+#define LARGURA_PAUSE 59
+#define ALTURA_PAUSE 8
+
+
+    static char *pause[ALTURA_PAUSE] = {
         "  8888888b.      d8888 888     888  .d8888b.  8888888888    ",
         "  888   Y88b    d88888 888     888 d88P  Y88b 888           ",
         "  888    888   d88P888 888     888 Y88b.      888           ",
@@ -37,23 +43,17 @@ void drawPauseMenu(Menu menu) {
     };
 
 
-    /* Obter altura e largura da ASCII - Pause */
-
-    unsigned short int altura_pause = sizeof(pause) / sizeof(pause[0]);
-    unsigned short int largura_pause = strlen(pause[4]);
-
-
     /* Obter onde vai ser colocada a ASCII - Pause em xOy */
 
-    unsigned short int x_pause = g_renderstate->ncols/2 - largura_pause/2;
-    unsigned short int y_pause = g_renderstate->nrows   - altura_pause*4/3;
+    unsigned short int x_pause = xMAX/2 - LARGURA_PAUSE/2;
+    unsigned short int y_pause = yMAX   - ALTURA_PAUSE*4/3;
 
 
     /* Criar o retângulo que liga as duas ASCII (Logo e Pause). O -1 serve para alinhar o traço inferior do retângulo com o traço do meio do E */
 
     rectangle(menu->wnd,
-              sizeof(logo)/sizeof(logo[0])  , x_pause - 8, 
-              y_pause + altura_pause/2 -1   , x_pause + largura_pause + 7
+              ALTURA_LOGO  , x_pause - 8, 
+              y_pause + ALTURA_PAUSE/2 -1   , x_pause + LARGURA_PAUSE + 7
     );
 
 
@@ -61,8 +61,8 @@ void drawPauseMenu(Menu menu) {
     
     wattron(menu->wnd, A_BOLD);
 
-    for(int i = 0 ; i < altura_pause ; i++)
-        for(int j = 0 ; j < largura_pause ; j++)
+    for(int i = 0 ; i < ALTURA_PAUSE ; i++)
+        for(int j = 0 ; j < LARGURA_PAUSE ; j++)
             mvwprintw(menu->wnd, y_pause + i, x_pause + j + i, "%c", pause[i][j]);
 
     wattroff(menu->wnd, A_BOLD);
@@ -72,13 +72,13 @@ void drawPauseMenu(Menu menu) {
 
     rectangle(
               menu->wnd, 
-              g_renderstate->nrows/2 - altura_pause/2           , g_renderstate->ncols/2 - tamanhoBotaoMaior/2 - 1, 
-              g_renderstate->nrows/2 - altura_pause/2 + BOTOES*2, g_renderstate->ncols/2 + tamanhoBotaoMaior/2 
+              yMAX/2 - ALTURA_PAUSE/2           , xMAX/2 - tamanhoBotaoMaior/2 - 1, 
+              yMAX/2 - ALTURA_PAUSE/2 + BOTOES*2, xMAX/2 + tamanhoBotaoMaior/2 
              );
 
 
     /* Print do logo */
-    
+
     printer(menu->wnd);
 
 
@@ -90,18 +90,12 @@ void drawPauseMenu(Menu menu) {
         if(i == effect)
             wattron(menu->wnd, A_REVERSE);
 
-        mvwprintw(menu->wnd, g_renderstate->nrows/2 - altura_pause/2 + separador + i +1 , g_renderstate->ncols/2 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, yMAX/2 - ALTURA_PAUSE/2 + separador + i +1 , xMAX/2 - strlen(botoes[i])/2, "%s", botoes[i]);
         
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
 
     }
-
-
-    for (int i = 0; i < BOTOES; i++)
-        free(botoes[i]);
-
-    free(botoes);
 
 }
 
@@ -111,6 +105,8 @@ void tick_PauseMenu() {
 
 
 void handle_PauseMenu_keybinds(int key) {
+
+    static unsigned short int botao_selecionado = 0;
 
     if(botao_selecionado == 0 && key == KEY_UP) {
 
@@ -144,7 +140,7 @@ void handle_PauseMenu_keybinds(int key) {
 
         case 10 : case 13 : switch(botao_selecionado) {
 
-                            case 0 : break; //return
+                            case 0 : break; // if(IsInGame && !isDead)
                             case 1 : closeMenu(MENU_PAUSE); displayMenu(MENU_OPTIONS); break;
                             case 2 : closeMenu(MENU_PAUSE); displayMenu(MENU_MAIN_MENU); break;
 

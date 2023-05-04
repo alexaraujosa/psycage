@@ -4,30 +4,36 @@
 #include <stdlib.h>
 
 #define BOTOES 5
-#define TAMANHO_MAX_BOTAO 20
 
-static unsigned short int botao_selecionado = 0, effect = 0;
+static unsigned short int effect = 0;
 
 void drawMainMenu(Menu menu) {
     
-    char **botoes = malloc(BOTOES * sizeof(char *));
+    char *botoes[BOTOES] = {"New  Game", "Load Game", "Tutorial ", " Options ", "Quit Game"}; 
 
-    for (int i = 0; i < BOTOES; i++)
-        botoes[i] = malloc(TAMANHO_MAX_BOTAO * sizeof(char));
+    if(g_renderstate->language == pt_PT) {
+        
+        for(int i = 0 ; i < BOTOES ; i++)
+            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
+        strcpy(botoes[0], "  Novo Jogo ");
+        strcpy(botoes[1], "  Carregar  ");
+        strcpy(botoes[2], "  Tutorial  ");
+        strcpy(botoes[3], "   Opcoes   ");
+        strcpy(botoes[4], "Sair do Jogo");
 
-    strcpy(botoes[0], "New  Game");
-    strcpy(botoes[1], "Load Game");
-    strcpy(botoes[2], "Tutorial ");
-    strcpy(botoes[3], " Options ");
-    strcpy(botoes[4], "Quit Game");
+    }
 
 
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
-    static char *cage[] = {
+#define LARGURA_CAGE 56
+#define ALTURA_CAGE 31
+
+
+    static char *cage[ALTURA_CAGE] = {
         "                        .#     &                       ",
         "                       #         #                     ",
         "                       /         #                     ",
@@ -43,17 +49,17 @@ void drawMainMenu(Menu menu) {
         "    , #       ,     /      #      #     .   .   ( (    ",
         "      #  .    (     .      &      (     /       &      ",
         "      #  .    (     .      #      (     /       #      ",
-        "      #  .    (     .             (     /       #      ",
-        "      #  .    (     .      #      (     /       #      ",
-        "      #  .    (     .             (     /       #      ",
-        "      #  .    (     .      #      (     /       #      ",
-        "      #  .    (     .             (     /       #      ",
-        "      #  .    (     .      #      (     /       #      ",
-        "      #  .    (     .             (     /       #      ",
-        "      #  .    (     .      #      (     /       #      ",
-        "      #  .    (     .             (     /       #      ",
-        "      #  .    (     .      #      (     /       #      ",
-        "      &  .    (     ,             (     /       #      ",
+        "      #  .    (                         /       #      ",
+        "      #  .    (            #            /       #      ",
+        "      #  .    (                         /       #      ",
+        "      #  .    (            #            /       #      ",
+        "      #  .    (                         /       #      ",
+        "      #  .    (            #            /       #      ",
+        "      #  .    (                         /       #      ",
+        "      #  .    (            #            /       #      ",
+        "      #  .    (                         /       #      ",
+        "      #  .    (            #            /       #      ",
+        "      &  .    (                         /       #      ",
         "      #  .    (     .      #      (     /       #      ",
         "      #  .    (     .      #      (     /       #      ",
         "    &##############################################&   ",
@@ -61,26 +67,20 @@ void drawMainMenu(Menu menu) {
         "  &##################################################& "
     };
 
-
-    /* Obter altura e largura da ASCII - Cage */
-
-    unsigned short int altura_cage = sizeof(cage) / sizeof(cage[0]);
-    unsigned short int largura_cage = strlen(cage[0]);
-
-
+    
     /* Obter onde vai ser colocada a ASCII - Cage em xOy */
 
-    unsigned short int x_cage = g_renderstate->ncols/2 - largura_cage/2;
-    unsigned short int y_cage = g_renderstate->nrows/2 - altura_cage/3;
+    unsigned short int x_cage = xMAX/2 - LARGURA_CAGE/2;
+    unsigned short int y_cage = yMAX/2 - ALTURA_CAGE/3;
 
 
     /* Printer da ASCII - Cage */
 
-    for(int i = 0 ; i < altura_cage ; i++) {
+    for(int i = 0 ; i < ALTURA_CAGE ; i++) {
 
-        for(int j = 0 ; j < largura_cage ; j++) {
+        for(int j = 0 ; j < LARGURA_CAGE ; j++) {
 
-            unsigned short int pair = 0;
+            static unsigned short int pair = 0;
 
             switch(cage[i][j]) {
                 case '&' : case '(' : case '/' : case '*' : pair = LIGHTPLUS_GREY_LOGO; break;
@@ -100,8 +100,8 @@ void drawMainMenu(Menu menu) {
     /* Cria o retângulo à volta dos botões */
     
     rectangle(menu->wnd, 
-              g_renderstate->nrows/2 + 5           , g_renderstate->ncols/2 - tamanhoBotaoMaior/2 - 1,
-              g_renderstate->nrows/2 + 5 + BOTOES*2, g_renderstate->ncols/2 + tamanhoBotaoMaior/2 + 1
+              yMAX/2 + 5           , xMAX/2 - tamanhoBotaoMaior/2 - 1,
+              yMAX/2 + 5 + BOTOES*2, xMAX/2 + tamanhoBotaoMaior/2 + (g_renderstate->language == en_US ? 1 : 0)
     );
 
 
@@ -117,18 +117,12 @@ void drawMainMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, g_renderstate->nrows/2 + separador + i + 5 +1 , g_renderstate->ncols/2 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, yMAX/2 + separador + i + 5 +1 , xMAX/2 - strlen(botoes[i])/2, "%s", botoes[i]);
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
             
     }
-
-
-    for (int i = 0; i < BOTOES; i++)
-        free(botoes[i]);
-
-    free(botoes);
 
 }
 
@@ -137,6 +131,8 @@ void tick_MainMenu() {
 }
 
 void handle_MainMenu_keybinds(int key) {
+
+    static unsigned short int botao_selecionado = 0;
 
     if(botao_selecionado == 0 && key == KEY_UP) {
 
@@ -170,10 +166,10 @@ void handle_MainMenu_keybinds(int key) {
 
         case 10 : case 13 : switch(botao_selecionado) {
 
-                            case 0 : break; //new game
+                            case 0 : g_renderstate->language = (g_renderstate->language == en_US) ? pt_PT : en_US; //new game
                             case 1 : break; //load game
                             case 2 : break; //tutorial
-                            case 3 : displayMenu(MENU_OPTIONS); break;
+                            case 3 : closeMenu(MENU_MAIN_MENU); displayMenu(MENU_OPTIONS); break;
                             case 4 : endwin(); exit(0);
 
                         }

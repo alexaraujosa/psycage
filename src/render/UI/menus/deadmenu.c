@@ -3,28 +3,34 @@
 #include "../../render.h"
 
 #define BOTOES 3
-#define TAMANHO_MAX_BOTAO 20
 
-static unsigned short int botao_selecionado = 0, effect = 0;
+static unsigned short int effect = 0;
 
 void drawDeadMenu(Menu menu) {
 
-    char **botoes = malloc(BOTOES * sizeof(char *));
+    static char *botoes[BOTOES] = {"   New   Game   ", "    Settings    ", "      Exit      "}; 
 
-    for (int i = 0; i < BOTOES; i++)
-        botoes[i] = malloc(TAMANHO_MAX_BOTAO * sizeof(char));
+    if(g_renderstate->language == pt_PT) {
+        
+        for(int i = 0 ; i < BOTOES ; i++)
+            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
-    
-    strcpy(botoes[0], "   New   Game   ");
-    strcpy(botoes[1], "    Settings    ");
-    strcpy(botoes[2], "      Exit      ");
+        strcpy(botoes[0], "   Novo  Jogo   ");
+        strcpy(botoes[1], "  Configuracoes ");
+        strcpy(botoes[2], "      Sair      ");        
+
+    }
 
 
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
-    static char *death[] = {
+#define LARGURA_DEATH 65
+#define ALTURA_DEATH 38
+
+
+    static char *death[ALTURA_DEATH] = {
         "                                           .\"\"--.._             ",
         "                                           []      `'--.._      ",
         "                                           ||__           `'-,  ",
@@ -66,7 +72,12 @@ void drawDeadMenu(Menu menu) {
         "         `---'`   `'----'`                                      "
     };  
 
-    static char *died[] = {
+    
+#define LARGURA_DIED 84
+#define ALTURA_DIED 8
+
+
+    static char *died[ALTURA_DIED] = {
         "Y88b   d88P  .d88888b.  888     888       8888888b. 8888888 8888888888 8888888b.      ",
         " Y88b d88P  d88P\" \"Y88b 888     888       888  \"Y88b  888   888        888  \"Y88b ",
         "  Y88o88P   888     888 888     888       888    888  888   888        888    888     ",
@@ -78,30 +89,21 @@ void drawDeadMenu(Menu menu) {
     };
 
 
-    /* Obter altura e largura da ASCII - Death e da ASCII - Died */
-
-    unsigned short int altura_death = sizeof(death) / sizeof(death[0]);
-    unsigned short int largura_death = strlen(death[0]);
-
-    unsigned short int altura_died = sizeof(died) / sizeof(died[0]);
-    unsigned short int largura_died = strlen(died[1]);
-
-
     /* Obter onde vai ser colocada a ASCII - Death e a ASCII - Died em x */
 
-    unsigned short int x_death = g_renderstate->ncols - largura_death*2.5;
+    unsigned short int x_death = xMAX - LARGURA_DEATH*2.5;
 
-    unsigned short int x_died = g_renderstate->ncols  - largura_died*1.1;
+    unsigned short int x_died = xMAX  - LARGURA_DIED*1.1;
 
 
 
     /* Printer da ASCII - Death */
 
-    for(int i = 0 ; i < altura_death ; i++) {
+    for(int i = 0 ; i < ALTURA_DEATH ; i++) {
 
-        for(int j = 0 ; j < largura_death ; j++) {
+        for(int j = 0 ; j < LARGURA_DEATH ; j++) {
 
-            int pair = 0;
+            static unsigned short int pair = 0;
 
             switch(death[i][j]) {
                 case '#' : case '{' : case '}' : pair = LIGHTPLUS_GREY_LOGO; break;
@@ -120,11 +122,11 @@ void drawDeadMenu(Menu menu) {
 
     /* Printer da ASCII - Died */
 
-    for(int i = 0 ; i < altura_died ; i++) {
+    for(int i = 0 ; i < ALTURA_DIED ; i++) {
 
-        for(int j = 0 ; j < largura_died ; j++) {
+        for(int j = 0 ; j < LARGURA_DIED ; j++) {
 
-            int pair = 0;
+            static unsigned short int pair = 0;
 
             switch(died[i][j]) {
                 case '"' : case '.' : pair = LIGHTPLUS_GREY_LOGO; break;
@@ -142,11 +144,11 @@ void drawDeadMenu(Menu menu) {
 
 
     /* Cria o retângulo à volta dos botões. O -3 é necessário, porque a largura do YOU e do DIED são diferentes, logo não podemos usar 
-     largura_died/2 para chegar ao meio , uma vez que o meio localiza-se na palavra DIED, portanto fica estéticamente feio */
+     LARGURA_DIED/2 para chegar ao meio , uma vez que o meio localiza-se na palavra DIED, portanto fica estéticamente feio */
     
     rectangle(menu->wnd, 
-              g_renderstate->nrows/2            , x_died + largura_died/2 - tamanhoBotaoMaior/2 - 3 - 1,
-              g_renderstate->nrows/2  + BOTOES*2, x_died + largura_died/2 + tamanhoBotaoMaior/2 - 3
+              yMAX/2            , x_died + LARGURA_DIED/2 - tamanhoBotaoMaior/2 - 3 - 1,
+              yMAX/2  + BOTOES*2, x_died + LARGURA_DIED/2 + tamanhoBotaoMaior/2 - 3
     );
 
 
@@ -158,18 +160,12 @@ void drawDeadMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, g_renderstate->nrows/2 + separador + i +1, x_died + largura_died/2 - 3 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, yMAX/2 + separador + i +1, x_died + LARGURA_DIED/2 - 3 - strlen(botoes[i])/2, "%s", botoes[i]);
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
             
     }
-
-
-    for (int i = 0; i < BOTOES; i++)
-        free(botoes[i]);
-
-    free(botoes);
 
 }
 
@@ -179,6 +175,8 @@ void tick_DeadMenu() {
 }
 
 void handle_DeadMenu_keybinds(int key) {
+
+    static unsigned short int botao_selecionado = 0;
 
     if(botao_selecionado == 0 && key == KEY_UP) {
 
@@ -212,9 +210,18 @@ void handle_DeadMenu_keybinds(int key) {
 
         case 10 : case 13 : switch(botao_selecionado) {
 
-                            case 0 : break; //new game
-                            case 1 : break; //options
-                            case 2 : break; //ir para o menu principal
+                            case 0 : g_renderstate->language = pt_PT;break; //new game
+                            case 1 :{
+                                closeMenu(MENU_DEAD);
+                                displayMenu(MENU_OPTIONS);
+                                break;
+                            } //options
+                            case 2 :{ 
+                                closeMenu(MENU_DEAD);
+                                //kill game
+                                displayMenu(MENU_MAIN_MENU);
+                                break;
+                            }
 
                         }
 

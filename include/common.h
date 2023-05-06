@@ -6,6 +6,7 @@
 #include <math.h>
 #include <linux/limits.h>
 
-// #define ASSETS_DIR strcpy(BIN_PATH, "/assets")
+#define TRUE 1
+#define FALSE 0
 
 #endif

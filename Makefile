@@ -2,7 +2,7 @@ CC        := gcc
 # C_FLAGS := -Wall -Wextra -pedantic -O2
 _C_FLAGS := -Wall -Wextra -pedantic
 C_OPT_FLAGS := -O2
-C_DEBUG_FLAGS := -Og -g -DRL_DEBUG
+C_DEBUG_FLAGS := -Og -g -DRL_DEBUG -fkeep-inline-functions
 C_FLAGS := $(_C_FLAGS) $(C_OPT_FLAGS)
 
 BIN		:= bin

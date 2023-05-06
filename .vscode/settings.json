@@ -35,7 +35,8 @@
         "string": "c",
         "unordered_map": "c",
         "vector": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "locale.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

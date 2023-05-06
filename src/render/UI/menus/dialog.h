@@ -5,13 +5,6 @@
 #include "common.h"
 #include "util/string.h"
 
-typedef struct g_dialog_metadata_struct {
-    int total_chars;
-    int total_lines;
-    int total_pages;
-    char*** page_data;
-} DMD, *Dmd;
-
 extern char* g_dialog_text;
 extern char**** g_dialog_page_data;
 extern int g_dialog_control[3];

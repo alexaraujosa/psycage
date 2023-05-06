@@ -78,7 +78,7 @@ static inline HashMap hm_new(const unsigned int size) {
     return m;
 }
 
-static int hm_resize(HashMap m, int new_cap) {
+static inline int hm_resize(HashMap m, int new_cap) {
     HashMap nm = hm_new(new_cap);
 
     if (!nm)  return -1;

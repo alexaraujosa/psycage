@@ -4,7 +4,7 @@ extern char ASSET_DIR[PATH_MAX];
 extern int ASSET_DIR_LEN;
 
 static HashMap items;
-static HashMap items_len;
+static int items_len;
 static KeyValuePair* item_entries;
 
 HashMap load_items() {
@@ -25,7 +25,7 @@ HashMap load_items() {
     int lineCount = 0;
     while ((read = getline(&line, &len, file)) != (size_t)-1) {
         lineCount++;
-        line[read - 1] = '\0';
+        if (line[read - 1] == '\n') line[read - 1] = '\0';
 
         if (lineCount == 1) {
             int version = -1;
@@ -65,7 +65,7 @@ HashMap load_items() {
     return map;
 }
 
-DataItemNode defaultItem() {
+DataItemNode defaultItemResource() {
     DataItemNode item = (DataItemNode)malloc(sizeof(DATA_ITEM_NODE));
     item->id = 0;
     item->name = "";
@@ -79,7 +79,7 @@ DataItemNode defaultItem() {
 DataItemNode parse_item(char* raw, int len) {
     // debug("LINE: %d | '%s'\n", len, raw);
 
-    DataItemNode item = defaultItem();
+    DataItemNode item = defaultItemResource();
     char name[MAX_INPUT];
     char id[MAX_ITEM_ID_SIZE];
     if (!sscanf(raw, "%s %s %d %d %d", id, name, &item->damage, &item->durability, &item->value)) return NULL;

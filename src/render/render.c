@@ -5,6 +5,9 @@ Renderstate g_renderstate;
 Renderstate init_render() {
     Renderstate rs = (Renderstate)malloc(sizeof(RENDERSTATE));
 
+    rs->activeMenus = 0;
+    for (int i = 0; i < MENU_STACK_MAX; i++) rs->menus[i] = NULL;
+
     // setlocale(LC_ALL, "");
 
     // Initialize window
@@ -25,6 +28,7 @@ Renderstate init_render() {
 	nonl();
 	intrflush(stdscr, false);
 	keypad(stdscr, true);
+    curs_set(0);
 
     // COLORS
     init_color(GREY, 400, 400, 400); 
@@ -48,18 +52,18 @@ Renderstate init_render() {
     init_pair(YELLOW_PLAYER, COLOR_YELLOW, COLOR_BLACK);
     init_pair(BLUE_PLAYER, COLOR_BLUE, COLOR_BLACK);
     // DUNGEON
-    init_pair(DUNGEON_WALLS, GREY, DARK_DARK_GREY| A_DIM); 
-    init_pair(DUNGEON_FLOOR, GREY, BLACK | A_DIM);
-    init_pair(DUNGEON_BLOOD, DARK_RED, BLACK | A_DIM);     
+    init_pair(DUNGEON_WALLS, GREY, (short)(DARK_DARK_GREY | A_DIM)); 
+    init_pair(DUNGEON_FLOOR, GREY, (short)(BLACK | A_DIM));
+    init_pair(DUNGEON_BLOOD, DARK_RED, (short)(BLACK | A_DIM));     
     // ASYLUM
-    init_pair(ASYLUM_WALLS, BLACK, WHITE | A_DIM); 
-    init_pair(ASYLUM_FLOOR, WHITE, LIGHT_GREY | A_DIM); 
-    init_pair(ASYLUM_BLOOD, DARK_RED, LIGHT_GREY | A_DIM);
+    init_pair(ASYLUM_WALLS, BLACK, (short)(WHITE | A_DIM)); 
+    init_pair(ASYLUM_FLOOR, WHITE, (short)(LIGHT_GREY | A_DIM)); 
+    init_pair(ASYLUM_BLOOD, DARK_RED, (short)(LIGHT_GREY | A_DIM));
     init_pair(NOTHING, BLACK, BLACK);    
     // SEWERS
-    init_pair(SEWERS_BLOOD, WHITE, DARK_RED | A_DIM);
-    init_pair(SEWERS_FLOOR, BROWN, DARK_GREY | A_DIM); 
-    init_pair(SEWERS_WALLS, GREEN, DARK_GREEN | A_DIM);
+    init_pair(SEWERS_BLOOD, WHITE, (short)(DARK_RED | A_DIM));
+    init_pair(SEWERS_FLOOR, BROWN, (short)(DARK_GREY | A_DIM)); 
+    init_pair(SEWERS_WALLS, GREEN, (short)(DARK_GREEN | A_DIM));
     // MENUS
     init_pair(ORANGE_LOGO, ORANGE, 0);
     init_pair(LIGHT_ORANGE_LOGO, LIGHT_ORANGE, 0);
@@ -67,12 +71,14 @@ Renderstate init_render() {
     init_pair(LIGHTPLUS_GREY_LOGO, LIGHTPLUS_GREY, 0);
     init_pair(YELLOW_ORANGE_LOGO, YELLOW_ORANGE, 0);
     init_pair(DARKPLUS_GREY_LOGO, DARKPLUS_GREY, 0);
+
+    init_pair(RED_BG, COLOR_WHITE, COLOR_RED);
+    init_pair(GREEN_BG, COLOR_WHITE, COLOR_GREEN);
+    init_pair(YELLOW_BG, COLOR_WHITE, COLOR_YELLOW);
     rs->wnd = wnd;
 
-    rs->activeMenus = 0;
-    for (int i = 0; i < MENU_STACK_MAX; i++) rs->menus[i] = NULL;
-
     g_renderstate = rs;
+
     return rs;
 }
 
@@ -83,6 +89,7 @@ void render(Gamestate gs) {
     render_game(gs);
     render_menu(gs);
     doupdate();
+    // refresh();
 }
 
 #pragma region Menu functions
@@ -153,39 +160,49 @@ void _removeMenu(MenuId menu) {
 void render_game(Gamestate gs) {
     Coords playerCoords = gs->player->entity->coords;
 
+    // TEST
+    wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_BG));
+    for (int i = 0; i < g_gamestate->path_cell_count; i++) {
+        mvwaddch(g_renderstate->wnd, g_gamestate->path_cells[i]->y, g_gamestate->path_cells[i]->x, '&');
+    }
+    wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_BG));
+
+    attron(COLOR_PAIR(GREEN_BG));
+    mvwaddch(g_renderstate->wnd, g_gamestate->pointA->y, g_gamestate->pointA->x, '#');
+    attroff(COLOR_PAIR(GREEN_BG));
+
+    attron(COLOR_PAIR(RED_BG));
+    mvwaddch(g_renderstate->wnd, g_gamestate->pointB->y, g_gamestate->pointB->x, '#');
+    attroff(COLOR_PAIR(RED_BG));
+
     move(g_renderstate->nrows - 1, 0);
 	wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
-	printw("(%d, %d) %d %d", 
+	printw("(%d, %d) %d %d | (%d, %d) (%d, %d) | %d", 
         playerCoords->x, 
         playerCoords->y, 
         g_renderstate->ncols, 
-        g_renderstate->nrows
+        g_renderstate->nrows,
+        g_gamestate->pointA->x, g_gamestate->pointA->y,
+        g_gamestate->pointB->x, g_gamestate->pointB->y,
+        g_gamestate->path_cell_count
     );
 	wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 
 	wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
-	mvwaddch(g_renderstate->wnd, playerCoords->x, playerCoords->y, '@' | COLOR_PAIR(WHITE_PLAYER));
+	mvwaddch(g_renderstate->wnd, playerCoords->y, playerCoords->x, '@' | COLOR_PAIR(WHITE_PLAYER));
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
 	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
 
-	wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
-	mvwaddch(g_renderstate->wnd, playerCoords->x - 1, playerCoords->y - 1, '.' | A_BOLD);
-	mvwaddch(g_renderstate->wnd, playerCoords->x - 1, playerCoords->y + 0, '.' | A_BOLD);
-	mvwaddch(g_renderstate->wnd, playerCoords->x - 1, playerCoords->y + 1, '.' | A_BOLD);
-	mvwaddch(g_renderstate->wnd, playerCoords->x + 0, playerCoords->y - 1, '.' | A_BOLD);
-	mvwaddch(g_renderstate->wnd, playerCoords->x + 0, playerCoords->y + 1, '.' | A_BOLD);
-	mvwaddch(g_renderstate->wnd, playerCoords->x + 1, playerCoords->y - 1, '.' | A_BOLD);
-	mvwaddch(g_renderstate->wnd, playerCoords->x + 1, playerCoords->y + 0, '.' | A_BOLD);
-	mvwaddch(g_renderstate->wnd, playerCoords->x + 1, playerCoords->y + 1, '.' | A_BOLD);
-    // mvaddwstr(playerCoords->x - 1, playerCoords->y - 1, L"█");
-	// mvaddwstr(playerCoords->x - 1, playerCoords->y + 0, L"█");
-	// mvaddwstr(playerCoords->x - 1, playerCoords->y + 1, L"█");
-	// mvaddwstr(playerCoords->x + 0, playerCoords->y - 1, L"█");
-	// mvaddwstr(playerCoords->x + 0, playerCoords->y + 1, L"█");
-	// mvaddwstr(playerCoords->x + 1, playerCoords->y - 1, L"█");
-	// mvaddwstr(playerCoords->x + 1, playerCoords->y + 0, L"█");
-	// mvaddwstr(playerCoords->x + 1, playerCoords->y + 1, L"█");
-    wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
+	// wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
+	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x - 1, '.' | A_BOLD);
+	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x + 0, '.' | A_BOLD);
+	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x + 1, '.' | A_BOLD);
+	// mvwaddch(g_renderstate->wnd, playerCoords->y + 0, playerCoords->x - 1, '.' | A_BOLD);
+	// mvwaddch(g_renderstate->wnd, playerCoords->y + 0, playerCoords->x + 1, '.' | A_BOLD);
+	// mvwaddch(g_renderstate->wnd, playerCoords->y + 1, playerCoords->x - 1, '.' | A_BOLD);
+	// mvwaddch(g_renderstate->wnd, playerCoords->y + 1, playerCoords->x + 0, '.' | A_BOLD);
+	// mvwaddch(g_renderstate->wnd, playerCoords->y + 1, playerCoords->x + 1, '.' | A_BOLD);
+    // wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
 	move(playerCoords->x, playerCoords->y);
 }

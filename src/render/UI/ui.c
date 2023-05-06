@@ -2,6 +2,7 @@
 #include "menus/mainmenu.h"
 #include "menus/optionsmenu.h"
 #include "menus/pausemenu.h"
+#include "menus/deadmenu.h"
 #include "menus/dialog.h"
 #include "menus/deadmenu.h"
 #include "menus/charactersmenu.h"
@@ -20,7 +21,7 @@ void drawMenu(Menu menu) {
             drawMainMenu(menu);
             break;
         }
-        case MENU_DIALOG:
+        case MENU_DIALOG: {
             WINDOW* win = newwin( 
                 g_ui_size[0],
                 g_ui_size[1],
@@ -33,6 +34,7 @@ void drawMenu(Menu menu) {
 
             drawDialog(menu);
             break;
+        }
         case MENU_OPTIONS: {
             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
             PANEL * panel = new_panel(win);

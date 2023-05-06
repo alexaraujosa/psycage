@@ -13,13 +13,22 @@
 #include "common.h"
 #include "../entity/player/player.h"
 #include "../render/render.h"
+#include "../map/map.h"
 
 // Import paths from main
 extern char* BIN_PATH;
 extern char ASSET_DIR[PATH_MAX];
 
 typedef struct gamestate {
-    Player player;
+    Player player;         // Player structure
+    int input_initialized; // Block user input
+    int clock;             // General tick clock
+    int block_clock;       // Stop clock execution
+    Coords pointA;
+    Coords pointB;
+    int recalculate;
+    int path_cell_count;
+    Coords* path_cells;
 } GAMESTATE, *Gamestate;
 
 extern Gamestate g_gamestate;

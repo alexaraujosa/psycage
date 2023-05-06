@@ -14,6 +14,7 @@
 #include "UI/menus/menulist.h"
 #include "UI/ui.h"
 #include "../gameloop/gameloop.h"
+#include "../map/map_render.h"
 
 typedef struct gamestate GAMESTATE, *Gamestate;
 
@@ -69,7 +70,11 @@ enum colors{
     DARK_ORANGE_LOGO,
     LIGHTPLUS_GREY_LOGO,
     YELLOW_ORANGE_LOGO,
-    DARKPLUS_GREY_LOGO
+    DARKPLUS_GREY_LOGO,
+    // TEST
+    GREEN_BG,
+    RED_BG,
+    YELLOW_BG
 };
 
 enum languages{

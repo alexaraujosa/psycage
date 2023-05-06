@@ -2,7 +2,7 @@ CC        := gcc
 # C_FLAGS := -Wall -Wextra -pedantic -O2
 _C_FLAGS := -Wall -Wextra -pedantic
 C_OPT_FLAGS := -O2
-C_DEBUG_FLAGS := -Og -g
+C_DEBUG_FLAGS := -Og -g -DRL_DEBUG
 C_FLAGS := $(_C_FLAGS) $(C_OPT_FLAGS)
 
 BIN		:= bin
@@ -25,6 +25,7 @@ debug: C_FLAGS = $(_C_FLAGS) $(C_DEBUG_FLAGS)
 debug: $(BIN)/$(EXECUTABLE)
 
 $(BIN)/$(EXECUTABLE): $(shell find ./$(SRC) -name '*.c')
+	mkdir -p $(BIN)
 	$(CC) $(C_FLAGS) -I$(INCLUDE) -L$(LIB) $^ -o $@ $(LIBRARIES)
 	$(MAKE) copyassets
 

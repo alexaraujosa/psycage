@@ -23,7 +23,19 @@
         "panel.h": "c",
         "menulist.h": "c",
         "dialog.h": "c",
-        "map_render.h": "c"
+        "pathfind.h": "c",
+        "map_render.h": "c",
+        "main_preproc": "cpp",
+        "map_common.h": "c",
+        "debug.h": "c",
+        "bit": "c",
+        "deque": "c",
+        "map": "c",
+        "*.tcc": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "typeinfo": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

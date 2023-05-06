@@ -24,6 +24,7 @@ tmux new-session -d -s SplitDbg
 tmux selectp -t SplitDbg
 tmux splitw -h -p 50 "gdbserver :12345 $SCRIPT_DIR/../bin/main"
 tmux send-keys -t 0 "gdb $SCRIPT_DIR/../bin/main -x $SCRIPT_DIR/debug.gdb" Enter
+tmux send-keys -t 0 Enter C-x o
 tmux select-pane -t 0
 tmux attach -t SplitDbg
 # gdb -x debug.gdb

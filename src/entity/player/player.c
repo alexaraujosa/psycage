@@ -9,8 +9,26 @@ Player defaultPlayer() {
     if (entity == NULL) return NULL;
     
     player->entity = entity;
+    player->level = 0;
 
     return player;
+}
+
+void levelUp(Player player) {
+    if (player->xp % 5 == 0) {
+        player->level += 1;
+        player->xp = 0;
+    }
+}
+
+void killCount(Player player, Entity entity) {
+    if (entity->health == 0) {
+        player->kills += 1;
+    }
+}
+
+void killXp(Player player) {
+    player->kills = player->xp;
 }
 
 void destroyPlayer(Player player) {

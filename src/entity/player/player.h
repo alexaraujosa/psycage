@@ -11,6 +11,9 @@
 
 typedef struct player {
     Entity entity;
+    int level;
+    int kills;
+    int xp;
 } PLAYER, *Player;
 
 // #define PLAYER_SIZE ENTITY_SIZE

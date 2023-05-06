@@ -18,6 +18,9 @@ typedef struct entity {
     int maxHealth;
     int health;
     int armor;
+    int basedamage;
+    int damage;
+    int dead;
 } ENTITY, *Entity;
 
 /* FUNCTION SIGNATURES */

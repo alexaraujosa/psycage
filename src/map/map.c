@@ -1,20 +1,6 @@
 #include "common.h"
 #include "map.h"
 
-Coords defaultCoords() {
-    Coords coords = (Coords)malloc(sizeof(COORDS));
-    if (coords == NULL) return NULL;
-
-    coords->x = 0;
-    coords->y = 0;
-
-    return coords;
-}
-
-void destroyCoords(Coords coords) {
-    free(coords);
-}
-
 void make_borders(int **matrix, int HEIGHT, int WIDTH) {
     
     // Iterate over the matrix and update the border
@@ -44,6 +30,7 @@ void make_borders(int **matrix, int HEIGHT, int WIDTH) {
 //====================================
 // Dungeon
 //====================================
+#pragma region Dungeon
 
 int **dungeon;
 
@@ -202,6 +189,7 @@ void create_dungeon( int HEIGHT, int WIDTH){
 //==========================
 // Sewers
 //==========================
+#pragma region Sewers
 
 #define NUM_ROOMS 10
 #define ROOM_MIN_WIDTH 7
@@ -442,11 +430,13 @@ void create_sewers(int HEIGHT, int WIDTH){
     make_borders(maze, HEIGHT, WIDTH);
     print_sewers(HEIGHT, WIDTH);
 }
+#pragma endregion
 
 
 //==========================
 // Asylum
 //==========================
+#pragma region Asylum
 
 #define MAX_ROOMS 10
 #define MIN_SIZE 12

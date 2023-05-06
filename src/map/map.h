@@ -7,10 +7,9 @@
 #ifndef __RL_MAP_H
 #define __RL_MAP_H
 
-typedef struct coords {
-    int x;
-    int y;
-} COORDS, *Coords;
+#include "common.h"
+#include "map_common.h"
+#include "../entity/ai/pathfind.h"
 
 typedef struct Room {
 
@@ -28,8 +27,13 @@ extern int **dungeon;
 extern int **asylum;
 
 /* FUNCTION SIGNATURES */
-Coords defaultCoords();
-void destroyCoords(Coords coords);
+void create_sewers();
+void create_dungeon();
+void create_asylum();
+void create_ai_test_map();
+void prepare_ai_test_map();
+void print_ai_test_map();
+void randomize_atm_points();
 
 void create_asylum(int HEIGHT, int WIDTH);
 void create_dungeon(int HEIGHT, int WIDTH);

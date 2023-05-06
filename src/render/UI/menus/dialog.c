@@ -2,9 +2,8 @@
 
 char* g_dialog_text;
 char**** g_dialog_page_data;
-int g_dialog_control[3] = { 0, 0, 0, 0 }; // max per line, max lines, max page, allow backtrack
-static int page_control[2] = { 0, 0 }; // max pages, current page
-static Dmd g_dialog_metadata;
+int g_dialog_control[3] = { 0, 0, 0 }; // max per line, max lines, max page
+static int page_control[2] = { 0 }; // max pages, current page
 
 void drawDialog(Menu menu) {
     wmove(menu->wnd, 10, 10);

@@ -32,8 +32,8 @@ int main() {
     Renderstate rs = init_render();
     Gamestate gs = init_gameloop();
     
-    gs->player->entity->coords->x = rs->nrows / 2;
-    gs->player->entity->coords->y = rs->ncols / 2;
+    gs->player->entity->coords->x = rs->ncols / 2;
+    gs->player->entity->coords->y = rs->nrows / 2;
 
     while (1) {
         tick();

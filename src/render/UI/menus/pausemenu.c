@@ -7,18 +7,23 @@
 static unsigned short int effect = 0;
 
 void drawPauseMenu(Menu menu) {
+    
+    char *botoes[BOTOES] = {
+        get_localized_string(EN_US, "menu.pause.return"),
+        get_localized_string(EN_US, "menu.pause.options"),  // falta os saves
+        get_localized_string(EN_US, "menu.pause.exit"),
+    }; 
 
-    static char *botoes[BOTOES] = {"   Return   ", "   Options  ", "    Exit    "}; 
 
     if(g_renderstate->language == pt_PT) {
         
         for(int i = 0 ; i < BOTOES ; i++)
             botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
-        strcpy(botoes[0], "   Voltar   ");
-        strcpy(botoes[1], "   Opcoes   ");  // Falta o save
-        strcpy(botoes[2], "    Sair    ");
-        
+        strcpy(botoes[0], get_localized_string(PT_PT, "menu.pause.return"));
+        strcpy(botoes[1], get_localized_string(PT_PT, "menu.pause.options"));   // falta os saves
+        strcpy(botoes[2], get_localized_string(PT_PT, "menu.pause.exit"));
+
     }
 
 

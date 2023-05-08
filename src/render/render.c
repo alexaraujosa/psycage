@@ -79,6 +79,8 @@ Renderstate init_render() {
 
     g_renderstate = rs;
 
+    load_locales();
+
     return rs;
 }
 

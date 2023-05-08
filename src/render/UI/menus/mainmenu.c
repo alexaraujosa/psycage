@@ -9,18 +9,25 @@ static unsigned short int effect = 0;
 
 void drawMainMenu(Menu menu) {
     
-    char *botoes[BOTOES] = {"New  Game", "Load Game", "Tutorial ", " Options ", "Quit Game"}; 
+    char *botoes[BOTOES] = {
+        get_localized_string(EN_US, "menu.main.new_game"),
+        get_localized_string(EN_US, "menu.main.load_game"),
+        get_localized_string(EN_US, "menu.main.saves"),
+        get_localized_string(EN_US, "menu.main.options"),
+        get_localized_string(EN_US, "menu.main.quit_game")
+    }; 
+
 
     if(g_renderstate->language == pt_PT) {
         
         for(int i = 0 ; i < BOTOES ; i++)
             botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
-        strcpy(botoes[0], "  Novo Jogo ");
-        strcpy(botoes[1], "  Carregar  ");
-        strcpy(botoes[2], "  Tutorial  ");
-        strcpy(botoes[3], "   Opcoes   ");
-        strcpy(botoes[4], "Sair do Jogo");
+        strcpy(botoes[0], get_localized_string(PT_PT, "menu.main.new_game"));
+        strcpy(botoes[1], get_localized_string(PT_PT, "menu.main.load_game"));
+        strcpy(botoes[2], get_localized_string(PT_PT, "menu.main.saves"));
+        strcpy(botoes[3], get_localized_string(PT_PT, "menu.main.options"));
+        strcpy(botoes[4], get_localized_string(PT_PT, "menu.main.quit_game"));
 
     }
 

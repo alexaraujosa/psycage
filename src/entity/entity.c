@@ -4,7 +4,7 @@
 Entity defaultEntity() {
     Entity entity = (Entity)malloc(sizeof(ENTITY));
     if (entity == NULL) return NULL;
-
+    entity->class = 0;
     entity->coords = defaultCoords();
     entity->maxHealth = 5;
     entity->health = 1;

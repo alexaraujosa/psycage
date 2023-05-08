@@ -7,17 +7,22 @@
 static unsigned short int effect = 0;
 
 void drawDeadMenu(Menu menu) {
+    
+    char *botoes[BOTOES] = {
+        get_localized_string(EN_US, "menu.dead.new_game"),
+        get_localized_string(EN_US, "menu.dead.options"),
+        get_localized_string(EN_US, "menu.dead.quit")
+    }; 
 
-    static char *botoes[BOTOES] = {"   New   Game   ", "    Settings    ", "      Exit      "}; 
 
     if(g_renderstate->language == pt_PT) {
         
         for(int i = 0 ; i < BOTOES ; i++)
             botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
-        strcpy(botoes[0], "   Novo  Jogo   ");
-        strcpy(botoes[1], "  Configuracoes ");
-        strcpy(botoes[2], "      Sair      ");        
+        strcpy(botoes[0], get_localized_string(PT_PT, "menu.dead.new_game"));
+        strcpy(botoes[1], get_localized_string(PT_PT, "menu.dead.options"));
+        strcpy(botoes[2], get_localized_string(PT_PT, "menu.dead.quit"));
 
     }
 
@@ -27,7 +32,7 @@ void drawDeadMenu(Menu menu) {
 
 
 #define LARGURA_DEATH 65
-#define ALTURA_DEATH 38
+#define ALTURA_DEATH 39
 
 
     static char *death[ALTURA_DEATH] = {

@@ -14,16 +14,21 @@ static unsigned short int botao_selecionado = 0, effect = 0;
 
 void drawCharactersMenu(Menu menu) {
     
-    static char *botoes[BOTOES] = {"  Priest   ", " Detective ", " Mercenary "};
+    char *botoes[BOTOES] = {
+        get_localized_string(EN_US, "menu.characters.priest"),
+        get_localized_string(EN_US, "menu.characters.detective"),
+        get_localized_string(EN_US, "menu.characters.mercenary")
+    }; 
+
 
     if(g_renderstate->language == pt_PT) {
         
         for(int i = 0 ; i < BOTOES ; i++)
             botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
-        strcpy(botoes[0], "   Padre    ");
-        strcpy(botoes[1], "  Detetive  ");
-        strcpy(botoes[2], " Mercenario ");
+        strcpy(botoes[0], get_localized_string(PT_PT, "menu.characters.priest"));
+        strcpy(botoes[1], get_localized_string(PT_PT, "menu.characters.detective"));
+        strcpy(botoes[2], get_localized_string(PT_PT, "menu.characters.mercenary"));
 
     }
 
@@ -167,9 +172,26 @@ void handle_CharactersMenu_keybinds(int key) {
 
         case 10 : case 13 : switch(botao_selecionado) {
 
-                            case 0 : break;            //!!!!! Alterar na struct entity a classe para X
-                            case 1 : break;             //!!!!! '' '' '' '' '' para Y
-                            case 2 : break;             //!!!!!! '' '' '' '' '' para Z
+                            case Priest : {
+                                g_gamestate->player->entity->basedamage = 3;
+                                g_gamestate->player->entity->class = Priest;
+                                //startgame
+                                break;            
+                            }
+
+                            case Detective : {
+                                g_gamestate->player->entity->basedamage = 3;
+                                g_gamestate->player->entity->class = Detective;
+                                //startgame
+                                break;             
+                            }
+
+                            case Mercenary : {
+                                g_gamestate->player->entity->basedamage = 3;
+                                g_gamestate->player->entity->class = Mercenary;
+                                //startgame
+                                break;             
+                            }
 
                         }
 

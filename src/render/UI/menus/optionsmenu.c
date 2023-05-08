@@ -8,16 +8,20 @@ static unsigned short int effect = 0;
 
 void drawOptionsMenu(Menu menu) {
     
-    static char *botoes[BOTOES] = {"   Return   ", "  Language  ", "Tutorial ", " Options ", "Quit Game"}; 
+    char *botoes[BOTOES] = {
+        get_localized_string(EN_US, "menu.options.return"),
+        get_localized_string(EN_US, "menu.options.language"),
+    }; 
+
 
     if(g_renderstate->language == pt_PT) {
         
         for(int i = 0 ; i < BOTOES ; i++)
             botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
 
-        strcpy(botoes[0], "   Voltar   ");
-        strcpy(botoes[1], "  Linguagem ");
-    
+        strcpy(botoes[0], get_localized_string(PT_PT, "menu.options.return"));
+        strcpy(botoes[1], get_localized_string(PT_PT, "menu.options.language"));
+
     }
 
 

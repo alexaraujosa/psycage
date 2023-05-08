@@ -15,6 +15,7 @@
 
 typedef struct entity {
     Coords coords;
+    int class;
     int maxHealth;
     int health;
     int armor;
@@ -22,6 +23,12 @@ typedef struct entity {
     int damage;
     int dead;
 } ENTITY, *Entity;
+
+enum Classes{
+    Priest,
+    Detective,
+    Mercenary
+};
 
 /* FUNCTION SIGNATURES */
 Entity defaultEntity();

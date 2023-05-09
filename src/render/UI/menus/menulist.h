@@ -10,7 +10,9 @@ typedef enum {
     MENU_OPTIONS,
     MENU_PAUSE,
     MENU_DEAD,
-    MENU_CHARACTERS
+    MENU_CHARACTERS,
+    MENU_SAVE,
+    MENU_SAVE_SLOT
 } MenuId;
 
 typedef struct menu {

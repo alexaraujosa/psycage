@@ -4,34 +4,18 @@
 
 #define BOTOES 3
 #define CLASSES 3
-
 #define ESPACAMENTO 2
-
 #define TAMANHO_MAX_BOTAO 20
 #define TAMANHO_MAX_CLASSE 20
 
-static unsigned short int botao_selecionado = 0, effect = 0;
+static unsigned short int botao_selecionado_principal = 0, effect = 0;
+static char *botoes[BOTOES] = {"menu.characters.priest", "menu.characters.detective", "menu.characters.mercenary"};
+
+
+
 
 void drawCharactersMenu(Menu menu) {
     
-    char *botoes[BOTOES] = {
-        get_localized_string(EN_US, "menu.characters.priest"),
-        get_localized_string(EN_US, "menu.characters.detective"),
-        get_localized_string(EN_US, "menu.characters.mercenary")
-    }; 
-
-
-    if(g_renderstate->language == pt_PT) {
-        
-        for(int i = 0 ; i < BOTOES ; i++)
-            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
-
-        strcpy(botoes[0], get_localized_string(PT_PT, "menu.characters.priest"));
-        strcpy(botoes[1], get_localized_string(PT_PT, "menu.characters.detective"));
-        strcpy(botoes[2], get_localized_string(PT_PT, "menu.characters.mercenary"));
-
-    }
-
 
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
@@ -68,7 +52,7 @@ void drawCharactersMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX/3 + ESPACAMENTO + separador + i +1, xMAX/2 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, yMAX/3 + ESPACAMENTO + separador + i +1, xMAX/2 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -94,7 +78,7 @@ void drawCharactersMenu(Menu menu) {
         wattron(info, A_BOLD | A_UNDERLINE);
 
 
-        switch(botao_selecionado) {
+        switch(botao_selecionado_principal) {
             
             case 0 : {
                 mvwprintw(info, 1, 2, "%s", botoes[0]);
@@ -138,17 +122,17 @@ void tick_CharactersMenu() {
 
 void handle_CharactersMenu_keybinds(int key) {
 
-    if(botao_selecionado == 0 && key == KEY_UP) {
+    if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
-        botao_selecionado = BOTOES - 1;
+        botao_selecionado_principal = BOTOES - 1;
         effect = BOTOES - 1;
 
         return;
     }
 
-    if(botao_selecionado == BOTOES-1 && key == KEY_DOWN) {
+    if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
 
-        botao_selecionado = 0;
+        botao_selecionado_principal = 0;
         effect = 0;
 
         return;
@@ -158,19 +142,19 @@ void handle_CharactersMenu_keybinds(int key) {
 
         case KEY_UP :
 
-            botao_selecionado--;
+            botao_selecionado_principal--;
             effect--;
             break;
 
 
         case KEY_DOWN :
 
-            botao_selecionado++;
+            botao_selecionado_principal++;
             effect++;
             break;
 
 
-        case 10 : case 13 : switch(botao_selecionado) {
+        case 10 : case 13 : switch(botao_selecionado_principal) {
 
                             case Priest : {
                                 g_gamestate->player->entity->basedamage = 3;

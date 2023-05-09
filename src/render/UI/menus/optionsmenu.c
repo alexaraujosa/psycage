@@ -3,37 +3,10 @@
 #include "../../render.h"
 
 #define BOTOES 2
-
-static unsigned short int effect = 0;
-
-void drawOptionsMenu(Menu menu) {
-    
-    char *botoes[BOTOES] = {
-        get_localized_string(EN_US, "menu.options.return"),
-        get_localized_string(EN_US, "menu.options.language"),
-    }; 
-
-
-    if(g_renderstate->language == pt_PT) {
-        
-        for(int i = 0 ; i < BOTOES ; i++)
-            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
-
-        strcpy(botoes[0], get_localized_string(PT_PT, "menu.options.return"));
-        strcpy(botoes[1], get_localized_string(PT_PT, "menu.options.language"));
-
-    }
-
-
-    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
-
-
 #define LARGURA_OPTIONS 76
 #define ALTURA_OPTIONS 8
 
-
-    static char *options[ALTURA_OPTIONS] = {
+static char *options[ALTURA_OPTIONS] = {
         " .d88888b.  8888888b. 88888888888 8888888 .d88888b.  888b    888  .d8888b.      ",
         "888     888 888    888    888       888  888     888 88888b  888 Y88b.          ",
         "d88     88b 888   Y88b    888       888  d88     88b 8888b   888 d88P           ",
@@ -42,7 +15,17 @@ void drawOptionsMenu(Menu menu) {
         "888     888 888           888       888  888     888 888  Y88888       \"888    ",
         "Y88b. .d88P 888           888       888  Y88b. .d88P 888   Y8888 Y88b  d88P     ",
         " \"Y88888P\"  888           888     8888888 \"Y88888P\"  888    Y888  \"Y8888P\""
-    };
+};
+
+static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static char *botoes[BOTOES] = {"menu.options.return", "menu.options.language"};
+
+
+void drawOptionsMenu(Menu menu) {
+    
+
+    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
+    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
     /* Obter onde vai ser colocada a ASCII - Options em xOy */
@@ -91,7 +74,7 @@ void drawOptionsMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + separador + i +1 , g_renderstate->ncols/2 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + separador + i +1 , g_renderstate->ncols/2 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
         
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -107,19 +90,18 @@ void tick_OptionsMenu() {
 
 void handle_OptionsMenu_keybinds(int key) {
 
-    static unsigned short int botao_selecionado = 0;
 
-    if(botao_selecionado == 0 && key == KEY_UP) {
+    if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
-        botao_selecionado = BOTOES - 1;
+        botao_selecionado_principal = BOTOES - 1;
         effect = BOTOES - 1;
 
         return;
     }
 
-    if(botao_selecionado == BOTOES-1 && key == KEY_DOWN) {
+    if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
 
-        botao_selecionado = 0;
+        botao_selecionado_principal = 0;
         effect = 0;
 
         return;
@@ -128,20 +110,20 @@ void handle_OptionsMenu_keybinds(int key) {
     switch(key) {
 
         case KEY_UP :
-            botao_selecionado--;
+            botao_selecionado_principal--;
             effect--;
             break;
 
 
         case KEY_DOWN :
-            botao_selecionado++;
+            botao_selecionado_principal++;
             effect++;
             break;
 
 
-        case 10 : case 13 : switch(botao_selecionado) {
+        case 10 : case 13 : switch(botao_selecionado_principal) {
 
-                            case 0 :{
+                            case 0 :
                             //     //if(isInGame) {
                             //         closeMenu(MENU_OPTIONS);
                             //         break;
@@ -158,11 +140,11 @@ void handle_OptionsMenu_keybinds(int key) {
                             //     }
                             //     }
                             // 
-                            }
-                            case 1 :{
-                                g_renderstate->language = (g_renderstate->language == en_US) ? pt_PT : en_US;
+                            break;
+                            case 1 :
+                                change_locale();
                                 break;
-                            }
+                            
                         }
 
     }

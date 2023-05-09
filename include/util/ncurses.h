@@ -73,8 +73,8 @@ inline char* tamanho_maxPalavra(int qnt_botoes, char *botoes[]) {
 
     for (int i = 1; i < qnt_botoes; i++) {
 
-        if (strlen(botoes[i]) > strlen(tamanho_max))
-            tamanho_max = botoes[i];
+        if (strlen(get_localized_string(g_renderstate->language, botoes[i])) > strlen(get_localized_string(g_renderstate->language, tamanho_max)))
+            tamanho_max = get_localized_string(g_renderstate->language, botoes[i]);
         
     }
 

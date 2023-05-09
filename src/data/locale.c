@@ -1,4 +1,5 @@
 #include "locale.h"
+#include "../render/render.h"
 
 // External Constants
 extern char ASSET_DIR[PATH_MAX];
@@ -148,4 +149,11 @@ char* get_localized_string(DataLocale loc, char* key) {
 
     if (transl == NULL) return key;
     return transl;
+}
+
+void change_locale() {
+
+    g_renderstate->language = (g_renderstate->language == en_US) ? pt_PT : en_US;
+    
+    return;
 }

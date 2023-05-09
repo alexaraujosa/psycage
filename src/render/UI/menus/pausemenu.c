@@ -3,39 +3,10 @@
 #include "../../render.h"
 
 #define BOTOES 3
-
-static unsigned short int effect = 0;
-
-void drawPauseMenu(Menu menu) {
-    
-    char *botoes[BOTOES] = {
-        get_localized_string(EN_US, "menu.pause.return"),
-        get_localized_string(EN_US, "menu.pause.options"),  // falta os saves
-        get_localized_string(EN_US, "menu.pause.exit"),
-    }; 
-
-
-    if(g_renderstate->language == pt_PT) {
-        
-        for(int i = 0 ; i < BOTOES ; i++)
-            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
-
-        strcpy(botoes[0], get_localized_string(PT_PT, "menu.pause.return"));
-        strcpy(botoes[1], get_localized_string(PT_PT, "menu.pause.options"));   // falta os saves
-        strcpy(botoes[2], get_localized_string(PT_PT, "menu.pause.exit"));
-
-    }
-
-
-    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
-
-
 #define LARGURA_PAUSE 59
 #define ALTURA_PAUSE 8
 
-
-    static char *pause[ALTURA_PAUSE] = {
+static char *pause[ALTURA_PAUSE] = {
         "  8888888b.      d8888 888     888  .d8888b.  8888888888    ",
         "  888   Y88b    d88888 888     888 d88P  Y88b 888           ",
         "  888    888   d88P888 888     888 Y88b.      888           ",
@@ -45,7 +16,18 @@ void drawPauseMenu(Menu menu) {
         "  888      d8888888888 Y88b. .d88P Y88b  d88P 888           ", 
         "  888     d88P     888  \"Y88888P\"   \"Y8888P\"  8888888888" 
                                                        
-    };
+};
+
+static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static char *botoes[BOTOES] = {"menu.pause.return", "menu.pause.options", "menu.pause.exit"};
+
+
+
+void drawPauseMenu(Menu menu) {
+
+
+    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
+    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
     /* Obter onde vai ser colocada a ASCII - Pause em xOy */
@@ -95,7 +77,7 @@ void drawPauseMenu(Menu menu) {
         if(i == effect)
             wattron(menu->wnd, A_REVERSE);
 
-        mvwprintw(menu->wnd, yMAX/2 - ALTURA_PAUSE/2 + separador + i +1 , xMAX/2 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, yMAX/2 - ALTURA_PAUSE/2 + separador + i +1 , xMAX/2 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
         
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -111,19 +93,18 @@ void tick_PauseMenu() {
 
 void handle_PauseMenu_keybinds(int key) {
 
-    static unsigned short int botao_selecionado = 0;
 
-    if(botao_selecionado == 0 && key == KEY_UP) {
+    if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
-        botao_selecionado = BOTOES - 1;
+        botao_selecionado_principal = BOTOES - 1;
         effect = BOTOES - 1;
 
         return;
     }
 
-    if(botao_selecionado == BOTOES-1 && key == KEY_DOWN) {
+    if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
 
-        botao_selecionado = 0;
+        botao_selecionado_principal = 0;
         effect = 0;
 
         return;
@@ -132,18 +113,18 @@ void handle_PauseMenu_keybinds(int key) {
     switch(key) {
 
         case KEY_UP :
-            botao_selecionado--;
+            botao_selecionado_principal--;
             effect--;
             break;
 
 
         case KEY_DOWN :
-            botao_selecionado++;
+            botao_selecionado_principal++;
             effect++;
             break;
 
 
-        case 10 : case 13 : switch(botao_selecionado) {
+        case 10 : case 13 : switch(botao_selecionado_principal) {
 
                             case 0 : break; // if(IsInGame && !isDead)
                             case 1 : closeMenu(MENU_PAUSE); displayMenu(MENU_OPTIONS); break;

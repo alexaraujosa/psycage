@@ -4,43 +4,10 @@
 #include <stdlib.h>
 
 #define BOTOES 5
-
-static unsigned short int effect = 0;
-
-void drawMainMenu(Menu menu) {
-    
-    char *botoes[BOTOES] = {
-        get_localized_string(EN_US, "menu.main.new_game"),
-        get_localized_string(EN_US, "menu.main.load_game"),
-        get_localized_string(EN_US, "menu.main.saves"),
-        get_localized_string(EN_US, "menu.main.options"),
-        get_localized_string(EN_US, "menu.main.quit_game")
-    }; 
-
-
-    if(g_renderstate->language == pt_PT) {
-        
-        for(int i = 0 ; i < BOTOES ; i++)
-            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
-
-        strcpy(botoes[0], get_localized_string(PT_PT, "menu.main.new_game"));
-        strcpy(botoes[1], get_localized_string(PT_PT, "menu.main.load_game"));
-        strcpy(botoes[2], get_localized_string(PT_PT, "menu.main.saves"));
-        strcpy(botoes[3], get_localized_string(PT_PT, "menu.main.options"));
-        strcpy(botoes[4], get_localized_string(PT_PT, "menu.main.quit_game"));
-
-    }
-
-
-    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
-
-
 #define LARGURA_CAGE 56
 #define ALTURA_CAGE 31
 
-
-    static char *cage[ALTURA_CAGE] = {
+static char *cage[ALTURA_CAGE] = {
         "                        .#     &                       ",
         "                       #         #                     ",
         "                       /         #                     ",
@@ -72,9 +39,20 @@ void drawMainMenu(Menu menu) {
         "    &##############################################&   ",
         "  /##################################################/ ",
         "  &##################################################& "
-    };
+};
 
+static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static char *botoes[BOTOES] = {"menu.main.new_game", "menu.main.load_game", "menu.main.saves", "menu.main.options", "menu.main.quit_game"};
+
+
+
+void drawMainMenu(Menu menu) {
     
+
+    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
+    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
+
+
     /* Obter onde vai ser colocada a ASCII - Cage em xOy */
 
     unsigned short int x_cage = xMAX/2 - LARGURA_CAGE/2;
@@ -124,7 +102,7 @@ void drawMainMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX/2 + separador + i + 5 +1 , xMAX/2 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, yMAX/2 + separador + i + 5 +1 , xMAX/2 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -139,19 +117,18 @@ void tick_MainMenu() {
 
 void handle_MainMenu_keybinds(int key) {
 
-    static unsigned short int botao_selecionado = 0;
 
-    if(botao_selecionado == 0 && key == KEY_UP) {
+    if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
-        botao_selecionado = BOTOES - 1;
+        botao_selecionado_principal = BOTOES - 1;
         effect = BOTOES - 1;
 
         return;
     }
 
-    if(botao_selecionado == BOTOES-1 && key == KEY_DOWN) {
+    if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
 
-        botao_selecionado = 0;
+        botao_selecionado_principal = 0;
         effect = 0;
 
         return;
@@ -160,22 +137,22 @@ void handle_MainMenu_keybinds(int key) {
     switch(key) {
 
         case KEY_UP :
-            botao_selecionado--;
+            botao_selecionado_principal--;
             effect--;
             break;
 
 
         case KEY_DOWN :
-            botao_selecionado++;
+            botao_selecionado_principal++;
             effect++;
             break;
 
 
-        case 10 : case 13 : switch(botao_selecionado) {
+        case 10 : case 13 : switch(botao_selecionado_principal) {
 
-                            case 0 : g_renderstate->language = (g_renderstate->language == en_US) ? pt_PT : en_US; //new game
+                            case 0 : g_renderstate->language = (g_renderstate->language == en_US) ? pt_PT : en_US; break;//new game
                             case 1 : break; //load game
-                            case 2 : break; //tutorial
+                            case 2 : break; //saves
                             case 3 : closeMenu(MENU_MAIN_MENU); displayMenu(MENU_OPTIONS); break;
                             case 4 : endwin(); exit(0);
 

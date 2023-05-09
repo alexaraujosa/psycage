@@ -3,39 +3,23 @@
 #include "../../render.h"
 
 #define BOTOES 3
-
-static unsigned short int effect = 0;
-
-void drawDeadMenu(Menu menu) {
-    
-    char *botoes[BOTOES] = {
-        get_localized_string(EN_US, "menu.dead.new_game"),
-        get_localized_string(EN_US, "menu.dead.options"),
-        get_localized_string(EN_US, "menu.dead.quit")
-    }; 
-
-
-    if(g_renderstate->language == pt_PT) {
-        
-        for(int i = 0 ; i < BOTOES ; i++)
-            botoes[i] = (char *) malloc(strlen(botoes[i] + 1));
-
-        strcpy(botoes[0], get_localized_string(PT_PT, "menu.dead.new_game"));
-        strcpy(botoes[1], get_localized_string(PT_PT, "menu.dead.options"));
-        strcpy(botoes[2], get_localized_string(PT_PT, "menu.dead.quit"));
-
-    }
-
-
-    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
-
-
 #define LARGURA_DEATH 65
 #define ALTURA_DEATH 39
+#define LARGURA_DIED 84
+#define ALTURA_DIED 8
 
+static char *died[ALTURA_DIED] = {
+        "Y88b   d88P  .d88888b.  888     888       8888888b. 8888888 8888888888 8888888b.      ",
+        " Y88b d88P  d88P\" \"Y88b 888     888       888  \"Y88b  888   888        888  \"Y88b ",
+        "  Y88o88P   888     888 888     888       888    888  888   888        888    888     ",
+        "   Y888P    888     888 888     888       888    888  888   8888888    888    888     ",
+        "    888     888     888 888     888       888    888  888   888        888    888     ",
+        "    888     888     888 888     888       888    888  888   888        888    888     ",
+        "    888     Y88b. .d88P Y88b. .d88P       888  .d88P  888   888        888  .d88P     ",
+        "    888      \"Y88888P\"   \"Y88888P\"        8888888P\" 8888888 8888888888 8888888P\""
+};
 
-    static char *death[ALTURA_DEATH] = {
+static char *death[ALTURA_DEATH] = {
         "                                           .\"\"--.._             ",
         "                                           []      `'--.._      ",
         "                                           ||__           `'-,  ",
@@ -75,23 +59,18 @@ void drawDeadMenu(Menu menu) {
         "/`                            |            ||                   ",
         "`-.___,-.      .-.        ___,'            ||                   ",
         "         `---'`   `'----'`                                      "
-    };  
+}; 
 
+static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static char *botoes[BOTOES] = {"menu.dead.new_game", "menu.dead.options", "menu.dead.quit"};
+
+
+
+void drawDeadMenu(Menu menu) {
     
-#define LARGURA_DIED 84
-#define ALTURA_DIED 8
 
-
-    static char *died[ALTURA_DIED] = {
-        "Y88b   d88P  .d88888b.  888     888       8888888b. 8888888 8888888888 8888888b.      ",
-        " Y88b d88P  d88P\" \"Y88b 888     888       888  \"Y88b  888   888        888  \"Y88b ",
-        "  Y88o88P   888     888 888     888       888    888  888   888        888    888     ",
-        "   Y888P    888     888 888     888       888    888  888   8888888    888    888     ",
-        "    888     888     888 888     888       888    888  888   888        888    888     ",
-        "    888     888     888 888     888       888    888  888   888        888    888     ",
-        "    888     Y88b. .d88P Y88b. .d88P       888  .d88P  888   888        888  .d88P     ",
-        "    888      \"Y88888P\"   \"Y88888P\"        8888888P\" 8888888 8888888888 8888888P\""
-    };
+    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
+    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
     /* Obter onde vai ser colocada a ASCII - Death e a ASCII - Died em x */
@@ -165,7 +144,7 @@ void drawDeadMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX/2 + separador + i +1, x_died + LARGURA_DIED/2 - 3 - strlen(botoes[i])/2, "%s", botoes[i]);
+        mvwprintw(menu->wnd, yMAX/2 + separador + i +1, x_died + LARGURA_DIED/2 - 3 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -181,19 +160,18 @@ void tick_DeadMenu() {
 
 void handle_DeadMenu_keybinds(int key) {
 
-    static unsigned short int botao_selecionado = 0;
 
-    if(botao_selecionado == 0 && key == KEY_UP) {
+    if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
-        botao_selecionado = BOTOES - 1;
+        botao_selecionado_principal = BOTOES - 1;
         effect = BOTOES - 1;
 
         return;
     }
 
-    if(botao_selecionado == BOTOES-1 && key == KEY_DOWN) {
+    if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
 
-        botao_selecionado = 0;
+        botao_selecionado_principal = 0;
         effect = 0;
 
         return;
@@ -202,31 +180,31 @@ void handle_DeadMenu_keybinds(int key) {
     switch(key) {
 
         case KEY_UP :
-            botao_selecionado--;
+            botao_selecionado_principal--;
             effect--;
             break;
 
 
         case KEY_DOWN :
-            botao_selecionado++;
+            botao_selecionado_principal++;
             effect++;
             break;
 
 
-        case 10 : case 13 : switch(botao_selecionado) {
+        case 10 : case 13 : switch(botao_selecionado_principal) {
 
-                            case 0 : g_renderstate->language = pt_PT;break; //new game
-                            case 1 :{
+                            case 0 : break; //new game
+                            case 1 :
                                 closeMenu(MENU_DEAD);
                                 displayMenu(MENU_OPTIONS);
                                 break;
-                            } //options
-                            case 2 :{ 
+                             //options
+                            case 2 :
                                 closeMenu(MENU_DEAD);
                                 //kill game
                                 displayMenu(MENU_MAIN_MENU);
                                 break;
-                            }
+                            
 
                         }
 

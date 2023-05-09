@@ -6,6 +6,7 @@
 #include "menus/dialog.h"
 #include "menus/deadmenu.h"
 #include "menus/charactersmenu.h"
+#include "menus/savemenu.h"
 
 int g_ui_size[2] = { 0 };
 
@@ -71,6 +72,24 @@ void drawMenu(Menu menu) {
             drawCharactersMenu(menu);
             break;
         }
+        case MENU_SAVE: {
+            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+            PANEL * panel = new_panel(win);
+            menu->wnd = win;
+            menu->panel = panel;
+
+            drawSaveMenu(menu);
+            break;
+        }
+        case MENU_SAVE_SLOT: {
+            WINDOW* win = newwin(g_renderstate->nrows/3, g_renderstate->ncols/4, g_renderstate->nrows/2, 3*g_renderstate->ncols/8);
+            PANEL * panel = new_panel(win);
+            menu->wnd = win;
+            menu->panel = panel;
+
+            drawSaveInfo(menu);
+            break;
+        }
         default:
             break;
     }
@@ -101,6 +120,10 @@ void tick_menu(Menu menu) {
         }
         case MENU_CHARACTERS: {
             tick_CharactersMenu();
+            break;
+        }
+        case MENU_SAVE: {
+            tick_SaveMenu();
             break;
         }
         default:
@@ -134,6 +157,14 @@ void handle_menu_keybinds(Menu menu, int key) {
         }
         case MENU_CHARACTERS: {
             handle_CharactersMenu_keybinds(key);
+            break;
+        }
+        case MENU_SAVE: {
+            handle_SaveMenu_keybinds(key);
+            break;
+        }
+        case MENU_SAVE_SLOT: {
+            handle_SaveMenu_keybinds(key);
             break;
         }
         default:

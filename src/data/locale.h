@@ -53,5 +53,6 @@ typedef struct dlocale_line {
 void load_locales();
 DataLocaleLine parse_locale_line(char* raw, int len);
 char* get_localized_string(DataLocale loc, char* key);
+void change_locale();
 
 #endif

@@ -1,7 +1,6 @@
 #version=1
 menu.main.new_game=New  Game
-menu.main.load_game=Load Game
-menu.main.saves=Tutorial 
+menu.main.saves=  Saves  
 menu.main.options= Options 
 menu.main.quit_game=Quit Game
 menu.options.return=   Return   

@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "util/ncurses.h"
 #include "menus/mainmenu.h"
 #include "menus/optionsmenu.h"
 #include "menus/pausemenu.h"
@@ -170,4 +171,19 @@ void handle_menu_keybinds(Menu menu, int key) {
         default:
             break;
     }
+}
+
+void drawGameInterface() {
+
+    //retangulo da esquerda
+    rectangle(g_renderstate->wnd, 0, 0, ALTURA_LOGO, g_renderstate->ncols/2 - LARGURA_LOGO/2 -1);
+    //retangulo da direita
+    rectangle(g_renderstate->wnd, 0, g_renderstate->ncols/2 + LARGURA_LOGO/2 +1, ALTURA_LOGO, g_renderstate->ncols);
+    //retangulo que faz o traco por baixo do logo
+    rectangle(g_renderstate->wnd, ALTURA_LOGO, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
+    //retangulo a volta
+    rectangle(g_renderstate->wnd, 0, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
+    //print do logo
+    printer(g_renderstate->wnd, 0, g_renderstate->ncols/2 - LARGURA_LOGO/2+1);
+    return;
 }

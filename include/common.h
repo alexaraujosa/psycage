@@ -9,4 +9,7 @@
 #define TRUE 1
 #define FALSE 0
 
+#define ALTURA_LOGO 7
+#define LARGURA_LOGO 66
+
 #endif

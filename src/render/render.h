@@ -16,6 +16,7 @@
 #include "../gameloop/gameloop.h"
 #include "../map/map_render.h"
 #include "../src/data/locale.h"
+#include "common.h"
 
 typedef struct gamestate GAMESTATE, *Gamestate;
 

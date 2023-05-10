@@ -76,7 +76,7 @@ void drawSaveMenu(Menu menu) {
 
     /* Print do logo */
 
-    printer(menu->wnd);
+    printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
 
     for(int i = 0, separador = 0 ; i < BOTOES_PRINCIPAL ; i++, separador += 1) {
@@ -135,12 +135,14 @@ if(save_selecionado == 0) {
 
             case 10 : case 13 : switch(botao_selecionado_principal) {
 
-                                case 0 : change_locale(); break; //fechar o menu de saves, pode ser para o principal ou para outro lado qualquer
+                                case 0 : 
+                                    closeMenu(MENU_SAVE);
+                                    break;
 
                                 case 1 : 
-                                    displayMenu(MENU_SAVE_SLOT);    //save1
-                                    save_selecionado = 1;
-                                    break; //load game
+                                    displayMenu(MENU_SAVE_SLOT);    // Apenas nao pode aceder se estiver no Menu Principal e o save for vazio,
+                                    save_selecionado = 1;           // Se existir save, ele pode querer entrar nesse jogo
+                                    break;
 
                                 case 2 : break; //save2
 
@@ -187,11 +189,14 @@ else {
                                 case 0 : 
                                     closeMenu(MENU_SAVE_SLOT);
                                     save_selecionado = 0;
-                                    break; //voltar ao menu de saves
+                                    break;
 
-                                case 1 : displayMenu(MENU_SAVE_SLOT); break; //dar save
+                                case 1 : 
+                                    displayMenu(MENU_SAVE_SLOT); 
+                                    break; //dar save
 
-                                case 2 : break; //dar load
+                                case 2 : 
+                                    break; //dar load
 
 
                             }

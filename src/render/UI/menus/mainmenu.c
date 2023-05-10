@@ -3,7 +3,7 @@
 #include "../../render.h"
 #include <stdlib.h>
 
-#define BOTOES 5
+#define BOTOES 4
 #define LARGURA_CAGE 56
 #define ALTURA_CAGE 31
 
@@ -42,7 +42,7 @@ static char *cage[ALTURA_CAGE] = {
 };
 
 static unsigned short int effect = 0, botao_selecionado_principal = 0;
-static char *botoes[BOTOES] = {"menu.main.new_game", "menu.main.load_game", "menu.main.saves", "menu.main.options", "menu.main.quit_game"};
+static char *botoes[BOTOES] = {"menu.main.new_game", "menu.main.saves", "menu.main.options", "menu.main.quit_game"};
 
 
 
@@ -92,7 +92,7 @@ void drawMainMenu(Menu menu) {
 
     /* Print do logo */
 
-    printer(menu->wnd);
+    printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
     /* Print dos botões com effect A_REVERSE no que está selecionado 
      +1 necessário no mvwprintw, devido aos arredondamentos para o floor e +5 devido ao circulo no topo da ASCII ART */
@@ -102,7 +102,7 @@ void drawMainMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX/2 + separador + i + 5 +1 , xMAX/2 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, yMAX/2 + separador + i + 5 +1 , xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -150,12 +150,25 @@ void handle_MainMenu_keybinds(int key) {
 
         case 10 : case 13 : switch(botao_selecionado_principal) {
 
-                            case 0 : g_renderstate->language = (g_renderstate->language == en_US) ? pt_PT : en_US; break;//new game
-                            case 1 : break; //load game
-                            case 2 : break; //saves
-                            case 3 : closeMenu(MENU_MAIN_MENU); displayMenu(MENU_OPTIONS); break;
-                            case 4 : endwin(); exit(0);
+                            case 0 : 
+                                closeMenu(MENU_MAIN_MENU);
+                                // startGame(); cujo codigo seria, por exemplo, utilizar as funcoes: create_asylum; print_asylum; drawGameInterface();
+                                create_asylum(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols-2, ALTURA_LOGO+1, 1);
+                                print_asylum(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols-2, ALTURA_LOGO+1, 1);
+                                drawGameInterface();
+                                break;
 
+                            case 1 : 
+                                displayMenu(MENU_SAVE);
+                                break; //saves
+
+                            case 2 : 
+                                displayMenu(MENU_OPTIONS); 
+                                break;
+
+                            case 3 : 
+                                exit(0);
+                                endwin();
                         }
 
     }

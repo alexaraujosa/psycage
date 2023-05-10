@@ -66,7 +66,7 @@ void drawPauseMenu(Menu menu) {
 
     /* Print do logo */
 
-    printer(menu->wnd);
+    printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
 
     /* Print dos botões com effect A_REVERSE no que está selecionado 
@@ -77,7 +77,7 @@ void drawPauseMenu(Menu menu) {
         if(i == effect)
             wattron(menu->wnd, A_REVERSE);
 
-        mvwprintw(menu->wnd, yMAX/2 - ALTURA_PAUSE/2 + separador + i +1 , xMAX/2 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, yMAX/2 - ALTURA_PAUSE/2 + separador + i +1 , xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
         
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -126,9 +126,17 @@ void handle_PauseMenu_keybinds(int key) {
 
         case 10 : case 13 : switch(botao_selecionado_principal) {
 
-                            case 0 : break; // if(IsInGame && !isDead)
-                            case 1 : closeMenu(MENU_PAUSE); displayMenu(MENU_OPTIONS); break;
-                            case 2 : closeMenu(MENU_PAUSE); displayMenu(MENU_MAIN_MENU); break;
+                            case 0 : 
+                                closeMenu(MENU_PAUSE);
+                                break;
+                            
+                            case 1 : 
+                                displayMenu(MENU_OPTIONS); 
+                                break;
+                            case 2 : 
+                                closeMenu(MENU_PAUSE);      // Aqui devo fazer clean do PATH todo dos menus
+                                displayMenu(MENU_MAIN_MENU); 
+                                break;
 
                         }
 

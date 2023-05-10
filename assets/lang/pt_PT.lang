@@ -1,7 +1,6 @@
 #version=1
 menu.main.new_game=  Novo Jogo 
-menu.main.load_game=  Carregar  
-menu.main.saves=  Tutorial  
+menu.main.saves=   Saves    
 menu.main.options=   Opcoes   
 menu.main.quit_game=Sair do Jogo
 menu.options.return=   Voltar   
@@ -19,7 +18,7 @@ menu.save.slot1=    Save 1
 menu.save.slot2=    Save 2    
 menu.save.slot3=    Save 3    
 menu.save.empty_slot=  Save Vazio  
-menu.save.return =    Voltar    
+menu.save.return=    Voltar    
 menu.save.infos.return=   Voltar   
 menu.save.infos.load=  Carregar  
 menu.save.infos.save=  Guardar   

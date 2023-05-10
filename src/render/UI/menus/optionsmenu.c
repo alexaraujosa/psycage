@@ -63,7 +63,7 @@ void drawOptionsMenu(Menu menu) {
 
     /* Print do logo */
     
-    printer(menu->wnd);
+    printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
 
     /* Print dos botões com effect A_REVERSE no que está selecionado 
@@ -74,7 +74,7 @@ void drawOptionsMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + separador + i +1 , g_renderstate->ncols/2 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + separador + i +1 , g_renderstate->ncols/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
         
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -124,23 +124,8 @@ void handle_OptionsMenu_keybinds(int key) {
         case 10 : case 13 : switch(botao_selecionado_principal) {
 
                             case 0 :
-                            //     //if(isInGame) {
-                            //         closeMenu(MENU_OPTIONS);
-                            //         break;
-                            //         //display game
-                            //     //else if(isInMainMenu) {  
-                            //         closeMenu(MENU_OPTIONS);
-                            //         displayMenu(MENU_MAIN_MENU);
-                            //         break;
-                            //     }
-                            //     //else if(isDead) {
-                            //         closeMenu(MENU_OPTIONS);
-                            //         display(MENU_DEAD);
-                            //         break;
-                            //     }
-                            //     }
-                            // 
-                            break;
+                                closeMenu(MENU_OPTIONS);
+                                break;
                             case 1 :
                                 change_locale();
                                 break;

@@ -26,7 +26,7 @@ void drawCharactersMenu(Menu menu) {
 
     /* Print do logo */
 
-    printer(menu->wnd);
+    printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
 
     /* Print da frase para escolher a classe do personagem com effect A_UNDERLINE */
@@ -52,7 +52,7 @@ void drawCharactersMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX/3 + ESPACAMENTO + separador + i +1, xMAX/2 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, yMAX/3 + ESPACAMENTO + separador + i +1, xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);

@@ -8,7 +8,7 @@
 #define xMAX g_renderstate->ncols
 #define yMAX g_renderstate->nrows
 
-// Definição dos valores do Logo (Uso em outros vários Menus)
+// Definição dos valores do Logo (Utilizado em outros Menus)
 #define ALTURA_LOGO 7
 #define LARGURA_LOGO 66
 
@@ -24,9 +24,9 @@ inline void rectangle(WINDOW* win, int y1, int x1, int y2, int x2) {
     mvwaddch(win, y2, x2, ACS_LRCORNER);
 }
 
-static inline void printer(WINDOW* win) {
+static inline void printer(WINDOW* win, int yinicio, int xinicio) {
    
-    char *logo[] = {
+    static char *logo[] = {
         " `7MMpdMAo. ,pP\"Ybd `7M'   `MF',p6\"bo   ,6\"Yb.  .P\"Ybmmm .gP\"Ya  ",
         "  MM   `Wb 8I   `\"   VA   ,V 6M'  OO  8)   MM :MI  I8  ,M'   Yb      ",
         "  MM    M8 `YMMMa.    VA ,V  8M        ,pm9MM  WmmmP\"  8M\"\"\"\"\"\"",
@@ -35,11 +35,6 @@ static inline void printer(WINDOW* win) {
         "  MM                  ,V                      6'     dP               ",
         ".JMML.             OOb\"                       Ybmmmd'                "
     };
-
-
-    /* Obter as coordenadas onde vai ser posicionada a ASCII ART */
-    unsigned short int y_logo = yMAX/4 - ALTURA_LOGO;
-    unsigned short int x_logo = xMAX/2 - LARGURA_LOGO/2;
 
 
     for (int i = 0; i < ALTURA_LOGO ; i++) {
@@ -61,7 +56,7 @@ static inline void printer(WINDOW* win) {
             /* Ativação do par de cores, print do caractere, desativação do par de cores, respetivamente */
             wattron(win, COLOR_PAIR(pair));
 
-            mvwprintw(win, y_logo + i, x_logo + j, "%c", logo[i][j]);
+            mvwprintw(win, yinicio + i, xinicio + j, "%c", logo[i][j]);
 
             wattroff(win, COLOR_PAIR(pair));
         }
@@ -69,7 +64,7 @@ static inline void printer(WINDOW* win) {
 }
 
 inline char* tamanho_maxPalavra(int qnt_botoes, char *botoes[]) {
-    char *tamanho_max = botoes[0];
+    char *tamanho_max = (get_localized_string(g_renderstate->language, botoes[0]));
 
     for (int i = 1; i < qnt_botoes; i++) {
 

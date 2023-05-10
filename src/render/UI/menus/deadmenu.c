@@ -144,7 +144,7 @@ void drawDeadMenu(Menu menu) {
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX/2 + separador + i +1, x_died + LARGURA_DIED/2 - 3 - strlen(botoes[i])/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, yMAX/2 + separador + i +1, x_died + LARGURA_DIED/2 - 3 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
@@ -193,19 +193,18 @@ void handle_DeadMenu_keybinds(int key) {
 
         case 10 : case 13 : switch(botao_selecionado_principal) {
 
-                            case 0 : break; //new game
+                            case 0 : 
+                                // aqui seria a startGame(), igual à função que está no main menu
+                                break;
+
                             case 1 :
-                                closeMenu(MENU_DEAD);
                                 displayMenu(MENU_OPTIONS);
                                 break;
-                             //options
-                            case 2 :
-                                closeMenu(MENU_DEAD);
-                                //kill game
-                                displayMenu(MENU_MAIN_MENU);
-                                break;
-                            
 
+                            case 2 :
+                                // aqui falta acabar o jogo e, como estamos dentro de um jogo, o PATH dos menus esta limpo, portanto vai dar para dar display
+                                displayMenu(MENU_MAIN_MENU);    // do MENU_MAIN_MENU, coisa que nao acontece agora porque o PATH nao esta limpo e nos
+                                break;      // estamos a aceder ao MENU_DEAD pelo MENU_MAIN_MENU
                         }
 
     }

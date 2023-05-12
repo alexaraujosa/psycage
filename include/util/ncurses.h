@@ -27,13 +27,13 @@ inline void rectangle(WINDOW* win, int y1, int x1, int y2, int x2) {
 static inline void printer(WINDOW* win, int yinicio, int xinicio) {
    
     static char *logo[] = {
-        " `7MMpdMAo. ,pP\"Ybd `7M'   `MF',p6\"bo   ,6\"Yb.  .P\"Ybmmm .gP\"Ya  ",
-        "  MM   `Wb 8I   `\"   VA   ,V 6M'  OO  8)   MM :MI  I8  ,M'   Yb      ",
-        "  MM    M8 `YMMMa.    VA ,V  8M        ,pm9MM  WmmmP\"  8M\"\"\"\"\"\"",
-        "  MM   ,AP L.   I8     VVV   YM.    , 8M   MM 8M       YM.    ,       ",
-        "  MMbmmd'  M9mmmP'     ,V     YMbmd'  `Moo9^Yo.YMMMMMb  `Mbmmd'       ",
-        "  MM                  ,V                      6'     dP               ",
-        ".JMML.             OOb\"                       Ybmmmd'                "
+        " `7MMpdMAo. ,pP\"Ybd `7M'   `MF',p6\"bo   ,6\"Yb.  .P\"Ybmmm .gP\"Ya  \0",
+        "  MM   `Wb 8I   `\"   VA   ,V 6M'  OO  8)   MM :MI  I8  ,M'   Yb  \0",
+        "  MM    M8 `YMMMa.    VA ,V  8M        ,pm9MM  WmmmP\"  8M\"\"\"\"\"\"  \0",
+        "  MM   ,AP L.   I8     VVV   YM.    , 8M   MM 8M       YM.    ,  \0",
+        "  MMbmmd'  M9mmmP'     ,V     YMbmd'  `Moo9^Yo.YMMMMMb  `Mbmmd'  \0",
+        "  MM                  ,V                      6'     dP          \0",
+        ".JMML.             OOb\"                       Ybmmmd'            \0"
     };
 
 

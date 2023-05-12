@@ -11,6 +11,7 @@ typedef struct dlocale_id {
 };
 
 // Internal Constants
+#define LOCALE_VERSION 1
 #define LOCALES 2
 #define MAX_LOCALE_KEY_LEN 255
 #define MAX_LOCALE_TRANSLATION_LEN 255
@@ -80,7 +81,7 @@ void load_locales() {
                     exit(1);
                 }
 
-                if (version != ITEM_VERSION) {
+                if (version != LOCALE_VERSION) {
                     debug("Version not supported.\n");
                     exit(1);
                 }
@@ -132,10 +133,10 @@ DataLocaleLine parse_locale_line(char* raw, int len) {
 
     translation[count] = '\0';
 
-    line->key = (char*)malloc(strlen(key) * sizeof(char));
+    line->key = (char*)malloc((strlen(key) + 1) * sizeof(char));
     strcpy(line->key, key);
 
-    line->translation = (char*)malloc(strlen(translation) * sizeof(char));
+    line->translation = (char*)malloc((strlen(translation) + 1) * sizeof(char));
     strcpy(line->translation, translation);
 
     return line;

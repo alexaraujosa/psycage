@@ -3,7 +3,7 @@
 
 #include "../ui.h"
 
-void drawDeadMenu(Menu menu);
+void draw_DeadMenu(Menu menu);
 void tick_DeadMenu();
 void handle_DeadMenu_keybinds(int key);
 

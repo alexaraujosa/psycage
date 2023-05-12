@@ -1,13 +1,13 @@
 #include "savemenu.h"
 #include "util/ncurses.h"
-#include "../../render.h"
-#include <stdlib.h>
+#include "common.h"
 
 #define BOTOES_PRINCIPAL 4
 #define BOTOES_INFOS 3
 #define ESPACAMENTO 2
 
 static unsigned short int effect_principal = 0, botao_selecionado_principal = 0, save_selecionado = 0, effect_infos = 0, botao_selecionado_infos = 0;
+
 static char *botoes[BOTOES_PRINCIPAL] = {"menu.save.return", "menu.save.slot1", "menu.save.empty_slot", "menu.save.slot3"};
 static char *botoes_infos[BOTOES_INFOS] = {"menu.save.infos.return", "menu.save.infos.save", "menu.save.infos.load"};
 
@@ -34,18 +34,22 @@ if(verificarExisteSave(save1) == 1)
 
 
 
-void drawSaveInfo(Menu menu) {
+void draw_SaveInfo(Menu menu) {
 
+    // Creates a rectangle around the window
     box(menu->wnd, 0, 0);
 
-
-
+    // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES_INFOS ; i++, separador += 1) {
 
         if(i == effect_infos) 
             wattron(menu->wnd, A_BOLD | A_DIM | A_REVERSE);
         
-        mvwprintw(menu->wnd, getmaxy(menu->wnd)/4 + separador + i +1 , getmaxx(menu->wnd)/2 - strlen(get_localized_string(g_renderstate->language, botoes_infos[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes_infos[i]));
+        mvwprintw(menu->wnd, 
+                  getmaxy(menu->wnd)/4 + separador + i + 1 ,
+                  getmaxx(menu->wnd)/2 - strlen(get_localized_string(g_renderstate->language, botoes_infos[i]))/2,
+                  "%s", get_localized_string(g_renderstate->language, botoes_infos[i])
+                );
 
         if(i == effect_infos)
             wattroff(menu->wnd, A_BOLD | A_DIM | A_REVERSE);
@@ -54,44 +58,37 @@ void drawSaveInfo(Menu menu) {
 
 }
 
-
-
-
-
-
 void drawSaveMenu(Menu menu) {
 
-
+    // Get the width of the widest button
     char *botaoMaior = tamanho_maxPalavra(BOTOES_PRINCIPAL, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
-
-    /* Cria o retângulo à volta dos botões */
-    
+    // Create the rectangle around the buttons
     rectangle(menu->wnd, 
-              yMAX*0.3           , xMAX/2 - tamanhoBotaoMaior/2 - 1,
+              yMAX*0.3                     , xMAX/2 - tamanhoBotaoMaior/2 - 1,
               yMAX*0.3 + BOTOES_PRINCIPAL*2, xMAX/2 + tamanhoBotaoMaior/2 
     );
 
-
-    /* Print do logo */
-
+    // Print the logo
     printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
-
+    // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES_PRINCIPAL ; i++, separador += 1) {
 
         if(i == effect_principal) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX*0.3 + separador + i +1 , xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd,
+                  yMAX*0.3 + separador + i + 1 ,
+                  xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
+                  "%s", get_localized_string(g_renderstate->language, botoes[i])
+                );
 
         if(i == effect_principal)
             wattroff(menu->wnd, A_REVERSE);
             
     }
-
-
 
 }
 

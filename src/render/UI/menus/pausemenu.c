@@ -1,10 +1,12 @@
 #include "pausemenu.h"
 #include "util/ncurses.h"
-#include "../../render.h"
 
 #define BOTOES 3
 #define LARGURA_PAUSE 59
 #define ALTURA_PAUSE 8
+
+static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static char *botoes[BOTOES] = {"menu.pause.return", "menu.pause.options", "menu.pause.exit"};
 
 static char *pause[ALTURA_PAUSE] = {
         "  8888888b.      d8888 888     888  .d8888b.  8888888888  \0",
@@ -18,34 +20,26 @@ static char *pause[ALTURA_PAUSE] = {
                                                        
 };
 
-static unsigned short int effect = 0, botao_selecionado_principal = 0;
-static char *botoes[BOTOES] = {"menu.pause.return", "menu.pause.options", "menu.pause.exit"};
 
 
 
-void drawPauseMenu(Menu menu) {
+void draw_PauseMenu(Menu menu) {
 
-
+    // Get the width of the widest button
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
-
-    /* Obter onde vai ser colocada a ASCII - Pause em xOy */
-
+    // Get where the ASCII ART will be placed
     unsigned short int x_pause = xMAX/2 - LARGURA_PAUSE/2;
     unsigned short int y_pause = yMAX   - ALTURA_PAUSE*4/3;
 
-
-    /* Criar o retângulo que liga as duas ASCII (Logo e Pause). O -1 serve para alinhar o traço inferior do retângulo com o traço do meio do E */
-
+    // Create the rectangle that connects the ASCII ART and the Logo
     rectangle(menu->wnd,
-              ALTURA_LOGO  , x_pause - 8, 
-              y_pause + ALTURA_PAUSE/2 -1   , x_pause + LARGURA_PAUSE + 7
+              ALTURA_LOGO                , x_pause - ALTURA_PAUSE, 
+              y_pause + ALTURA_PAUSE/2 -1, x_pause + LARGURA_PAUSE + ALTURA_PAUSE
     );
 
-
-    /* Printer da ASCII - Pause em Negrito, com efeito Itálico */
-    
+    // Prints the ASCII stored in the array pause in bold
     wattron(menu->wnd, A_BOLD);
 
     for(int i = 0 ; i < ALTURA_PAUSE ; i++)
@@ -54,30 +48,27 @@ void drawPauseMenu(Menu menu) {
 
     wattroff(menu->wnd, A_BOLD);
 
-
-    /* Cria o retângulo à volta dos botões */
-
+    // Create the rectangle around the buttons
     rectangle(
               menu->wnd, 
               yMAX/2 - ALTURA_PAUSE/2           , xMAX/2 - tamanhoBotaoMaior/2 - 1, 
               yMAX/2 - ALTURA_PAUSE/2 + BOTOES*2, xMAX/2 + tamanhoBotaoMaior/2 
              );
 
-
-    /* Print do logo */
-
+    // Print the logo
     printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
-
-    /* Print dos botões com effect A_REVERSE no que está selecionado 
-     +1 necessário no mvwprintw, devido aos arredondamentos para o floor */
-
+    // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
         if(i == effect)
             wattron(menu->wnd, A_REVERSE);
 
-        mvwprintw(menu->wnd, yMAX/2 - ALTURA_PAUSE/2 + separador + i +1 , xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, 
+                  yMAX/2 - ALTURA_PAUSE/2 + separador + i + 1 ,
+                  xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
+                  "%s", get_localized_string(g_renderstate->language, botoes[i])
+                );
         
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);

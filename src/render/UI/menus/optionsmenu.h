@@ -3,7 +3,7 @@
 
 #include "../ui.h"
 
-void drawOptionsMenu(Menu menu);
+void draw_OptionsMenu(Menu menu);
 void tick_OptionsMenu();
 void handle_OptionsMenu_keybinds(int key);
 

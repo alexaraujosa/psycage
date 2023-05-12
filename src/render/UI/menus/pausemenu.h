@@ -3,7 +3,7 @@
 
 #include "../ui.h"
 
-void drawPauseMenu(Menu menu);
+void draw_PauseMenu(Menu menu);
 void tick_PauseMenu();
 void handle_PauseMenu_keybinds(int key);
 

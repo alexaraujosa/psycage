@@ -1,10 +1,12 @@
 #include "optionsmenu.h"
 #include "util/ncurses.h"
-#include "../../render.h"
 
 #define BOTOES 2
 #define LARGURA_OPTIONS 76
 #define ALTURA_OPTIONS 8
+
+static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static char *botoes[BOTOES] = {"menu.options.return", "menu.options.language"};
 
 static char *options[ALTURA_OPTIONS] = {
         " .d88888b.  8888888b. 88888888888 8888888 .d88888b.  888b    888  .d8888b. \0",
@@ -17,33 +19,27 @@ static char *options[ALTURA_OPTIONS] = {
         " \"Y88888P\"  888           888     8888888 \"Y88888P\"  888    Y888  \"Y8888P\" \0"
 };
 
-static unsigned short int effect = 0, botao_selecionado_principal = 0;
-static char *botoes[BOTOES] = {"menu.options.return", "menu.options.language"};
 
 
-void drawOptionsMenu(Menu menu) {
+
+void draw_OptionsMenu(Menu menu) {
     
-
+    // Get the width of the widest button
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
 
-    /* Obter onde vai ser colocada a ASCII - Options em xOy */
-
+    // Get where the ASCII ART will be placed
     unsigned short int x_options = xMAX/2 - LARGURA_OPTIONS/2;
     unsigned short int y_options = yMAX   - ALTURA_OPTIONS*4/3;
 
-
-    /* Criar o retângulo que liga as duas ASCII (Logo e Options) */
-
+    // Create the rectangle that connects the ASCII ART and the Logo
     rectangle(menu->wnd, 
-              ALTURA_LOGO, x_options - 6,
-              y_options + ALTURA_OPTIONS/2, x_options + LARGURA_OPTIONS + 5
+              ALTURA_LOGO                 , x_options - ALTURA_OPTIONS,
+              y_options + ALTURA_OPTIONS/2, x_options + LARGURA_OPTIONS + ALTURA_OPTIONS
     );
     
-
-    /* Printer da ASCII - Options em Negrito */
-
+    // Prints the ASCII stored in the array options
     wattron(menu->wnd, A_BOLD);
 
     for(int i = 0 ; i < ALTURA_OPTIONS ; i++)
@@ -52,29 +48,26 @@ void drawOptionsMenu(Menu menu) {
 
     wattroff(menu->wnd, A_BOLD);
 
-
-    /* Cria o retângulo à volta dos botões */
-    
+    // Create the rectangle around the buttons
     rectangle(menu->wnd, 
               g_renderstate->nrows/2 - ALTURA_OPTIONS/2           , g_renderstate->ncols/2 - tamanhoBotaoMaior/2 - 1, 
               g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + BOTOES*2, g_renderstate->ncols/2 + tamanhoBotaoMaior/2 
              );
 
-
-    /* Print do logo */
-    
+    // Print the logo
     printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
-
-    /* Print dos botões com effect A_REVERSE no que está selecionado 
-     +1 necessário no mvwprintw, devido aos arredondamentos para o floor */
-
+    // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + separador + i +1 , g_renderstate->ncols/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, 
+                  g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + separador + i + 1 ,
+                  g_renderstate->ncols/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
+                  "%s", get_localized_string(g_renderstate->language, botoes[i])
+                );
         
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);

@@ -1,6 +1,5 @@
 #include "charactersmenu.h"
 #include "util/ncurses.h"
-#include "../../render.h"
 
 #define BOTOES 3
 #define CLASSES 3
@@ -14,99 +13,91 @@ static char *botoes[BOTOES] = {"menu.characters.priest", "menu.characters.detect
 
 
 
-void drawCharactersMenu(Menu menu) {
+void draw_CharactersMenu(Menu menu) {
     
+    // Get the width of the widest button
+    char *botao_Maior = tamanho_maxPalavra(BOTOES, botoes);
+    unsigned short int tamanho_Botao_Maior = strlen(botao_Maior);
 
-    char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
-    unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
+    // Class Choice Message
+    static char *classe_Mensagem = NULL;
+    classe_Mensagem = (g_renderstate->language == en_US) ? "Choose your Character Class:" : "Escolha a Classe do seu Jogador:";
 
-    static char *classeMessage = NULL;
-    classeMessage = (g_renderstate->language == en_US) ? "Choose your Character Class:" : "Escolha a Classe do seu Jogador:";
-
-
-    /* Print do logo */
-
+    // Print the logo
     printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
-
-    /* Print da frase para escolher a classe do personagem com effect A_UNDERLINE */
-
+    // Print of the Class Choice Message Underlined
     wattron(menu->wnd, A_UNDERLINE);
-    mvwprintw(menu->wnd, yMAX/3, xMAX/2 - strlen(classeMessage)/2 + 1, "%s", classeMessage);
+    mvwprintw(menu->wnd, yMAX/3, xMAX/2 - strlen(classe_Mensagem)/2 + 1, "%s", classe_Mensagem);
     wattroff(menu->wnd, A_UNDERLINE);
 
-
-    /* Cria o retângulo à volta das classes */
-
+    // Create the rectangle around the classes
     rectangle(menu->wnd, 
-              yMAX/3 + ESPACAMENTO           , xMAX/2 - tamanhoBotaoMaior/2 -1,
-              yMAX/3 + ESPACAMENTO + BOTOES*2, xMAX/2 + tamanhoBotaoMaior/2 + (g_renderstate->language == en_US ? 1 : 0)
-             );
+              yMAX/3 + ESPACAMENTO           , xMAX/2 - tamanho_Botao_Maior/2 -1,
+              yMAX/3 + ESPACAMENTO + BOTOES*2, xMAX/2 + tamanho_Botao_Maior/2 + (g_renderstate->language == en_US ? 1 : 0)
+            );
 
-
-    /* Print das classes com effect A_REVERSE no que está selecionado 
-     +1 necessário no mvwprintw, devido aos arredondamentos para o floor */
-
+    // Prints the buttons to choose the class (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX/3 + ESPACAMENTO + separador + i +1, xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, 
+                  yMAX/3 + ESPACAMENTO + separador + i + 1,
+                  xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
+                  "%s", get_localized_string(g_renderstate->language, botoes[i])
+                );
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);
             
     }
 
+    // Creates the window with the description of each class
+    WINDOW *info = malloc(sizeof(WINDOW));
+    info = newwin(
+                    yMAX/3                             , xMAX/2, 
+                    yMAX/3 + ESPACAMENTO + BOTOES*2 + 2, xMAX/4
+    );
 
-    /* Criação da janela abaixo das classes para colocar a devida informação de cada classe */
-
-        WINDOW *info = malloc(sizeof(WINDOW));
-        info = newwin(
-                      yMAX/3                             , xMAX/2, 
-                      yMAX/3 + ESPACAMENTO + BOTOES*2 + 2, xMAX/4
-        );
-
-        /* Retângulo à volta da janela */
-
+        // Creates a rectangle around the window
         box(info, 0, 0);
 
-
-        /* Colocação do texto com a descrição de cada classe */         // !!!!!!
-
+        // Display the description of each class
         wattron(info, A_BOLD | A_UNDERLINE);
-
 
         switch(botao_selecionado_principal) {
             
             case 0 : {
-                mvwprintw(info, 1, 2, "%s", botoes[0]);
+                mvwprintw(info, 1, 2, "%s", get_localized_string(g_renderstate->language, botoes[0]));
                 wattroff(info, A_BOLD | A_UNDERLINE);
+
                 // Print da descrição da class
                 break;
             }
             
             case 1 : {
-                mvwprintw(info, 1, 2, "%s", botoes[1]);
+                mvwprintw(info, 1, 2, "%s", get_localized_string(g_renderstate->language, botoes[1]));
                 wattroff(info, A_BOLD | A_UNDERLINE);
+
                 // Print da descrição da class
                 break;
             }
             
             case 2 : {
-                mvwprintw(info, 1, 2, "%s", botoes[2]);
+                mvwprintw(info, 1, 2, "%s", get_localized_string(g_renderstate->language, botoes[2]));
                 wattroff(info, A_BOLD | A_UNDERLINE);
+
                 // Print da descrição da class
                 break;
             }
 
     }
 
-        /* Atualização de ambas as janelas */
-
-        wrefresh(menu->wnd);
-        wrefresh(info);
+    // Refreshes both windows
+    wrefresh(menu->wnd);
+    wrefresh(info);
 
 }
 

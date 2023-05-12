@@ -6,6 +6,6 @@
 void drawSaveMenu(Menu menu);
 void tick_SaveMenu();
 void handle_SaveMenu_keybinds(int key);
-void drawSaveInfo(Menu menu);
+void draw_SaveInfo(Menu menu);
 
 #endif

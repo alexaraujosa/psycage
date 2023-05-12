@@ -1,12 +1,14 @@
 #include "deadmenu.h"
 #include "util/ncurses.h"
-#include "../../render.h"
 
 #define BOTOES 3
 #define LARGURA_DEATH 65
 #define ALTURA_DEATH 39
 #define LARGURA_DIED 84
 #define ALTURA_DIED 8
+
+static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static char *botoes[BOTOES] = {"menu.dead.new_game", "menu.dead.options", "menu.dead.quit"};
 
 static char *died[ALTURA_DIED] = {
         "Y88b   d88P  .d88888b.  888     888       8888888b. 8888888 8888888888 8888888b.      \0",
@@ -61,37 +63,31 @@ static char *death[ALTURA_DEATH] = {
         "         `---'`   `'----'`                                      \0"
 }; 
 
-static unsigned short int effect = 0, botao_selecionado_principal = 0;
-static char *botoes[BOTOES] = {"menu.dead.new_game", "menu.dead.options", "menu.dead.quit"};
 
 
 
-void drawDeadMenu(Menu menu) {
+void draw_DeadMenu(Menu menu) {
     
-
+    // Get the width of the widest button
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
 
-
-    /* Obter onde vai ser colocada a ASCII - Death e a ASCII - Died em x */
-
+    // Get where the ASCII ARTS will be placed
     unsigned short int x_death = xMAX - LARGURA_DEATH*2.5;
-
     unsigned short int x_died = xMAX  - LARGURA_DIED*1.1;
 
-
-
-    /* Printer da ASCII - Death */
-
+    // Prints the ASCII stored in the array death
     for(int i = 0 ; i < ALTURA_DEATH ; i++) {
-
         for(int j = 0 ; j < LARGURA_DEATH ; j++) {
 
             static unsigned short int pair = 0;
 
             switch(death[i][j]) {
-                case '#' : case '{' : case '}' : pair = LIGHTPLUS_GREY_LOGO; break;
-                default : pair = DARKPLUS_GREY_LOGO;
+                case '#' : case '{' : case '}' : 
+                    pair = LIGHTPLUS_GREY_LOGO; break;
+                
+                default : 
+                    pair = DARKPLUS_GREY_LOGO;
             }
 
             wattron(menu->wnd, COLOR_PAIR(pair));
@@ -100,21 +96,20 @@ void drawDeadMenu(Menu menu) {
 
             wattroff(menu->wnd, COLOR_PAIR(pair));
         }
-
     }
 
-
-    /* Printer da ASCII - Died */
-
+    // Prints the ASCII stored in the array died
     for(int i = 0 ; i < ALTURA_DIED ; i++) {
-
         for(int j = 0 ; j < LARGURA_DIED ; j++) {
 
             static unsigned short int pair = 0;
 
             switch(died[i][j]) {
-                case '"' : case '.' : pair = LIGHTPLUS_GREY_LOGO; break;
-                default : pair = DARKPLUS_GREY_LOGO;
+                case '"' : case '.' : 
+                    pair = LIGHTPLUS_GREY_LOGO; break;
+
+                default : 
+                    pair = DARKPLUS_GREY_LOGO;
             }
 
             wattron(menu->wnd, COLOR_PAIR(pair));
@@ -123,28 +118,27 @@ void drawDeadMenu(Menu menu) {
 
             wattroff(menu->wnd, COLOR_PAIR(pair));
         }
-
     }
 
-
-    /* Cria o retângulo à volta dos botões. O -3 é necessário, porque a largura do YOU e do DIED são diferentes, logo não podemos usar 
-     LARGURA_DIED/2 para chegar ao meio , uma vez que o meio localiza-se na palavra DIED, portanto fica estéticamente feio */
-    
+    // Create the rectangle around the buttons
+    // NOTE: The -3 comes from the fact that the words YOU and DIED are not the same width
     rectangle(menu->wnd, 
               yMAX/2            , x_died + LARGURA_DIED/2 - tamanhoBotaoMaior/2 - 3 - 1,
               yMAX/2  + BOTOES*2, x_died + LARGURA_DIED/2 + tamanhoBotaoMaior/2 - 3
     );
 
 
-    /* Print dos botões com effect A_REVERSE no que está selecionado 
-     +1 necessário no mvwprintw, devido aos arredondamentos para o floor e o -3 devido ao mesmo motivo que para o rectangle (acima) */
-
+    // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
         if(i == effect) 
             wattron(menu->wnd, A_REVERSE);
         
-        mvwprintw(menu->wnd, yMAX/2 + separador + i +1, x_died + LARGURA_DIED/2 - 3 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2, "%s", get_localized_string(g_renderstate->language, botoes[i]));
+        mvwprintw(menu->wnd, 
+                  yMAX/2 + separador + i + 1, 
+                  x_died + LARGURA_DIED/2 - 3 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
+                  "%s", get_localized_string(g_renderstate->language, botoes[i])
+                );
 
         if(i == effect)
             wattroff(menu->wnd, A_REVERSE);

@@ -2,6 +2,7 @@
 #include "gameloop.h"
 
 Gamestate g_gamestate;
+int find_map;
 
 Gamestate init_gameloop() {
 	Gamestate gs = (Gamestate)malloc(sizeof(GAMESTATE));
@@ -21,7 +22,7 @@ Gamestate init_gameloop() {
 
 	g_gamestate = gs;
 
-	create_asylum(g_renderstate->nrows, g_renderstate->ncols); // map
+	find_map = create_random_map(g_renderstate->nrows, g_renderstate->ncols); // map
 
 	//escolhe um dos 3s
 	// create_dungeon();
@@ -40,7 +41,7 @@ void tick() {
 		As_Node path = pathfind(
 			g_renderstate->nrows, 
 			g_renderstate->ncols, 
-			asylum, 
+			map, 
 			g_gamestate->pointA, 
 			g_gamestate->pointB, 
 			obstacles,
@@ -62,7 +63,8 @@ void tick() {
 
 		tick_menu(active_menu);
 	} else {
-
+		// RTX_ON
+		calculate_visibility(g_gamestate->player->entity->coords->x,g_gamestate->player->entity->coords->y, map, g_renderstate->nrows, g_renderstate->ncols); 
 	}
 }
 

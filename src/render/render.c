@@ -39,8 +39,6 @@ Renderstate init_render() {
     init_color(DARK_GREEN, 0, 300,0);     
     init_color(LIGHT_GREY, 160, 160, 160);
     init_color(GREEN, 0, 700, 0);
-    init_color(BLACK, 0 ,0 , 0);
-    init_color(WHITE, 1000, 1000, 1000);
     init_color(ORANGE, 830, 470, 0);
     init_color(LIGHT_ORANGE, 800, 500, 0);
     init_color(DARK_ORANGE, 760, 390, 0);
@@ -53,10 +51,10 @@ Renderstate init_render() {
     init_pair(BLUE_PLAYER, COLOR_BLUE, COLOR_BLACK);
     // DUNGEON
     init_pair(DUNGEON_WALLS, GREY, (short)(DARK_DARK_GREY | A_DIM)); 
-    init_pair(DUNGEON_FLOOR, GREY, (short)(BLACK | A_DIM));
-    init_pair(DUNGEON_BLOOD, DARK_RED, (short)(BLACK | A_DIM));     
+    init_pair(DUNGEON_FLOOR, GREY, (short)(COLOR_BLACK | A_DIM));
+    init_pair(DUNGEON_BLOOD, DARK_RED, (short)(COLOR_BLACK | A_DIM));     
     // ASYLUM
-    init_pair(ASYLUM_WALLS, BLACK, (short)(WHITE | A_DIM)); 
+    init_pair(ASYLUM_WALLS, BLACK, (short)(COLOR_WHITE | A_DIM)); 
     init_pair(ASYLUM_FLOOR, WHITE, (short)(LIGHT_GREY | A_DIM)); 
     init_pair(ASYLUM_BLOOD, DARK_RED, (short)(LIGHT_GREY | A_DIM));
     init_pair(NOTHING, BLACK, BLACK);    
@@ -87,8 +85,9 @@ Renderstate init_render() {
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
 
-    print_asylum(g_renderstate->nrows, g_renderstate->ncols); // map
+    print_random_map(g_renderstate->nrows, g_renderstate->ncols, find_map); // map
     render_game(gs);
+    print_light(g_renderstate->nrows, g_renderstate->ncols); // RTX_ON
     render_menu(gs);
     doupdate();
     // refresh();

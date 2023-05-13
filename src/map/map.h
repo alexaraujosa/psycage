@@ -22,9 +22,7 @@ typedef struct Room {
 
 } Room;
 
-extern int **maze;
-extern int **dungeon;
-extern int **asylum;
+extern int **map;
 
 /* FUNCTION SIGNATURES */
 void create_sewers();

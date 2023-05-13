@@ -1,6 +1,8 @@
 #include "common.h"
 #include "map.h"
 
+int **map;
+
 void make_borders(int **matrix, int HEIGHT, int WIDTH) {
     
     // Iterate over the matrix and update the border
@@ -32,22 +34,20 @@ void make_borders(int **matrix, int HEIGHT, int WIDTH) {
 //====================================
 #pragma region Dungeon
 
-int **dungeon;
-
-// Initialize the dungeon to all walls
+// Initialize the map to all walls
 void init_dungeon(int HEIGHT, int WIDTH) {
 
-    // Allocate space for matrix "dungeon"
-    dungeon = (int **)malloc(HEIGHT * sizeof(int *));
+    // Allocate space for matrix "map"
+    map = (int **)malloc(HEIGHT * sizeof(int *));
     for (int i = 0; i < HEIGHT; i++) {
-        dungeon[i] = (int *)malloc(WIDTH * sizeof(int));
+        map[i] = (int *)malloc(WIDTH * sizeof(int));
     }
     
     for (int y = 0; y < HEIGHT; y++) {
         
         for (int x = 0; x < WIDTH; x++) {
             
-            dungeon[y][x] = 1;
+            map[y][x] = 1;
         }
     }
 }
@@ -55,23 +55,23 @@ void init_dungeon(int HEIGHT, int WIDTH) {
 
 void generate_dungeon(int HEIGHT, int WIDTH) {    
     
-    // Initialize the dungeon with random floors and walls
+    // Initialize the map with random floors and walls
     for (int y = 1; y < HEIGHT - 1; y++) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
             if (rand() % 100 < 60) { // % of the floor
                 
-                dungeon[y][x] = 0;
+                map[y][x] = 0;
             } 
             else {
                 
-                dungeon[y][x] = 1;
+                map[y][x] = 1;
             }
         }
     }
 
-    // Run a cellular automaton to smooth out the dungeon
+    // Run a cellular automaton to smooth out the map
     for (int i = 0; i < 3; i++) {
         
         int new_dungeon[HEIGHT][WIDTH];
@@ -86,7 +86,7 @@ void generate_dungeon(int HEIGHT, int WIDTH) {
                     
                     for (int dx = -1; dx <= 1; dx++) {
                         
-                        if (dungeon[y+dy][x+dx] == 0) {
+                        if (map[y+dy][x+dx] == 0) {
                             count++;
                         }
                     }
@@ -104,7 +104,7 @@ void generate_dungeon(int HEIGHT, int WIDTH) {
             
             for (int x = 1; x < WIDTH - 1; x++) {
                 
-                dungeon[y][x] = new_dungeon[y][x];
+                map[y][x] = new_dungeon[y][x];
             }
         }
     }
@@ -117,8 +117,8 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (dungeon[y][x] == 0 && rand() % 100 < 5){ // % of blood
-                dungeon[y][x] = 3;
+            if (map[y][x] == 0 && rand() % 100 < 5){ // % of blood
+                map[y][x] = 2;
             }
         }
     }
@@ -138,7 +138,7 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
                     
                     for (int dx = -1; dx <= 1; dx++) {
                         
-                        if (dungeon[y+dy][x+dx] == 0) {
+                        if (map[y+dy][x+dx] == 0) {
                             
                             count++;
                         }
@@ -158,7 +158,7 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
             
             for (int x = 1; x < WIDTH - 1; x++) {
                 
-                dungeon[y][x] = new_dungeon[y][x];
+                map[y][x] = new_dungeon[y][x];
             }
         }
     }
@@ -168,10 +168,10 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (dungeon[y][x] == 0) {
+            if (map[y][x] == 0) {
                 
                 if (rand() % 100 < 5){ // % of blood
-                    dungeon[y][x] = 3;
+                    map[y][x] = 2;
                 }
             }
         }
@@ -197,22 +197,19 @@ void create_dungeon( int HEIGHT, int WIDTH){
 #define CORRIDOR_WIDTH 3
 #define MAX_CONNECTIONS 10
 
-
-int **maze;
-
 void init_maze(int HEIGHT, int WIDTH){
     
-    // Allocate space for the matrix "maze"
-    maze = (int **)malloc(HEIGHT * sizeof(int *));
+    // Allocate space for the matrix "map"
+    map = (int **)malloc(HEIGHT * sizeof(int *));
     for (int i = 0; i < HEIGHT; i++) {
-        maze[i] = (int *)malloc(WIDTH * sizeof(int));
+        map[i] = (int *)malloc(WIDTH * sizeof(int));
     }
     
     // Initialize all cells as walls
     for (int i = 0; i < WIDTH; i++) {
         
         for (int j = 0; j < HEIGHT; j++) {
-            maze[j][i] = 1;
+            map[j][i] = 1;
         }
     }
 }
@@ -346,10 +343,10 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
                 
                 if (y > 0 && y < HEIGHT-1) {
                     if (y == source_y) {
-                        maze[y][x] = 2; 
+                        map[y][x] = 2; 
                     } 
                     else {
-                        maze[y][x] = 0; 
+                        map[y][x] = 0; 
                     }
                 }
             }
@@ -367,13 +364,13 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
             
             for (int x = source_x - corridor_width / 2; x <= source_x + corridor_width / 2; x++) {
                 
-                if (x > 0 && x < WIDTH-1 && maze[y][x] != 2) {
+                if (x > 0 && x < WIDTH-1 && map[y][x] != 2) {
                     
                     if (x > source_x - corridor_width / 2 && x < source_x + corridor_width / 2) {
-                        maze[y][x] = 2;
+                        map[y][x] = 2;
                     } 
                     else {
-                        maze[y][x] = 0;
+                        map[y][x] = 0;
                     }
                 }
             }
@@ -391,7 +388,7 @@ void create_sewers(int HEIGHT, int WIDTH){
     
     init_maze(HEIGHT, WIDTH);
 
-    // The root_room is the starting point of the dungeon generation process, which is a single room that occupies the entire maze
+    // The root_room is the starting point of the map generation process, which is a single room that occupies the entire map
     Room* root_room = create_room_sewers(0, 0, WIDTH, HEIGHT);
 
     split_room_sewers(root_room, HEIGHT, WIDTH);
@@ -418,16 +415,16 @@ void create_sewers(int HEIGHT, int WIDTH){
     free(rooms);
     
     for (int i = 0; i < HEIGHT; i++) {
-        maze[i][0] = 1;
-        maze[i][WIDTH-1] = 1;
+        map[i][0] = 1;
+        map[i][WIDTH-1] = 1;
     }
     
     for (int j = 0; j < WIDTH; j++) {
-        maze[0][j] = 1;
-        maze[HEIGHT-1][j] = 1;
+        map[0][j] = 1;
+        map[HEIGHT-1][j] = 1;
     }
 
-    make_borders(maze, HEIGHT, WIDTH);
+    make_borders(map, HEIGHT, WIDTH);
     print_sewers(HEIGHT, WIDTH);
 }
 #pragma endregion
@@ -442,22 +439,20 @@ void create_sewers(int HEIGHT, int WIDTH){
 #define MIN_SIZE 12
 #define MAX_SIZE 17
 
-int **asylum;
-
-// Initialize the "asylum" array with all cells set to 1 (representing walls).
+// Initialize the "map" array with all cells set to 1 (representing walls).
 void init_asylum(int HEIGHT, int WIDTH){
     
-    // Allocate space for matrix "asylum"
-    asylum = (int **)malloc(HEIGHT * sizeof(int *));
+    // Allocate space for matrix "map"
+    map = (int **)malloc(HEIGHT * sizeof(int *));
     for (int i = 0; i < HEIGHT; i++) {
-        asylum[i] = (int *)malloc(WIDTH * sizeof(int));
+        map[i] = (int *)malloc(WIDTH * sizeof(int));
     }
     
     for (int y = 0; y < HEIGHT; y++) {
         
         for (int x = 0; x < WIDTH; x++) {
             
-            asylum[y][x] = 1;
+            map[y][x] = 1;
         }
     }
 }
@@ -475,13 +470,13 @@ Room create_room(int HEIGHT, int WIDTH) {
     return room;
 }
 
-// Carve out the specified room in the "asylum" array by setting all cells inside the room to 0.
+// Carve out the specified room in the "map" array by setting all cells inside the room to 0.
 void carve_room(Room room) {
     
     for (int y = room.y; y < room.y + room.height; y++) {
         
         for (int x = room.x; x < room.x + room.width; x++) {
-            asylum[y][x] = 0;
+            map[y][x] = 0;
         }
     }
 }
@@ -495,7 +490,7 @@ void connect_rooms(Room source, Room destination) {
     while (x != destination.x + (destination.width / 2)) {
         
         for (int i = y - 2; i <= y + 2; i++) {
-            asylum[i][x] = 0;
+            map[i][x] = 0;
         }
         x += (x < destination.x + (destination.width / 2)) ? 1 : -1;
     }
@@ -503,7 +498,7 @@ void connect_rooms(Room source, Room destination) {
     while (y != destination.y + (destination.height / 2)) {
         
         for (int i = x - 2; i <= x + 2; i++) {
-            asylum[y][i] = 0;
+            map[y][i] = 0;
         }
         y += (y < destination.y + (destination.height / 2)) ? 1 : -1;
     }
@@ -525,8 +520,8 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (asylum[y][x] == 0 && rand() % 100 < 10){ // % of blood
-                asylum[y][x] = 4;
+            if (map[y][x] == 0 && rand() % 100 < 10){ // % of blood
+                map[y][x] = 4;
             }
         }
     }
@@ -546,7 +541,7 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
                     
                     for (int dx = -1; dx <= 1; dx++) {
                         
-                        if (asylum[y+dy][x+dx] == 0) {
+                        if (map[y+dy][x+dx] == 0) {
                             
                             count++;
                         }
@@ -566,7 +561,7 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
             
             for (int x = 1; x < WIDTH - 1; x++) {
                 
-                asylum[y][x] = new_asylum[y][x];
+                map[y][x] = new_asylum[y][x];
             }
         }
     }
@@ -576,10 +571,10 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (asylum[y][x] == 0) {
+            if (map[y][x] == 0) {
                 
                 if (rand() % 100 < 10){ // % of blood
-                    asylum[y][x] = 4;
+                    map[y][x] = 4;
                 }
             }
         }
@@ -601,6 +596,28 @@ void create_asylum(int HEIGHT, int WIDTH){
 
     carve_corridors(rooms, num_rooms);
     blood_stains_asylum(HEIGHT, WIDTH);
-    make_borders(asylum, HEIGHT, WIDTH);
+    make_borders(map, HEIGHT, WIDTH);
     print_asylum(HEIGHT, WIDTH);
+}
+
+//====================================
+// Random Map
+//====================================
+
+int create_random_map(int HEIGHT, int WIDTH){
+
+    int random = rand() % 3;
+
+    if(random == 0){
+        create_dungeon(HEIGHT,WIDTH);
+        return 1;
+    }
+    if(random == 1){ 
+        create_sewers(HEIGHT, WIDTH);
+        return 2;
+    }
+    if(random == 2){
+        create_asylum(HEIGHT, WIDTH);
+        return 3;
+    }
 }

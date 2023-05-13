@@ -35,6 +35,7 @@ extern Gamestate g_gamestate;
 extern char* g_dialog_text;
 extern char**** g_dialog_page_data;
 extern int g_dialog_control[3];
+extern int find_map;
 
 /* FUNCTION SIGNATURES */
 Gamestate init_gameloop();

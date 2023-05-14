@@ -1,13 +1,16 @@
 #include "ui.h"
 #include "util/ncurses.h"
+#include "common.h"
 #include "menus/mainmenu.h"
 #include "menus/optionsmenu.h"
 #include "menus/pausemenu.h"
 #include "menus/deadmenu.h"
 #include "menus/dialog.h"
-#include "menus/deadmenu.h"
 #include "menus/charactersmenu.h"
 #include "menus/savemenu.h"
+
+#define LARGURA_RETANGULO 52
+#define ESTATISTICAS 6
 
 int g_ui_size[2] = { 0 };
 
@@ -20,7 +23,7 @@ void drawMenu(Menu menu) {
             menu->wnd = win;
             menu->panel = panel;
 
-            drawMainMenu(menu);
+            draw_MainMenu(menu);
             break;
         }
         case MENU_DIALOG: {
@@ -43,7 +46,7 @@ void drawMenu(Menu menu) {
             menu->wnd = win;
             menu->panel = panel;
 
-            drawOptionsMenu(menu);
+            draw_OptionsMenu(menu);
             break;
         }
         case MENU_PAUSE: {
@@ -52,7 +55,7 @@ void drawMenu(Menu menu) {
             menu->wnd = win;
             menu->panel = panel;
 
-            drawPauseMenu(menu);
+            draw_PauseMenu(menu);
             break;
         }
         case MENU_DEAD: {
@@ -61,7 +64,7 @@ void drawMenu(Menu menu) {
             menu->wnd = win;
             menu->panel = panel;
 
-            drawDeadMenu(menu);
+            draw_DeadMenu(menu);
             break; 
         }
         case MENU_CHARACTERS: {
@@ -70,7 +73,7 @@ void drawMenu(Menu menu) {
             menu->wnd = win;
             menu->panel = panel;
 
-            drawCharactersMenu(menu);
+            draw_CharactersMenu(menu);
             break;
         }
         case MENU_SAVE: {
@@ -88,7 +91,7 @@ void drawMenu(Menu menu) {
             menu->wnd = win;
             menu->panel = panel;
 
-            drawSaveInfo(menu);
+            draw_SaveInfo(menu);
             break;
         }
         default:
@@ -175,15 +178,103 @@ void handle_menu_keybinds(Menu menu, int key) {
 
 void drawGameInterface() {
 
-    //retangulo da esquerda
+    static char *stats[ESTATISTICAS] = {"user.interface.stats.class", "user.interface.stats.level","user.interface.stats.kills", "user.interface.stats.armor", "user.interface.stats.hp", "user.interface.stats.xp"};
+
+    //Desenha o retângulo à esquerda do Logo
     rectangle(g_renderstate->wnd, 0, 0, ALTURA_LOGO, g_renderstate->ncols/2 - LARGURA_LOGO/2 -1);
-    //retangulo da direita
+
+    //Desenha o retângulo à direita do Logo
     rectangle(g_renderstate->wnd, 0, g_renderstate->ncols/2 + LARGURA_LOGO/2 +1, ALTURA_LOGO, g_renderstate->ncols);
-    //retangulo que faz o traco por baixo do logo
+
+    //Desenha o traço por baixo do Logo
     rectangle(g_renderstate->wnd, ALTURA_LOGO, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
-    //retangulo a volta
+
+    //Retângulo à volta da janela toda
     rectangle(g_renderstate->wnd, 0, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
-    //print do logo
+
+    //Print do Logo
     printer(g_renderstate->wnd, 0, g_renderstate->ncols/2 - LARGURA_LOGO/2+1);
+
+    //Print do nome de cada estatística em Negrito
+
+    wattron(g_renderstate->wnd, A_BOLD);
+
+
+    //Print das estatísticas no lado esquerdo do retângulo da esquerda
+    for(int i = 0 ; i < ESTATISTICAS/2 ; i++)
+        mvwprintw(
+                  g_renderstate->wnd,   
+                  ALTURA_LOGO/3 + i,
+                  LARGURA_RETANGULO/6,
+                  "%s",    get_localized_string(g_renderstate->language, stats[i])
+                );
+    
+
+    //Print das estatísticas no lado direito do retângulo da esquerda
+    for(int i = ESTATISTICAS/2, j = 0 ; i < ESTATISTICAS ; i++, j++)
+        mvwprintw(g_renderstate->wnd,
+                  ALTURA_LOGO/3 + j,
+                  LARGURA_RETANGULO*0.6,
+                  "%s",    get_localized_string(g_renderstate->language, stats[i])
+                );
+
+
+    wattroff(g_renderstate->wnd, A_BOLD);
+
+
+    //Print dos valores de cada estatística
+
+
+/*      Lado esquerdo do Retângulo da esquerda   */
+
+
+    //Print da Classe
+    mvwprintw(g_renderstate->wnd, 
+              ALTURA_LOGO/3,    
+              LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.class")),
+              "%s" , getClassInterface(g_gamestate->player->entity->class)
+            );
+
+    //Print do Level
+    mvwprintw(g_renderstate->wnd, 
+            ALTURA_LOGO/3 + 1,    
+            LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.level")),
+            "%d", g_gamestate->player->level
+        );
+
+    //Print das Kills
+    mvwprintw(g_renderstate->wnd, 
+            ALTURA_LOGO/3 + 2,    
+            LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.kills")),
+            "%d", g_gamestate->player->kills
+        );
+
+/*      Lado direito do Retângulo da esquerda   */
+
+
+    //Print da Armor
+    mvwprintw(g_renderstate->wnd, 
+            ALTURA_LOGO/3,    
+            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.armor")),
+            "%d", g_gamestate->player->entity->armor
+        );
+
+    //Print do Health e Max Health
+    mvwprintw(g_renderstate->wnd,
+              ALTURA_LOGO/3 + 1, 
+              LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
+              "%d/%d", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
+            );
+
+    //Print do XP
+    mvwprintw(g_renderstate->wnd, 
+            ALTURA_LOGO/3 + 2,    
+            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.xp")),
+            "%d", g_gamestate->player->xp
+        );
+
+    mvwprintw(g_renderstate->wnd, ALTURA_LOGO/3, LARGURA_RETANGULO+LARGURA_LOGO + 4, "Priest got hitted by Andrew Tate and lost 5 HP.");
+    mvwprintw(g_renderstate->wnd, ALTURA_LOGO/3+1, LARGURA_RETANGULO+LARGURA_LOGO + 4, "Mercenary got hitted by Andrew Tate and lost 5 HP.");
+    mvwprintw(g_renderstate->wnd, ALTURA_LOGO/3+2, LARGURA_RETANGULO+LARGURA_LOGO + 4, "Detective picked a knife and earned a dick.");
     return;
 }

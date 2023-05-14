@@ -1,6 +1,7 @@
 #include "mainmenu.h"
 #include "util/ncurses.h"
 #include "common.h"
+#include "../src/data/savi.h"
 
 #define BOTOES 4
 #define LARGURA_CAGE 56
@@ -88,7 +89,10 @@ void draw_MainMenu(Menu menu) {
 
     // Print the logo
     printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
-
+    mvwprintw(menu->wnd, 4, 4, "%d", verify_Save(1));
+    delete_Save(1);
+    create_Save(2);
+    
     // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
@@ -150,8 +154,8 @@ void handle_MainMenu_keybinds(int key) {
                             case 0 : 
                                 closeMenu(MENU_MAIN_MENU);
                                 // startGame(); cujo codigo seria, por exemplo, utilizar as funcoes: create_asylum; print_asylum; drawGameInterface();
-                                create_asylum(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols-2, ALTURA_LOGO+1, 1);
-                                print_asylum(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols-2, ALTURA_LOGO+1, 1);
+                                create_asylum(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols-2);
+                                print_asylum(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols-2);
                                 drawGameInterface();
                                 break;
 

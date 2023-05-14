@@ -1,7 +1,6 @@
 #include "mainmenu.h"
 #include "util/ncurses.h"
 #include "common.h"
-#include "../src/data/savi.h"
 
 #define BOTOES 4
 #define LARGURA_CAGE 56
@@ -89,9 +88,6 @@ void draw_MainMenu(Menu menu) {
 
     // Print the logo
     printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
-    mvwprintw(menu->wnd, 4, 4, "%d", verify_Save(1));
-    delete_Save(1);
-    create_Save(2);
     
     // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {

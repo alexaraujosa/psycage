@@ -1,4 +1,5 @@
 #include "entity.h"
+#include "../render/render.h"
 #include <stdio.h>
 
 Entity defaultEntity() {
@@ -44,4 +45,23 @@ void healEntity(Entity entity, int hp) {
 void entityIsDead(Entity entity) {
     if (entity->health == 0) entity->dead = 1;
     else entity->dead = 0;
+}
+
+char* getClassInterface(int classe) {
+
+    switch(classe) {
+
+        case Priest:
+            return get_localized_string(g_renderstate->language, "user.interface.stats.priest");
+
+        case Detective:
+            return get_localized_string(g_renderstate->language, "user.interface.stats.detective");
+        
+        case Mercenary:
+            return get_localized_string(g_renderstate->language, "user.interface.stats.mercenary");
+
+    }
+
+
+    return;
 }

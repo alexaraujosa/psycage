@@ -95,7 +95,7 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             }
             
             // If the current coordinates are outside the bounds of the map, skip this cell and move to the next one
-            if (current_x+1 < 0 || current_x < 0 || current_x-1 < 0 || current_y < 0 || current_x+1 >= WIDTH|| current_x-1 >= WIDTH || current_x >= WIDTH|| current_y >= HEIGHT) {
+            if (current_x < 0 || current_y < 0 || current_x >= WIDTH|| current_y >= HEIGHT) {
                 continue;
             }
             
@@ -153,7 +153,7 @@ void calculate_visibility(int x, int y, int **map,int HEIGHT, int WIDTH){
     visible[y][x] = 1;
 }
 
-void print_light(int HEIGHT, int WIDTH) {
+void print_light(WINDOW* win, int HEIGHT, int WIDTH){
     
     for (int y = 0; y < HEIGHT; y++) {
         
@@ -161,17 +161,18 @@ void print_light(int HEIGHT, int WIDTH) {
             
             if(visible[y][x] == 0){
                 
-                mvaddch(y, x, ' ' | COLOR_BLACK);           
+                mvwaddch(win, y, x, ' ' | COLOR_BLACK);
             }
             else{
 
-                printw('\0');
+                mvwprintw(win, y, x, '\0');
             }
         }
-
-        printw("\n");
+        
+        wprintw(win, "\n");
     }
-    refresh();
+
+    wrefresh(win);
 }
 
 

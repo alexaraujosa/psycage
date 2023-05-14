@@ -46,7 +46,7 @@ void print_sewers(int HEIGHT, int WIDTH){
                 mvaddch(j,i, '#' | COLOR_PAIR(SEWERS_WALLS));
             }
             if (map[j][i] == 3) {
-                mvaddch(j, i, ' ' | COLOR_PAIR(NOTHING));
+                mvaddch(j, i, ' ' | COLOR_BLACK);
             }
             if (map[j][i] == 2) {
                 mvaddch(j, i, '~' | COLOR_PAIR(SEWERS_BLOOD));
@@ -79,7 +79,7 @@ void print_asylum(int HEIGHT, int WIDTH) {
                 mvaddch(y, x, '.' | COLOR_PAIR(ASYLUM_FLOOR));
             }
             if (map[y][x] == 3){
-                mvaddch(y, x, ' ' | COLOR_PAIR(NOTHING));
+                mvaddch(y, x, ' ' | COLOR_BLACK);
             }
             if(map[y][x] == 4){
                 mvaddch(y, x, '*' | COLOR_PAIR(ASYLUM_BLOOD));

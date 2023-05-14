@@ -5,7 +5,6 @@
 #include "../render/render.h"
 #include <math.h>
 
-//extern int **visibility;
 extern int **visible;
 
 #endif

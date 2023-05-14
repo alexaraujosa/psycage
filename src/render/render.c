@@ -51,15 +51,14 @@ Renderstate init_render() {
     init_pair(BLUE_PLAYER, COLOR_BLUE, COLOR_BLACK);
     // DUNGEON
     init_pair(DUNGEON_WALLS, GREY, (short)(DARK_DARK_GREY | A_DIM)); 
-    init_pair(DUNGEON_FLOOR, GREY, (short)(COLOR_BLACK | A_DIM));
-    init_pair(DUNGEON_BLOOD, DARK_RED, (short)(COLOR_BLACK | A_DIM));     
+    init_pair(DUNGEON_FLOOR, GREY, COLOR_BLACK | A_DIM);
+    init_pair(DUNGEON_BLOOD, DARK_RED, COLOR_BLACK | A_DIM);     
     // ASYLUM
-    init_pair(ASYLUM_WALLS, BLACK, (short)(COLOR_WHITE | A_DIM)); 
-    init_pair(ASYLUM_FLOOR, WHITE, (short)(LIGHT_GREY | A_DIM)); 
-    init_pair(ASYLUM_BLOOD, DARK_RED, (short)(LIGHT_GREY | A_DIM));
-    init_pair(NOTHING, BLACK, BLACK);    
+    init_pair(ASYLUM_WALLS, COLOR_BLACK, COLOR_WHITE | A_DIM); 
+    init_pair(ASYLUM_FLOOR, COLOR_WHITE, (short)(LIGHT_GREY | A_DIM)); 
+    init_pair(ASYLUM_BLOOD, DARK_RED, (short)(LIGHT_GREY | A_DIM));    
     // SEWERS
-    init_pair(SEWERS_BLOOD, WHITE, (short)(DARK_RED | A_DIM));
+    init_pair(SEWERS_BLOOD, COLOR_WHITE, (short)(DARK_RED | A_DIM));
     init_pair(SEWERS_FLOOR, BROWN, (short)(DARK_GREY | A_DIM)); 
     init_pair(SEWERS_WALLS, GREEN, (short)(DARK_GREEN | A_DIM));
     // MENUS
@@ -87,7 +86,7 @@ void render(Gamestate gs) {
 
     print_random_map(g_renderstate->nrows, g_renderstate->ncols, find_map); // map
     render_game(gs);
-    print_light(g_renderstate->nrows, g_renderstate->ncols); // RTX_ON
+    print_light(g_renderstate->wnd,g_renderstate->nrows, g_renderstate->ncols); // RTX_ON
     render_menu(gs);
     doupdate();
     // refresh();

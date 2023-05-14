@@ -41,8 +41,6 @@ enum colors{
     DARK_DARK_GREY,
     LIGHT_GREY,
     GREEN,
-    BLACK,
-    WHITE,
     ORANGE,
     LIGHT_ORANGE,
     DARK_ORANGE,
@@ -57,7 +55,6 @@ enum colors{
     SEWERS_BLOOD,
     SEWERS_FLOOR,
     SEWERS_WALLS,
-    NOTHING,
     // Asylum
     ASYLUM_BLOOD,
     ASYLUM_WALLS,

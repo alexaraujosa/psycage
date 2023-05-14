@@ -12,6 +12,7 @@
 #include <ncurses.h>
 #include "common.h"
 #include "../entity/player/player.h"
+#include "../entity/projectile/projectile.h"
 #include "../render/render.h"
 #include "../map/map.h"
 
@@ -21,6 +22,7 @@ extern char ASSET_DIR[PATH_MAX];
 
 typedef struct gamestate {
     Player player;         // Player structure
+    Projectile projectile;
     int input_initialized; // Block user input
     int clock;             // General tick clock
     int block_clock;       // Stop clock execution
@@ -44,5 +46,6 @@ void handle_keybinds();
 void game_keybinds(int key);
 void menu_keybinds(int key);
 void move_player(int dx, int dy);
+void move_projectile(int dx, int dy);
 
 #endif

@@ -159,6 +159,7 @@ void _removeMenu(MenuId menu) {
 #pragma region Renderers
 void render_game(Gamestate gs) {
     Coords playerCoords = gs->player->entity->coords;
+    Coords projectileCoords = gs->projectile->entity->coords;
 
     // TEST
     wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_BG));
@@ -179,7 +180,9 @@ void render_game(Gamestate gs) {
 	wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 	printw("(%d, %d) %d %d | (%d, %d) (%d, %d) | %d", 
         playerCoords->x, 
-        playerCoords->y, 
+        playerCoords->y,
+        projectileCoords->x,
+        projectileCoords->x, 
         g_renderstate->ncols, 
         g_renderstate->nrows,
         g_gamestate->pointA->x, g_gamestate->pointA->y,
@@ -190,6 +193,7 @@ void render_game(Gamestate gs) {
 
 	wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
 	mvwaddch(g_renderstate->wnd, playerCoords->y, playerCoords->x, '@' | COLOR_PAIR(WHITE_PLAYER));
+    mvwaddch(g_renderstate->wnd, projectileCoords->y, projectileCoords->x, 'T' | COLOR_PAIR(WHITE_PLAYER));
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
 	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
 
@@ -205,6 +209,7 @@ void render_game(Gamestate gs) {
     // wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
 	move(playerCoords->x, playerCoords->y);
+    move(projectileCoords->x, projectileCoords->y);
 }
 
 void render_menu(Gamestate gs) {

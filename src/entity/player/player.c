@@ -37,3 +37,7 @@ void destroyPlayer(Player player) {
 
     return;
 }
+
+void getLastDirection(Player player) {  //gpt diz que é int
+    return player->last_direction;
+}

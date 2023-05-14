@@ -7,7 +7,9 @@ int find_map;
 Gamestate init_gameloop() {
 	Gamestate gs = (Gamestate)malloc(sizeof(GAMESTATE));
 	Player player = defaultPlayer();
+	Projectile projectile = defaultProjectile();
 	gs->player = player;
+	gs->projectile = projectile;
 
 	gs->input_initialized = 0;
 
@@ -126,16 +128,42 @@ void game_keybinds(int key) {
 
 		// Movement Controls
 		case KEY_UP:
-			move_player(0, -1); 
+			move_player(0, -1);
+			g_gamestate->player->last_direction = 0;  
 			break;
 		case KEY_DOWN:
-			move_player(0, 1); 
+			move_player(0, 1);
+			g_gamestate->player->last_direction = 1;  
 			break;
 		case KEY_LEFT:
-			move_player(-1, 0); 
+			move_player(-1, 0);
+			g_gamestate->player->last_direction = 2;  
 			break;
 		case KEY_RIGHT:
-			move_player(1, 0); 
+			move_player(1, 0);
+			g_gamestate->player->last_direction = 3;  
+			break;
+		case 'r':
+		    if (g_gamestate->player->last_direction == 0) {
+				g_gamestate->projectile->entity->coords->x == g_gamestate->player->entity->coords->x;
+			g_gamestate->projectile->entity->coords->y == g_gamestate->player->entity->coords->y;
+                move_projectile(0, -1); 
+			}
+			if (g_gamestate->player->last_direction == 1) {
+				g_gamestate->projectile->entity->coords->x == g_gamestate->player->entity->coords->x;
+			g_gamestate->projectile->entity->coords->y == g_gamestate->player->entity->coords->y;
+				move_projectile(0, 1); 
+			}
+			if (g_gamestate->player->last_direction == 2) {
+				g_gamestate->projectile->entity->coords->x == g_gamestate->player->entity->coords->x;
+			g_gamestate->projectile->entity->coords->y == g_gamestate->player->entity->coords->y;
+				move_projectile(-1, 0); 
+			}
+			if (g_gamestate->player->last_direction == 3) {
+				g_gamestate->projectile->entity->coords->x == g_gamestate->player->entity->coords->x;
+			g_gamestate->projectile->entity->coords->y == g_gamestate->player->entity->coords->y;
+				move_projectile(1, 0); 
+			}
 			break;
 
 		// Open Menu
@@ -229,4 +257,9 @@ void menu_keybinds(int key) {
 void move_player(int dx, int dy) {
 	g_gamestate->player->entity->coords->x += dx;
 	g_gamestate->player->entity->coords->y += dy;
+}
+
+void move_projectile(int dx, int dy) {
+	g_gamestate->projectile->entity->coords->x += dx;
+	g_gamestate->projectile->entity->coords->y += dy;
 }

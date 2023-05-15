@@ -10,6 +10,7 @@ Player defaultPlayer() {
     
     player->entity = entity;
     player->level = 0;
+    player->cheats = 0;
 
     return player;
 }

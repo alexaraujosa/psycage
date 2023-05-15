@@ -12,6 +12,7 @@
 #include "common.h"
 #include "util/math.h"
 #include "../map/map.h"
+#include "cheats/cheats.h"
 
 typedef struct entity {
     Coords coords;

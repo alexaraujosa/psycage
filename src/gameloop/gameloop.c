@@ -109,6 +109,8 @@ void handle_keybinds() {
 void game_keybinds(int key) {
 	mvaddch(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, ' ');
 
+	godmode_code_checker(key);
+
 	switch(key) {
 		case '1': {
 			g_gamestate->pointA->x = g_gamestate->player->entity->coords->x;

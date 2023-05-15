@@ -12,11 +12,9 @@
 #include "common.h"
 #include "util/math.h"
 #include "../map/map.h"
-#include "cheats/cheats.h"
 
 typedef struct entity {
     Coords coords;
-    int class;
     int maxHealth;
     int health;
     int armor;
@@ -25,17 +23,10 @@ typedef struct entity {
     int dead;
 } ENTITY, *Entity;
 
-enum Classes{
-    Priest,
-    Detective,
-    Mercenary
-};
-
 /* FUNCTION SIGNATURES */
 Entity defaultEntity();
 void destroyEntity(Entity entity);
 void damageEntity(Entity entity, int hp);
 void healEntity(Entity entity, int hp);
-char* getClassInterface(int classe);
 
 #endif

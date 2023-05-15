@@ -149,21 +149,21 @@ void handle_CharactersMenu_keybinds(int key) {
 
                             case Priest : {
                                 g_gamestate->player->entity->basedamage = 3;
-                                g_gamestate->player->entity->class = Priest;
+                                g_gamestate->player->class = Priest;
                                 //startgame
                                 break;            
                             }
 
                             case Detective : {
                                 g_gamestate->player->entity->basedamage = 3;
-                                g_gamestate->player->entity->class = Detective;
+                                g_gamestate->player->class = Detective;
                                 //startgame
                                 break;             
                             }
 
                             case Mercenary : {
                                 g_gamestate->player->entity->basedamage = 3;
-                                g_gamestate->player->entity->class = Mercenary;
+                                g_gamestate->player->class = Mercenary;
                                 //startgame
                                 break;             
                             }

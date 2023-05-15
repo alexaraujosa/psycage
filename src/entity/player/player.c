@@ -1,4 +1,5 @@
 #include "player.h"
+#include "../../render/render.h"
 #include <string.h>
 
 Player defaultPlayer() {
@@ -11,6 +12,7 @@ Player defaultPlayer() {
     player->entity = entity;
     player->level = 0;
     player->cheats = 0;
+    player->class = 0;
 
     return player;
 }
@@ -41,4 +43,23 @@ void destroyPlayer(Player player) {
 
 void getLastDirection(Player player) {  //gpt diz que é int
     return player->last_direction;
+}
+
+char* getClassInterface(int classe) {
+
+    switch(classe) {
+
+        case Priest:
+            return get_localized_string(g_renderstate->language, "user.interface.stats.priest");
+
+        case Detective:
+            return get_localized_string(g_renderstate->language, "user.interface.stats.detective");
+        
+        case Mercenary:
+            return get_localized_string(g_renderstate->language, "user.interface.stats.mercenary");
+
+    }
+
+
+    return;
 }

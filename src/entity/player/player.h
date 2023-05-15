@@ -16,12 +16,20 @@ typedef struct player {
     int xp;
     int last_direction;
     int cheats;
+    int class;
 } PLAYER, *Player;
+
+enum Classes{
+    Priest,
+    Detective,
+    Mercenary
+};
 
 // #define PLAYER_SIZE ENTITY_SIZE
 
 /* FUNCTION SIGNATURES */
 Player defaultPlayer();
 void destroyPlayer(Player player);
+char* getClassInterface(int classe);
 
 #endif

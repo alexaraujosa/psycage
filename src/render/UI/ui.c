@@ -232,7 +232,7 @@ void drawGameInterface() {
     mvwprintw(g_renderstate->wnd, 
               ALTURA_LOGO/3,    
               LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.class")),
-              "%s" , getClassInterface(g_gamestate->player->entity->class)
+              "%s" , getClassInterface(g_gamestate->player->class)
             );
 
     //Print do Level

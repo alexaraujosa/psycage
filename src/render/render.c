@@ -191,11 +191,15 @@ void render_game(Gamestate gs) {
     );
 	wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 
-	wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
-	mvwaddch(g_renderstate->wnd, playerCoords->y, playerCoords->x, '@' | COLOR_PAIR(WHITE_PLAYER));
+    if(g_gamestate->player->cheats == 1)	
+        wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
+    else	
+        wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
+	mvwaddch(g_renderstate->wnd, playerCoords->y, playerCoords->x, '@');
     mvwaddch(g_renderstate->wnd, projectileCoords->y, projectileCoords->x, 'T' | COLOR_PAIR(WHITE_PLAYER));
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
 	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
+    wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
 	// wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x - 1, '.' | A_BOLD);

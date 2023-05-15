@@ -1,5 +1,6 @@
 #include "player.h"
 #include "../../render/render.h"
+#include "../../data/items.h"
 #include <string.h>
 
 Player defaultPlayer() {
@@ -11,16 +12,27 @@ Player defaultPlayer() {
     
     player->entity = entity;
     player->level = 0;
+    player->kills = 0;
+    player->xp = 0;
     player->cheats = 0;
     player->class = 0;
 
     return player;
 }
 
-void levelUp(Player player) {
-    if (player->xp % 5 == 0) {
-        player->level += 1;
-        player->xp = 0;
+void levelUp(Player player, Entity entity) {
+    if (player->level <= 99) {
+        if (player->xp % 5 == 0) {
+            player->level += 1;
+            player->xp = 0;
+            player->entity->basedamage += 1;
+            player->entity->maxHealth += 4;
+            player->entity->health == player->entity->maxHealth;
+            if (player->level <= 25) {
+                entity->maxHealth += 8;
+                entity->basedamage += 4;
+             }
+        }
     }
 }
 

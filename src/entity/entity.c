@@ -9,7 +9,7 @@ Entity defaultEntity() {
     entity->health = 12;
     entity->armor = 0;
     entity->basedamage = 4;
-    entity->damage = 4;
+    entity->damage = entity->basedamage;
 
     return entity;
 }

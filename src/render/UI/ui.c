@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "util/ncurses.h"
+#include "../../entity/cheats/cheats.h"
 #include "common.h"
 #include "menus/mainmenu.h"
 #include "menus/optionsmenu.h"
@@ -260,11 +261,23 @@ void drawGameInterface() {
         );
 
     //Print do Health e Max Health
-    mvwprintw(g_renderstate->wnd,
-              ALTURA_LOGO/3 + 1, 
-              LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
-              "%d/%d", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
-            );
+    if(g_gamestate->player->cheats == 0) {
+
+        mvwprintw(g_renderstate->wnd,
+                ALTURA_LOGO/3 + 1, 
+                LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
+                "%d/%d     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
+                );
+
+    } else {
+
+        mvwprintw(g_renderstate->wnd,
+                ALTURA_LOGO/3 + 1, 
+                LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
+                "%s", get_localized_string(g_renderstate->language, "user.interface.stats.god")
+                );
+
+    }
 
     //Print do XP
     mvwprintw(g_renderstate->wnd, 

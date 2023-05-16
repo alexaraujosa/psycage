@@ -178,12 +178,12 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
     }
 }
 
-void create_dungeon( int HEIGHT, int WIDTH){
+void create_dungeon( int HEIGHT, int WIDTH, int beginY, int beginX){
     
-    init_dungeon(HEIGHT, WIDTH);
+    init_dungeon(HEIGHT+beginY, WIDTH);
     generate_dungeon(HEIGHT, WIDTH);
     blood_stains_dungeon(HEIGHT, WIDTH);
-    print_dungeon(HEIGHT, WIDTH);
+    print_dungeon(HEIGHT, WIDTH, beginY, beginX);
 }
 
 //==========================
@@ -384,9 +384,9 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
     num_connections++;
 }
 
-void create_sewers(int HEIGHT, int WIDTH){
+void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
     
-    init_maze(HEIGHT, WIDTH);
+    init_maze(HEIGHT+beginY, WIDTH);
 
     // The root_room is the starting point of the map generation process, which is a single room that occupies the entire map
     Room* root_room = create_room_sewers(0, 0, WIDTH, HEIGHT);
@@ -425,7 +425,7 @@ void create_sewers(int HEIGHT, int WIDTH){
     }
 
     make_borders(map, HEIGHT, WIDTH);
-    print_sewers(HEIGHT, WIDTH);
+    print_sewers(HEIGHT, WIDTH, beginY, beginX);
 }
 #pragma endregion
 
@@ -581,9 +581,9 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
     }
 }
 
-void create_asylum(int HEIGHT, int WIDTH){
+void create_asylum(int HEIGHT, int WIDTH, int beginY, int beginX){
  
-    init_asylum(HEIGHT, WIDTH);
+    init_asylum(HEIGHT+beginY, WIDTH);
 
     Room rooms[MAX_ROOMS];
     int num_rooms = rand() % (MAX_ROOMS - 1) + 2;
@@ -597,27 +597,27 @@ void create_asylum(int HEIGHT, int WIDTH){
     carve_corridors(rooms, num_rooms);
     blood_stains_asylum(HEIGHT, WIDTH);
     make_borders(map, HEIGHT, WIDTH);
-    print_asylum(HEIGHT, WIDTH);
+    print_asylum(HEIGHT, WIDTH, beginY, beginX);
 }
 
 //====================================
 // Random Map
 //====================================
 
-int create_random_map(int HEIGHT, int WIDTH){
+int create_random_map(int HEIGHT, int WIDTH, int beginY, int beginX){
 
     int random = rand() % 3;
 
     if(random == 0){
-        create_dungeon(HEIGHT,WIDTH);
+        create_dungeon(HEIGHT,WIDTH, beginY, beginX);
         return 1;
     }
     if(random == 1){ 
-        create_sewers(HEIGHT, WIDTH);
+        create_sewers(HEIGHT, WIDTH, beginY, beginX);
         return 2;
     }
     if(random == 2){
-        create_asylum(HEIGHT, WIDTH);
+        create_asylum(HEIGHT, WIDTH, beginY, beginX);
         return 3;
     }
 }

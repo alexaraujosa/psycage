@@ -94,7 +94,7 @@ Renderstate init_render() {
 
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
-    print_random_map(g_renderstate->nrows, g_renderstate->ncols, find_map); // map
+    print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, ALTURA_LOGO + 1, 1); // map
     render_game(gs);
     // print_light(g_renderstate->nrows, g_renderstate->ncols); // RTX_ON
     render_menu(gs);
@@ -225,7 +225,7 @@ void render_game(Gamestate gs) {
     }
     wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
 
-    print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
+    //print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
 
 	// wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x - 1, '.' | A_BOLD);

@@ -23,6 +23,7 @@ menu.save.infos.return= Return
 menu.save.infos.load=  Load  
 menu.save.infos.save=  Save  
 user.interface.stats.hp=  HP  
+user.interface.stats.god=INFINITE
 user.interface.stats.armor=ARMOR 
 user.interface.stats.class=CLASS 
 user.interface.stats.level=LEVEL 

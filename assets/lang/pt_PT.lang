@@ -23,6 +23,7 @@ menu.save.infos.return=   Voltar
 menu.save.infos.load=  Carregar  
 menu.save.infos.save=  Guardar   
 user.interface.stats.hp=  HP  
+user.interface.stats.god=INFINITO
 user.interface.stats.armor=ESCUDO 
 user.interface.stats.class=CLASSE
 user.interface.stats.level=LEVEL 

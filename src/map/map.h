@@ -33,13 +33,13 @@ void prepare_ai_test_map();
 void print_ai_test_map();
 void randomize_atm_points();
 
-void create_asylum(int HEIGHT, int WIDTH);
-void create_dungeon(int HEIGHT, int WIDTH);
-void create_sewers(int HEIGHT, int WIDTH);
+void create_asylum(int HEIGHT, int WIDTH, int beginY, int beginX);
+void create_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX);
+void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX);
 
-void print_sewers(int HEIGHT, int WIDTH);
-void print_asylum(int HEIGHT, int WIDTH);
-void print_dungeon(int HEIGHT, int WIDTH);
+void print_sewers(int HEIGHT, int WIDTH, int beginY, int beginX);
+void print_asylum(int HEIGHT, int WIDTH, int beginY, int beginX);
+void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX);
 
 
 #endif

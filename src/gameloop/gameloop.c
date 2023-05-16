@@ -36,19 +36,19 @@ Gamestate init_gameloop() {
 	// gs->path_cells = NULL;
 
     debug_file(dbgOut, " - Generating initial map...\n");
-	find_map = create_random_map(g_renderstate->nrows, g_renderstate->ncols); // map
+	find_map = create_random_map(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols - 2, ALTURA_LOGO + 1, 1); // map
 
     debug_file(dbgOut, " -- Generating light map...\n");
 	init_light_map(g_renderstate->nrows, g_renderstate->ncols);
 
 
     debug_file(dbgOut, " - Generating map footprint...\n");
-	map_footprint = (int **)malloc(g_renderstate->nrows * sizeof(int *));
-    for (int i = 0; i < g_renderstate->nrows; i++) {
+	map_footprint = (int **)malloc((g_renderstate->nrows - ALTURA_LOGO - 2) * sizeof(int *));
+    for (int i = 0; i < g_renderstate->nrows - ALTURA_LOGO - 2; i++) {
         map_footprint[i] = (int *)malloc(g_renderstate->ncols * sizeof(int));
     }
 
-	for (int i = 0; i < g_renderstate->nrows; i++) {
+	for (int i = 0; i < g_renderstate->nrows - ALTURA_LOGO - 2; i++) {
 		for (int j = 0; j < g_renderstate->ncols; j++) {
 			map_footprint[i][j] = map[i][j];
 		}
@@ -63,7 +63,7 @@ Gamestate init_gameloop() {
 	for (int i = 0; i < mob_count; i++) {
 		Mob mob = defaultMob();
 
-		addMobToMap(mob, map, g_renderstate->ncols, g_renderstate->nrows);
+		addMobToMap(mob, map, g_renderstate->ncols, g_renderstate->nrows - ALTURA_LOGO - 2);
 
 		mobs[i] = mob;
 		map[mob->entity->coords->y][mob->entity->coords->x] = 5;

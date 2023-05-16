@@ -150,8 +150,8 @@ void handle_MainMenu_keybinds(int key) {
                             case 0 : 
                                 closeMenu(MENU_MAIN_MENU);
                                 // startGame(); cujo codigo seria, por exemplo, utilizar as funcoes: create_asylum; print_asylum; drawGameInterface();
-                                create_asylum(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols-2);
-                                print_asylum(g_renderstate->nrows - ALTURA_LOGO - 2, g_renderstate->ncols-2);
+                                // create_asylum(g_renderstate->nrows, g_renderstate->ncols, 5);
+                                // print_asylum(g_renderstate->nrows, g_renderstate->ncols, 5);
                                 drawGameInterface();
                                 break;
 

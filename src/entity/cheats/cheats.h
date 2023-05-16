@@ -8,5 +8,6 @@
 /* FUNCTION SIGNATURES */
 
 void godmode_code_checker(int key);
+void godmode_Health();
 
 #endif

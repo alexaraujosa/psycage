@@ -42,7 +42,7 @@ Gamestate init_gameloop() {
 	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); // map
 
     debug_file(dbgOut, " -- Generating light map...\n");
-	init_light_map(g_renderstate->nrows, g_renderstate->ncols);
+	init_light_map(g_renderstate->nrows, g_renderstate->ncols-2);
 
 
     debug_file(dbgOut, " - Generating map footprint...\n");
@@ -122,7 +122,7 @@ void tick() {
 			g_gamestate->player->entity->coords->y, 
 			map, 
 			g_renderstate->nrows, 
-			g_renderstate->ncols
+			g_renderstate->ncols-2
 		); 
 	}
 

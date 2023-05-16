@@ -96,7 +96,7 @@ Renderstate init_render() {
 void render(Gamestate gs) {
     print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, ALTURA_LOGO + 1, 1); // map
     render_game(gs);
-    // print_light(g_renderstate->nrows, g_renderstate->ncols); // RTX_ON
+    print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, ALTURA_LOGO + 1, 1); // RTX_ON
     render_menu(gs);
     doupdate();
     // refresh();

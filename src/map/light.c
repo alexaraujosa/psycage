@@ -162,7 +162,8 @@ void calculate_visibility(int x, int y, int **map, int HEIGHT, int WIDTH){
     visible[y][x] = 1;
 }
 
-void print_light(WINDOW* win, int HEIGHT, int WIDTH){
+
+void print_light(WINDOW* win, int HEIGHT, int WIDTH, int beginY, int beginX){
     
     for (int y = 0; y < HEIGHT; y++) {
         
@@ -170,11 +171,11 @@ void print_light(WINDOW* win, int HEIGHT, int WIDTH){
             
             if(visible[y][x] == 0){
                 
-                mvwaddch(win, y, x, ' ' | COLOR_BLACK);
+                mvwaddch(win, y + beginY, x + beginX, ' ' | COLOR_BLACK);
             }
             else{
 
-                mvwprintw(win, y, x, '\0');
+                mvwprintw(win, y + beginY, x + beginX, "%c",'\0');
             }
         }
         

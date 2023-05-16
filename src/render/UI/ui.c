@@ -82,7 +82,7 @@ void drawMenu(Menu menu) {
             menu->wnd = win;
             menu->panel = panel;
 
-            drawSaveMenu(menu);
+            draw_SaveMenu(menu);
             break;
         }
         case MENU_SAVE_SLOT: {

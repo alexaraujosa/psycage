@@ -118,7 +118,7 @@ DataLocaleLine parse_locale_line(char* raw, int len) {
 
     int part = 0;
     int count = 0;
-    for (int i = 0; i < strlen(raw); i++) {
+    for (size_t i = 0; i < strlen(raw); i++) {
         if (raw[i] == '=') {
             key[count] = '\0';
 

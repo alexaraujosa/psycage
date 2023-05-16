@@ -77,6 +77,7 @@ DataItemNode defaultItemResource() {
 }
 
 DataItemNode parse_item(char* raw, int len) {
+    IGNORE_ARG(len);
     // debug("LINE: %d | '%s'\n", len, raw);
 
     DataItemNode item = defaultItemResource();

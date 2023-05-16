@@ -58,7 +58,7 @@ void draw_SaveInfo(Menu menu) {
 
 }
 
-void drawSaveMenu(Menu menu) {
+void draw_SaveMenu(Menu menu) {
 
     // Get the width of the widest button
     char *botaoMaior = tamanho_maxPalavra(BOTOES_PRINCIPAL, botoes);

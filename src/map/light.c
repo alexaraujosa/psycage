@@ -7,7 +7,7 @@
 #define PI 3.14159265
 #define RADIUS 20
 
-int **visible;
+int **visible = NULL;
 
 void init_light_map(int HEIGHT, int WIDTH) {
     
@@ -142,9 +142,19 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
     }
 }
 
-void calculate_visibility(int x, int y, int **map,int HEIGHT, int WIDTH){
-   
-    init_light_map(HEIGHT, WIDTH);
+void calculate_visibility(int x, int y, int **map, int HEIGHT, int WIDTH){
+    
+    if (visible != NULL) {
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                visible[i][j] = 0;
+            }
+        }
+
+        //free(visible);
+    }
+
+    // init_light_map(HEIGHT, WIDTH);
     
     for (int octant = 0; octant < 8; octant++) {
         cast_light(x, y, 1, 1.0, 0.0, map, octant, HEIGHT, WIDTH);

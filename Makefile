@@ -32,6 +32,7 @@ $(BIN)/$(EXECUTABLE): $(shell find ./$(SRC) -name '*.c')
 clean:
 	-rm $(BIN)/*
 	-rm -r $(BIN)/assets
+	-rm -r $(BIN)/logs
 
 copyassets: 
 	mkdir -p $(BIN)/assets

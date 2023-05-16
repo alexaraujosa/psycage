@@ -36,7 +36,11 @@
         "unordered_map": "c",
         "vector": "c",
         "typeinfo": "c",
-        "locale.h": "c"
+        "locale.h": "c",
+        "pathfind_js.h": "c",
+        "optionsmenu.h": "c",
+        "gameloop_common.h": "c",
+        "light.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

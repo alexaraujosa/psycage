@@ -5,7 +5,6 @@
 //====================================
 
 #define PI 3.14159265
-#define RADIUS 20
 
 int **visible = NULL;
 
@@ -35,7 +34,7 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
     double next_start_slope = start_slope;
     
 
-    for (int i = row; i <= RADIUS; i++) {
+    for (int i = row; i <= g_gamestate->player->radius; i++) {
         
         int blocked = 0;
         
@@ -103,7 +102,7 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             double distance = sqrt(dx * dx + dy * dy);
 
             // If the distance is less than or equal to the radius, set the visibility of the current cell to 1
-            if (distance <= RADIUS) {
+            if (distance <= g_gamestate->player->radius) {
                 
                 visible[current_y][current_x-1] = 1;
                 visible[current_y][current_x] = 1;
@@ -127,7 +126,7 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             // If blocked is false, check if the current cell is a wall or obstacle and if the current row is less than the radius
             // If it is, set blocked to true, recursively call the cast_light function with the updated row and slope values, and update next_start_slope
             else {
-                if (current_x < WIDTH && (map[current_y][current_x] == 1 || map[current_y][current_x] == 3) && i < RADIUS) {
+                if (current_x < WIDTH && (map[current_y][current_x] == 1 || map[current_y][current_x] == 3) && i < g_gamestate->player->radius) {
                     blocked = 1;
                     cast_light(x, y, i + 1, start_slope, l_slope, map, octant, HEIGHT, WIDTH);
                     next_start_slope = r_slope;

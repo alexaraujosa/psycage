@@ -17,6 +17,7 @@ typedef struct player {
     int last_direction;
     int cheats;
     int class;
+    int radius;
 } PLAYER, *Player;
 
 enum Classes{
@@ -31,5 +32,6 @@ enum Classes{
 Player defaultPlayer();
 void destroyPlayer(Player player);
 char* getClassInterface(int classe);
+void verifyPlayerRadius();
 
 #endif

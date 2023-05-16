@@ -1,7 +1,14 @@
 #include "player.h"
 #include "../../render/render.h"
 #include "../../data/items.h"
+#include "../../data/save.h"
 #include <string.h>
+
+#define MAX_RADIUS_PRIEST 6
+#define MIN_RADIUS_DETECTIVE 4
+#define KILLS_TO_CHANGE_RADIUS 15
+
+
 
 Player defaultPlayer() {
     Player player = (Player)malloc(sizeof(PLAYER));
@@ -15,7 +22,8 @@ Player defaultPlayer() {
     player->kills = 0;
     player->xp = 0;
     player->cheats = 0;
-    player->class = 0;
+    player->class = Priest;
+    player->radius = 0;
 
     return player;
 }
@@ -40,6 +48,8 @@ void killCount(Player player, Entity entity) {
     if (entity->health == 0) {
         player->kills += 1;
     }
+    if(player->kills % KILLS_TO_CHANGE_RADIUS == 0)
+        verifyPlayerRadius();
 }
 
 void killXp(Player player) {
@@ -47,6 +57,9 @@ void killXp(Player player) {
 }
 
 void destroyPlayer(Player player) {
+    for(int i = 1 ; i <= 3 ; i++)
+        delete_Save(i);
+    
     destroyEntity(player->entity);
     free(player);
 
@@ -72,6 +85,32 @@ char* getClassInterface(int classe) {
 
     }
 
+
+    return;
+}
+
+void verifyPlayerRadius() {
+
+    switch(g_gamestate->player->class) {
+
+        case Priest: {
+
+            if(g_gamestate->player->radius < MAX_RADIUS_PRIEST)
+                g_gamestate->player->radius++;
+
+            break;
+
+        }
+
+        case Detective: {
+
+            if(g_gamestate->player->radius > MIN_RADIUS_DETECTIVE)
+                g_gamestate->player->radius--;
+
+            break;
+
+        }
+    }
 
     return;
 }

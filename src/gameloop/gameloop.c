@@ -84,6 +84,8 @@ Gamestate init_gameloop() {
 	
 	g_gamestate = gs;
 
+    gs->player->radius = 5; // DELETE BEFORE SENDING THE PROJECT	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 	return gs;
 }
 

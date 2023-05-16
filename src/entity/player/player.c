@@ -85,8 +85,7 @@ char* getClassInterface(int classe) {
 
     }
 
-
-    return;
+    return NULL;
 }
 
 void verifyPlayerRadius() {

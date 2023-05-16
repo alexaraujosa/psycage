@@ -51,6 +51,7 @@ int delete_Save(int num_save) {
 
     }
 
+    return 0;
 }
 
 

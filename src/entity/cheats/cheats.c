@@ -11,7 +11,7 @@ void godmode_code_checker(int key) {
 
 		godmode_code_index++;
 
-        if(godmode_code_index == strlen(godmode_code))
+        if(godmode_code_index == (int) strlen(godmode_code))
             g_gamestate->player->cheats = (g_gamestate->player->cheats == 0) ? 1 : 0;
 
 	} else {

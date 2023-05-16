@@ -3,6 +3,8 @@
 Renderstate g_renderstate;
 
 Renderstate init_render() {
+    debug_file(dbgOut, " - Allocating renderstate memory...\n");
+
     Renderstate rs = (Renderstate)malloc(sizeof(RENDERSTATE));
 
     rs->activeMenus = 0;
@@ -11,26 +13,34 @@ Renderstate init_render() {
     // setlocale(LC_ALL, "");
 
     // Initialize window
+    debug_file(dbgOut, " - Initializing window...\n");
     WINDOW *wnd = initscr();
 
     // Get window size
+    debug_file(dbgOut, " - Initializing settings...\n");
+
     int ncols, nrows;
     getmaxyx(wnd,nrows,ncols);
     rs->nrows = nrows;
     rs->ncols = ncols;
     rs->language = en_US;
 
-	start_color();
-
 	cbreak();
 	noecho();
     curs_set(0);
 	nonl();
+    nodelay(stdscr, TRUE);
+    //timeout(100);
 	intrflush(stdscr, false);
 	keypad(stdscr, true);
-    curs_set(0);
+    //curs_set(0);
 
+    
     // COLORS
+    debug_file(dbgOut, " - Initializing colors...\n");
+
+    start_color();
+
     init_color(GREY, 400, 400, 400); 
     init_color(DARK_DARK_GREY, 80, 80, 80);     
     init_color(DARK_GREY, 192, 192, 180); 
@@ -76,6 +86,7 @@ Renderstate init_render() {
 
     g_renderstate = rs;
 
+    debug_file(dbgOut, " - Loading localization files...\n");
     load_locales();
 
     return rs;
@@ -83,10 +94,9 @@ Renderstate init_render() {
 
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
-
     print_random_map(g_renderstate->nrows, g_renderstate->ncols, find_map); // map
     render_game(gs);
-    print_light(g_renderstate->wnd,g_renderstate->nrows, g_renderstate->ncols); // RTX_ON
+    // print_light(g_renderstate->nrows, g_renderstate->ncols); // RTX_ON
     render_menu(gs);
     doupdate();
     // refresh();
@@ -162,32 +172,35 @@ void render_game(Gamestate gs) {
     Coords projectileCoords = gs->projectile->entity->coords;
 
     // TEST
-    wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_BG));
-    for (int i = 0; i < g_gamestate->path_cell_count; i++) {
-        mvwaddch(g_renderstate->wnd, g_gamestate->path_cells[i]->y, g_gamestate->path_cells[i]->x, '&');
-    }
-    wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_BG));
+    // wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_BG));
+    // for (int i = 0; i < g_gamestate->path_cell_count; i++) {
+    //     mvwaddch(g_renderstate->wnd, g_gamestate->path_cells[i]->y, g_gamestate->path_cells[i]->x, '&');
+    // }
+    // wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_BG));
 
-    attron(COLOR_PAIR(GREEN_BG));
-    mvwaddch(g_renderstate->wnd, g_gamestate->pointA->y, g_gamestate->pointA->x, '#');
-    attroff(COLOR_PAIR(GREEN_BG));
+    // attron(COLOR_PAIR(GREEN_BG));
+    // mvwaddch(g_renderstate->wnd, g_gamestate->pointA->y, g_gamestate->pointA->x, '#');
+    // attroff(COLOR_PAIR(GREEN_BG));
 
-    attron(COLOR_PAIR(RED_BG));
-    mvwaddch(g_renderstate->wnd, g_gamestate->pointB->y, g_gamestate->pointB->x, '#');
-    attroff(COLOR_PAIR(RED_BG));
+    // attron(COLOR_PAIR(RED_BG));
+    // mvwaddch(g_renderstate->wnd, g_gamestate->pointB->y, g_gamestate->pointB->x, '#');
+    // attroff(COLOR_PAIR(RED_BG));
 
     move(g_renderstate->nrows - 1, 0);
 	wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
-	printw("(%d, %d) %d %d | (%d, %d) (%d, %d) | %d", 
+	// printw("(%d, %d) %d %d | (%d, %d) (%d, %d) | %d | %d", 
+    printw("(%d, %d) %d %d | %d", 
         playerCoords->x, 
         playerCoords->y,
         projectileCoords->x,
         projectileCoords->x, 
         g_renderstate->ncols, 
         g_renderstate->nrows,
-        g_gamestate->pointA->x, g_gamestate->pointA->y,
-        g_gamestate->pointB->x, g_gamestate->pointB->y,
-        g_gamestate->path_cell_count
+        // g_gamestate->pointA->x, g_gamestate->pointA->y,
+        // g_gamestate->pointB->x, g_gamestate->pointB->y,
+        // g_gamestate->path_cell_count,
+        // g_gamestate->last_res
+        gs->mob_count
     );
 	wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 
@@ -200,6 +213,19 @@ void render_game(Gamestate gs) {
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
 	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
+
+    wattron(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
+    for (int i = 0; i < gs->mob_count; i++) {
+        mvwaddch(
+            g_renderstate->wnd, 
+            gs->mobs[i]->entity->coords->y, 
+            gs->mobs[i]->entity->coords->x, 
+            '$' | COLOR_PAIR(ORANGE_LOGO)
+        );
+    }
+    wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
+
+    print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
 
 	// wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x - 1, '.' | A_BOLD);
@@ -217,6 +243,7 @@ void render_game(Gamestate gs) {
 }
 
 void render_menu(Gamestate gs) {
+    IGNORE_ARG(gs);
     for (int i = 0; i < g_renderstate->activeMenus; i++) {
         drawMenu(g_renderstate->menus[i]);
     }

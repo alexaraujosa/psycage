@@ -11,33 +11,39 @@
 
 #include <ncurses.h>
 #include "common.h"
-#include "../entity/player/player.h"
-#include "../entity/projectile/projectile.h"
+#include "util/filesystem.h"
+#include "gameloop_common.h"
+// #include "../entity/player/player.h"
+// #include "../entity/ai/ai.h"
 #include "../render/render.h"
 #include "../map/map.h"
+#include "../map/light.h"
 
 // Import paths from main
 extern char* BIN_PATH;
+extern int BIN_PATH_LEN;
 extern char ASSET_DIR[PATH_MAX];
+extern FILE* dbgOut;
 
-typedef struct gamestate {
-    Player player;         // Player structure
-    Projectile projectile;
-    int input_initialized; // Block user input
-    int clock;             // General tick clock
-    int block_clock;       // Stop clock execution
-    Coords pointA;
-    Coords pointB;
-    int recalculate;
-    int path_cell_count;
-    Coords* path_cells;
-} GAMESTATE, *Gamestate;
+// typedef struct gamestate {
+//     Player player;         // Player structure
+//     Projectile projectile;
+//     int input_initialized; // Block user input
+//     int clock;             // General tick clock
+//     int block_clock;       // Stop clock execution
+//     Coords pointA;
+//     Coords pointB;
+//     int recalculate;
+//     int path_cell_count;
+//     Coords* path_cells;
+// } GAMESTATE, *Gamestate;
 
 extern Gamestate g_gamestate;
+extern int find_map;
+
 extern char* g_dialog_text;
 extern char**** g_dialog_page_data;
 extern int g_dialog_control[3];
-extern int find_map;
 
 /* FUNCTION SIGNATURES */
 Gamestate init_gameloop();

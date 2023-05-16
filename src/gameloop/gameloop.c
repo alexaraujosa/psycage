@@ -1,30 +1,80 @@
 #include <stdio.h>
+#include <time.h>
+#include <unistd.h>
 #include "gameloop.h"
 
 Gamestate g_gamestate;
+int** map_footprint;
 int find_map;
 
+#define TICK_DURATION_MS 100
+clock_t tickStart, tickEnd;
+float tickDuration, taskDuration;
+
 Gamestate init_gameloop() {
+    debug_file(dbgOut, " - Allocating gameloop memory...\n");
+
 	Gamestate gs = (Gamestate)malloc(sizeof(GAMESTATE));
+
+    debug_file(dbgOut, " - Initializing player...\n");
 	Player player = defaultPlayer();
-	Projectile projectile = defaultProjectile();
 	gs->player = player;
+
+    debug_file(dbgOut, " - Initializing projectile...\n");
+	Projectile projectile = defaultProjectile();
 	gs->projectile = projectile;
 
+    debug_file(dbgOut, " - Initializing clock-related variables...\n");
 	gs->input_initialized = 0;
-
 	gs->clock = 0;
 	gs->block_clock = 1;
 
-	gs->pointA = defaultCoords();
-	gs->pointB = defaultCoords();
-	gs->recalculate = 0;
-	gs->path_cell_count = 0;
-	gs->path_cells = NULL;
+	// gs->pointA = defaultCoords();
+	// gs->pointB = defaultCoords();
+	// gs->recalculate = 0;
+	// gs->path_cell_count = 0;
+	// gs->path_cells = NULL;
 
-	g_gamestate = gs;
-
+    debug_file(dbgOut, " - Generating initial map...\n");
 	find_map = create_random_map(g_renderstate->nrows, g_renderstate->ncols); // map
+
+    debug_file(dbgOut, " -- Generating light map...\n");
+	init_light_map(g_renderstate->nrows, g_renderstate->ncols);
+
+
+    debug_file(dbgOut, " - Generating map footprint...\n");
+	map_footprint = (int **)malloc(g_renderstate->nrows * sizeof(int *));
+    for (int i = 0; i < g_renderstate->nrows; i++) {
+        map_footprint[i] = (int *)malloc(g_renderstate->ncols * sizeof(int));
+    }
+
+	for (int i = 0; i < g_renderstate->nrows; i++) {
+		for (int j = 0; j < g_renderstate->ncols; j++) {
+			map_footprint[i][j] = map[i][j];
+		}
+	}
+
+	// gs->pointB = mob->entity->coords;
+
+    debug_file(dbgOut, " - Generating mobs...\n");
+	int mob_count = 3;
+	Mob* mobs = (Mob*)malloc(sizeof(Mob) * mob_count);
+
+	for (int i = 0; i < mob_count; i++) {
+		Mob mob = defaultMob();
+
+		addMobToMap(mob, map, g_renderstate->ncols, g_renderstate->nrows);
+
+		mobs[i] = mob;
+		map[mob->entity->coords->y][mob->entity->coords->x] = 5;
+	}
+
+	gs->mobs = mobs;
+	gs->mob_count = mob_count;
+
+	gs->last_res = -1;
+
+	gs->paused = FALSE;
 
 	//escolhe um dos 3s
 	// create_dungeon();
@@ -32,65 +82,71 @@ Gamestate init_gameloop() {
     // create_sewers();
 	// create_ai_test_map();
 	
+	g_gamestate = gs;
+
 	return gs;
 }
 
 void tick() {
+	tickStart = clock();
+
 	if (!g_gamestate->block_clock) g_gamestate->clock++;
 
-	if (g_gamestate->recalculate) {
-		int obstacles[2] = { 1, 3 };
-		As_Node path = pathfind(
-			g_renderstate->nrows, 
-			g_renderstate->ncols, 
-			map, 
-			g_gamestate->pointA, 
-			g_gamestate->pointB, 
-			obstacles,
-			2
-		);
-
-		g_gamestate->path_cell_count = pf_get_path_cell_count(path);
-    	g_gamestate->path_cells = pf_reconstruct_path(path, g_gamestate->path_cell_count);
-		__asm__("nop");
-
-		g_gamestate->recalculate = 0;
-	}
-
 	handle_keybinds();
+	flushinp();
 
 	if (isInMenu()) {
 		Menu active_menu = getActiveMenu();
-		if (active_menu == NULL) return;
+		if (active_menu == NULL) goto tick_end;
 
 		tick_menu(active_menu);
 	} else {
+		for (int i = 0; i < g_gamestate->mob_count; i++) {
+			attemptMoveMob(
+				g_gamestate->player->entity->coords, 
+				g_gamestate->mobs[i],
+				map, 
+				g_renderstate->ncols,
+				g_renderstate->nrows
+			);
+		}
+
 		// RTX_ON
-		calculate_visibility(g_gamestate->player->entity->coords->x,g_gamestate->player->entity->coords->y, map, g_renderstate->nrows, g_renderstate->ncols); 
+		calculate_visibility(
+			g_gamestate->player->entity->coords->x, 
+			g_gamestate->player->entity->coords->y, 
+			map, 
+			g_renderstate->nrows, 
+			g_renderstate->ncols
+		); 
+	}
+
+	tick_end: {
+		taskDuration = ((float)(clock() - tickStart)) / CLOCKS_PER_SEC * 1000;
+
+		tickDuration = TICK_DURATION_MS - taskDuration;
+		if (tickDuration > 0) {
+            // Delay for the remaining time
+            usleep((useconds_t)(tickDuration * 1000));
+
+			// flushinp();
+        }
+
+		tickEnd = clock();
+
+		// IF DEBUG NEEDED
+		float actualTickDuration = ((float)(tickEnd - tickStart)) / CLOCKS_PER_SEC * 1000;
+		// debug_file(dbgOut, "Tick duration: %.2f ms\n", actualTickDuration);
+
+		if (tickDuration > TICK_DURATION_MS) 
+			debug_file(dbgOut, "Tick took too long (%.2f / %d ms). Skipping.\n", actualTickDuration, TICK_DURATION_MS);
 	}
 }
 
 void handle_keybinds() {
 	int key = getch();
 
-	// switch(key) {
-	// 	case 'z':
-	// 	case 'Z':
-	// 		randomize_atm_points();
-	// 		break;
-	// 	case 'q':
-	// 	case 'Q':
-	// 		endwin();
-	// 		exit(0);
-	// 		break;
-    //     // default:
-	// 	// 	// endwin();
-	// 	// 	// printf("B\n");
-    //     //     // exit(1);
-    //         break;
-    // }
-
-	// return;
+	if (key == ERR) return;
 
 	// Fix initial duplicate keys
 	if (!g_gamestate->input_initialized) {
@@ -107,24 +163,31 @@ void handle_keybinds() {
 }
 
 void game_keybinds(int key) {
-	mvaddch(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, ' ');
+	// mvaddch(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, ' ');
 
 	godmode_code_checker(key);
 
 	switch(key) {
-		case '1': {
-			g_gamestate->pointA->x = g_gamestate->player->entity->coords->x;
-			g_gamestate->pointA->y = g_gamestate->player->entity->coords->y;
+		// case '1': {
+		// 	g_gamestate->pointA->x = g_gamestate->player->entity->coords->x;
+		// 	g_gamestate->pointA->y = g_gamestate->player->entity->coords->y;
 
-			break;
-		}
-		case '2': {
-			g_gamestate->pointB->x = g_gamestate->player->entity->coords->x;
-			g_gamestate->pointB->y = g_gamestate->player->entity->coords->y;
-			break;
-		}
+		// 	break;
+		// }
+		// case '2': {
+		// 	g_gamestate->pointB->x = g_gamestate->player->entity->coords->x;
+		// 	g_gamestate->pointB->y = g_gamestate->player->entity->coords->y;
+		// 	break;
+		// }
 		case '3': {
-			g_gamestate->recalculate = TRUE;
+			// g_gamestate->recalculate = TRUE;
+			g_gamestate->last_res = attemptMoveMob(
+				g_gamestate->player->entity->coords, 
+				g_gamestate->mobs[0],
+				map, 
+				g_renderstate->ncols,
+				g_renderstate->nrows
+			);
 			break;
 		}
 
@@ -172,6 +235,22 @@ void game_keybinds(int key) {
 		case '5': 
 			displayMenu(MENU_MAIN_MENU);
 			break;
+		case 'a':
+		case 'A': {
+			g_dialog_text = "A\nB\nLorem ipsum dolore sit amet. Some random fuckery here.\0";
+			g_ui_size[0] = 5;
+			g_ui_size[1] = 29;
+			g_dialog_control[0] = 29;
+			g_dialog_control[1] = 1;
+
+			char**** _page_data = malloc(sizeof(char****));
+			int page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
+
+			g_dialog_control[2] = page_count;
+			g_dialog_page_data = _page_data;
+			displayMenu(MENU_DIALOG);
+			break;
+		}
 
 		// Seppuku
 		case 'q': 

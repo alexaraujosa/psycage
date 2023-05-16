@@ -11,13 +11,14 @@
 #include <ncurses.h>
 #include <panel.h>
 #include "common.h"
+#include "debug.h"
 #include "UI/menus/menulist.h"
 #include "UI/ui.h"
 #include "../gameloop/gameloop.h"
 #include "../map/map_render.h"
 #include "../src/data/locale.h"
-#include "common.h"
 
+extern FILE* dbgOut;
 typedef struct gamestate GAMESTATE, *Gamestate;
 
 #define MENU_STACK_MAX 5

@@ -12,6 +12,7 @@ char* BIN_PATH;
 int BIN_PATH_LEN;
 char ASSET_DIR[PATH_MAX];
 int ASSET_DIR_LEN = PATH_MAX;
+FILE* dbgOut;
 
 int main() {
     // Setup Paths
@@ -22,19 +23,57 @@ int main() {
     }
 
     BIN_PATH = dirname(BIN_PATH_TMP);
-    BIN_PATH_LEN = strlen_cp(BIN_PATH);
+    BIN_PATH_LEN = strlen(BIN_PATH);
 
     strncpy(ASSET_DIR, BIN_PATH, BIN_PATH_LEN);
     strcat(ASSET_DIR, "/assets");
+
+    // Setup Debug Log File
+	char dbgout_path[PATH_MAX];
+    snprintf(dbgout_path, sizeof(dbgout_path), "%.*s/logs/dbg-", BIN_PATH_LEN, BIN_PATH);
+
+	time_t now = time(NULL);
+    struct tm* tmInfo = localtime(&now);
+    size_t dateFormatSize = 20;
+    size_t new_dbgout_len = BIN_PATH_LEN + sizeof("/logs/dbg-") - 1 + dateFormatSize;
+
+    char* new_dbgout_path = malloc(new_dbgout_len);
+    if (new_dbgout_path == NULL) {
+        fprintf(stderr, "Unable to initialize game: Failed to generate log path.\n");
+        return 1;
+    }
+    strcpy(new_dbgout_path, dbgout_path);
+    strftime(new_dbgout_path + new_dbgout_len - dateFormatSize, dateFormatSize, "%Y-%m-%dT%H:%M:%S", tmInfo);
+    strcat(new_dbgout_path, ".log");
+
+	if (createParentFolder(new_dbgout_path) != 0) {
+        printf("Unable to initialize game: Unable to create log folder.\n");
+        exit(1);
+    }
+
+    dbgOut = fopen(new_dbgout_path, "w");
+
+    debug_file(dbgOut, "Logger initialized.\n");
     
+    // Initialize random
     srandom(time(NULL));
 
+    // Initialize renderer
+    debug_file(dbgOut, "Initializing renderer...\n");
     Renderstate rs = init_render();
+    debug_file(dbgOut, "Renderer initialized successfully.\n");
+
+    // Initialize gameloop
+    debug_file(dbgOut, "Initializing gameloop...\n");
     Gamestate gs = init_gameloop();
+
+    debug_file(dbgOut, "Gameloop initialized succesfully.\n");
     
     gs->player->entity->coords->x = rs->ncols / 2;
     gs->player->entity->coords->y = rs->nrows / 2;
 
+    // Event Loop
+    debug_file(dbgOut, "Event loop started.\n");
     while (1) {
         tick();
         render(gs);

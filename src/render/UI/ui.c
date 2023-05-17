@@ -78,6 +78,15 @@ void drawMenu(Menu menu) {
             draw_CharactersMenu(menu);
             break;
         }
+        case MENU_CHARACTERS_INFO: {
+            WINDOW* win = newwin(yMAX/3, xMAX/2, yMAX/3 + ESPACAMENTO_CHARACTERS + BOTOES_CHARACTERS*2 + 2, xMAX/4);
+            PANEL * panel = new_panel(win);
+            menu->wnd = win;
+            menu->panel = panel;
+
+            draw_CharactersInfo(menu);
+            break;
+        }
         case MENU_SAVE: {
             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
             PANEL * panel = new_panel(win);
@@ -128,6 +137,10 @@ void tick_menu(Menu menu) {
             tick_CharactersMenu();
             break;
         }
+        case MENU_CHARACTERS_INFO: {
+            tick_CharactersMenu();
+            break;
+        }
         case MENU_SAVE: {
             tick_SaveMenu();
             break;
@@ -162,6 +175,10 @@ void handle_menu_keybinds(Menu menu, int key) {
             break;
         }
         case MENU_CHARACTERS: {
+            handle_CharactersMenu_keybinds(key);
+            break;
+        }
+        case MENU_CHARACTERS_INFO: {
             handle_CharactersMenu_keybinds(key);
             break;
         }
@@ -216,7 +233,7 @@ void drawGameInterface() {
     for(int i = ESTATISTICAS/2, j = 0 ; i < ESTATISTICAS ; i++, j++)
         mvwprintw(g_renderstate->wnd,
                   ALTURA_LOGO/3 + j,
-                  LARGURA_RETANGULO*0.6,
+                  LARGURA_RETANGULO*0.5,
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
 
@@ -234,7 +251,7 @@ void drawGameInterface() {
     mvwprintw(g_renderstate->wnd, 
               ALTURA_LOGO/3,    
               LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.class")),
-              "%s" , getClassInterface(g_gamestate->player->class)
+              "%s  " , getClassInterface(g_gamestate->player->class)
             );
 
     //Print do Level
@@ -257,7 +274,7 @@ void drawGameInterface() {
     //Print da Armor
     mvwprintw(g_renderstate->wnd, 
             ALTURA_LOGO/3,    
-            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.armor")),
+            LARGURA_RETANGULO*0.5 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.armor")),
             "%d", g_gamestate->player->entity->armor
         );
 
@@ -266,7 +283,7 @@ void drawGameInterface() {
 
         mvwprintw(g_renderstate->wnd,
                 ALTURA_LOGO/3 + 1, 
-                LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
+                LARGURA_RETANGULO*0.5 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
                 "%d/%d     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
                 );
 
@@ -274,7 +291,7 @@ void drawGameInterface() {
 
         mvwprintw(g_renderstate->wnd,
                 ALTURA_LOGO/3 + 1, 
-                LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
+                LARGURA_RETANGULO*0.5 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
                 "%s", get_localized_string(g_renderstate->language, "user.interface.stats.god")
                 );
 
@@ -283,12 +300,37 @@ void drawGameInterface() {
     //Print do XP
     mvwprintw(g_renderstate->wnd, 
             ALTURA_LOGO/3 + 2,    
-            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.xp")),
+            LARGURA_RETANGULO*0.5 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.xp")),
             "%d", g_gamestate->player->xp
         );
 
-    mvwprintw(g_renderstate->wnd, ALTURA_LOGO/3, LARGURA_RETANGULO+LARGURA_LOGO + 4, "Priest got hitted by Andrew Tate and lost 5 HP.");
-    mvwprintw(g_renderstate->wnd, ALTURA_LOGO/3+1, LARGURA_RETANGULO+LARGURA_LOGO + 4, "Mercenary got hitted by Andrew Tate and lost 5 HP.");
-    mvwprintw(g_renderstate->wnd, ALTURA_LOGO/3+2, LARGURA_RETANGULO+LARGURA_LOGO + 4, "Detective picked a knife and earned a dick.");
+
+
+// CONSOLA
+
+    //Print das mensagens da Consola
+    for(int i = 0 ; i < MAX_MESSAGES ; i++) 
+        mvwprintw(g_renderstate->wnd, i + 1, g_renderstate->ncols/2 + LARGURA_LOGO*0.55, "aa", g_gamestate->messages[i]);
+
     return;
+}
+
+void addConsoleMessage(int value, char* key) {
+
+    /*
+    O que vai aparecer:
+    (XP) - Quando um player ganha XP(e.g. mata um mob) vai aparecer que recebeu X xp
+    (HP) - Quando um player ataca um MOB, mostra quanto HP tirou e, quando um player é atacado, quanto de HP perdeu
+    (ITEM) - Quando um player abre um Chest vai aparecer que trocou de ITEM (e.g. You got a Sword) [o Sword seria o ITEM]
+    */
+
+    for(int i = MAX_MESSAGES - 1 ; i > 0 ; i--)
+        strcpy(g_gamestate->messages[i], g_gamestate->messages[i-1]);
+
+    char mensagem[MAX_MESSAGES_LENGTH];
+    strcpy(mensagem, get_localized_string(g_renderstate->language, key));
+
+    sprintf(mensagem, mensagem, value);
+    strcpy(g_gamestate->messages[0], mensagem);
+
 }

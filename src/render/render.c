@@ -1,5 +1,9 @@
 #include "render.h"
 
+#define OFFSET_X 1
+#define OFFSET_Y ALTURA_LOGO + 1
+
+
 Renderstate g_renderstate;
 
 Renderstate init_render() {
@@ -23,7 +27,7 @@ Renderstate init_render() {
     getmaxyx(wnd,nrows,ncols);
     rs->nrows = nrows;
     rs->ncols = ncols;
-    rs->language = en_US;
+    rs->language = //en_US;
 
 	cbreak();
 	noecho();
@@ -94,9 +98,10 @@ Renderstate init_render() {
 
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
-    print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, ALTURA_LOGO + 1, 1); // map
+    if(isInMenu() == 0)
+        print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, OFFSET_Y, OFFSET_X); // map
     render_game(gs);
-    // print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, ALTURA_LOGO + 1, 1); // RTX_ON
+    // print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, OFFSET_Y, OFFSET_X); // RTX_ON
     render_menu(gs);
     doupdate();
     // refresh();
@@ -208,8 +213,8 @@ void render_game(Gamestate gs) {
      }else {	
         wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     }
-	mvwaddch(g_renderstate->wnd, playerCoords->y + ALTURA_LOGO + 1, playerCoords->x + 1, '@');
-    mvwaddch(g_renderstate->wnd, projectileCoords->y, projectileCoords->x, 'T' | COLOR_PAIR(WHITE_PLAYER));
+	mvwaddch(g_renderstate->wnd, playerCoords->y + OFFSET_Y, playerCoords->x + OFFSET_X, '@');
+    mvwaddch(g_renderstate->wnd, projectileCoords->y + OFFSET_Y, projectileCoords->x + OFFSET_X, 'T' | COLOR_PAIR(WHITE_PLAYER));
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
 	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
@@ -218,8 +223,8 @@ void render_game(Gamestate gs) {
     for (int i = 0; i < gs->mob_count; i++) {
         mvwaddch(
             g_renderstate->wnd, 
-            gs->mobs[i]->entity->coords->y + ALTURA_LOGO + 1, 
-            gs->mobs[i]->entity->coords->x + 1, 
+            gs->mobs[i]->entity->coords->y + OFFSET_Y, 
+            gs->mobs[i]->entity->coords->x + OFFSET_X, 
             '$' | COLOR_PAIR(ORANGE_LOGO)
         );
     }

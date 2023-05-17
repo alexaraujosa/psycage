@@ -11,6 +11,7 @@ typedef enum {
     MENU_PAUSE,
     MENU_DEAD,
     MENU_CHARACTERS,
+    MENU_CHARACTERS_INFO,
     MENU_SAVE,
     MENU_SAVE_SLOT
 } MenuId;

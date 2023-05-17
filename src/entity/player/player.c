@@ -113,3 +113,92 @@ void verifyPlayerRadius() {
 
     return;
 }
+
+void player_spawn(Player player, int **map, int HEIGHT, int WIDTH) {
+
+    // Spawn player in the closest position on the left
+    int left_closest_x = 1000;
+    int left_multi_closest_y[20] = {0};
+    int left_i = 0;
+    
+    for (int y = 0; y < HEIGHT-1; y++){
+        
+        for (int x = 0; x < WIDTH; x++){
+            
+            if (map[y][x] == 0){
+                
+                if(left_closest_x == x && left_i < 20){
+                    
+                    left_multi_closest_y[left_i++] = y;
+                }
+                if (left_closest_x > x){
+
+                    left_closest_x = x;
+                    
+                    for (int j = 0; j < left_i; j++){
+                        left_multi_closest_y[j] = 0;
+                    }
+                    
+                    left_multi_closest_y[0] = y;
+                    left_i = 1;
+                }
+
+                break;
+            }
+        }
+    }
+
+    // Spawn player in the closest position on the right
+    int right_closest_x = 0;
+    int right_multi_closest_y[20] = {0};
+    int right_i = 0;
+    
+    for (int y = 0; y < HEIGHT-1; y++){
+        
+        for (int x = WIDTH-1; x >= 0 ; x--){
+            
+            if (map[y][x] == 0){
+                
+                if(right_closest_x == x && right_i < 20){
+                    
+                    right_multi_closest_y[right_i++] = y;
+                }
+                if (right_closest_x < x){
+
+                    right_closest_x = x;
+                    
+                    for (int j = 0; j < right_i; j++){
+                        
+                        right_multi_closest_y[j] = 0;
+                    }
+                    
+                    right_multi_closest_y[0] = y;
+                    right_i = 1;
+                }
+
+                break;
+            }
+        }
+    }
+
+    // Chooses the closest spawn location to a border (right or left)
+    int distance_right = right_closest_x; 
+    int distance_left = WIDTH - left_closest_x;
+
+    if (distance_right > distance_left){
+
+        int right_random_index = rand() % right_i;
+        int closest_y = right_multi_closest_y[right_random_index];    
+        
+        player->entity->coords->x = right_closest_x;
+        player->entity->coords->y = closest_y;  
+    }
+    else{
+
+        int left_random_index = rand() % left_i;
+        int closest_y = left_multi_closest_y[left_random_index];
+
+        player->entity->coords->x = left_closest_x;
+        player->entity->coords->y = closest_y;
+    }
+}

@@ -69,8 +69,7 @@ int main() {
 
     debug_file(dbgOut, "Gameloop initialized succesfully.\n");
     
-    gs->player->entity->coords->x = rs->ncols / 2;
-    gs->player->entity->coords->y = rs->nrows / 2;
+    player_spawn(gs->player, map, g_renderstate->nrows, g_renderstate->ncols-2); // spawn
 
     // Event Loop
     debug_file(dbgOut, "Event loop started.\n");

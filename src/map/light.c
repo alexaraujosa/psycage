@@ -165,9 +165,9 @@ void calculate_visibility(int x, int y, int **map, int HEIGHT, int WIDTH){
 
 void print_light(WINDOW* win, int HEIGHT, int WIDTH, int beginY, int beginX){
     
-    for (int y = 0; y < HEIGHT; y++) {
+    for (int y = 0; y < HEIGHT- beginY-1; y++) {
         
-        for (int x = 0; x < WIDTH; x++) {
+        for (int x = 0; x < WIDTH-1; x++) {
             
             if(visible[y][x] == 0){
                 
@@ -179,7 +179,7 @@ void print_light(WINDOW* win, int HEIGHT, int WIDTH, int beginY, int beginX){
             }
         }
         
-        wprintw(win, "\n");
+        wprintw(win, "%c");
     }
 
     wrefresh(win);

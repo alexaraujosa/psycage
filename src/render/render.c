@@ -27,7 +27,7 @@ Renderstate init_render() {
     getmaxyx(wnd,nrows,ncols);
     rs->nrows = nrows;
     rs->ncols = ncols;
-    rs->language = //en_US;
+    rs->language = en_US;
 
 	cbreak();
 	noecho();

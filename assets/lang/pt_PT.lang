@@ -34,4 +34,5 @@ user.interface.stats.kills=KILLS
 user.interface.stats.priest=Padre
 user.interface.stats.detective=Detetive
 user.interface.stats.mercenary=Mercenario
+user.interface.stats.monsters=Monstros Vivos:
 user.interface.console.lost.hp=Perdeste %d HP.

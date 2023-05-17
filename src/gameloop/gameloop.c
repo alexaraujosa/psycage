@@ -48,11 +48,11 @@ Gamestate init_gameloop() {
     debug_file(dbgOut, " - Generating map footprint...\n");
 	map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));
     for (int i = 0; i < ALTURA_JOGO; i++) {
-        map_footprint[i] = (int *)malloc(g_renderstate->ncols * sizeof(int));
+        map_footprint[i] = (int *)malloc((LARGURA_JOGO) * sizeof(int));
     }
 
 	for (int i = 0; i < ALTURA_JOGO; i++) {
-		for (int j = 0; j < g_renderstate->ncols; j++) {
+		for (int j = 0; j < (LARGURA_JOGO); j++) {
 			map_footprint[i][j] = map[i][j];
 		}
 	}
@@ -66,7 +66,7 @@ Gamestate init_gameloop() {
 	for (int i = 0; i < mob_count; i++) {
 		Mob mob = defaultMob();
 
-		addMobToMap(mob, map, g_renderstate->ncols, ALTURA_JOGO);
+		addMobToMap(mob, map, LARGURA_JOGO, ALTURA_JOGO);
 
 		mobs[i] = mob;
 		map[mob->entity->coords->y][mob->entity->coords->x] = 5;
@@ -111,8 +111,10 @@ void tick() {
 				g_gamestate->player->entity->coords, 
 				g_gamestate->mobs[i],
 				map, 
-				g_renderstate->ncols,
-				g_renderstate->nrows
+				//g_renderstate->ncols,
+				//g_renderstate->nrows
+				LARGURA_JOGO,
+				ALTURA_JOGO
 			);
 		}
 
@@ -215,23 +217,23 @@ void game_keybinds(int key) {
 			break;
 		case 'r':
 		    if (g_gamestate->player->last_direction == 0) {
-				g_gamestate->projectile->entity->coords->x == g_gamestate->player->entity->coords->x;
-			g_gamestate->projectile->entity->coords->y == g_gamestate->player->entity->coords->y;
+				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
+				g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
                 move_projectile(0, -1); 
 			}
 			if (g_gamestate->player->last_direction == 1) {
-				g_gamestate->projectile->entity->coords->x == g_gamestate->player->entity->coords->x;
-			g_gamestate->projectile->entity->coords->y == g_gamestate->player->entity->coords->y;
+				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
+				g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
 				move_projectile(0, 1); 
 			}
 			if (g_gamestate->player->last_direction == 2) {
-				g_gamestate->projectile->entity->coords->x == g_gamestate->player->entity->coords->x;
-			g_gamestate->projectile->entity->coords->y == g_gamestate->player->entity->coords->y;
+				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
+				g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
 				move_projectile(-1, 0); 
 			}
 			if (g_gamestate->player->last_direction == 3) {
-				g_gamestate->projectile->entity->coords->x == g_gamestate->player->entity->coords->x;
-			g_gamestate->projectile->entity->coords->y == g_gamestate->player->entity->coords->y;
+				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
+				g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
 				move_projectile(1, 0); 
 			}
 			break;
@@ -240,22 +242,22 @@ void game_keybinds(int key) {
 		case '5': 
 			displayMenu(MENU_MAIN_MENU);
 			break;
-		case 'a':
-		case 'A': {
-			g_dialog_text = "A\nB\nLorem ipsum dolore sit amet. Some random fuckery here.\0";
-			g_ui_size[0] = 5;
-			g_ui_size[1] = 29;
-			g_dialog_control[0] = 29;
-			g_dialog_control[1] = 1;
+		// case 'a':
+		// case 'A': {
+		// 	g_dialog_text = "A\nB\nLorem ipsum dolore sit amet. Some random fuckery here.\0";
+		// 	g_ui_size[0] = 5;
+		// 	g_ui_size[1] = 29;
+		// 	g_dialog_control[0] = 29;
+		// 	g_dialog_control[1] = 1;
 
-			char**** _page_data = malloc(sizeof(char****));
-			int page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
+		// 	char**** _page_data = malloc(sizeof(char****));
+		// 	int page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
 
-			g_dialog_control[2] = page_count;
-			g_dialog_page_data = _page_data;
-			displayMenu(MENU_DIALOG);
-			break;
-		}
+		// 	g_dialog_control[2] = page_count;
+		// 	g_dialog_page_data = _page_data;
+		// 	displayMenu(MENU_DIALOG);
+		// 	break;
+		// }
 
 		// Seppuku
 		case 'q': 

@@ -15,6 +15,12 @@ Mob defaultMob() {
     return mob;
 }
 
+void destroyMob(Mob mob) {
+    destroyEntity(mob->entity);
+
+    free(mob);
+}
+
 int trackPlayer(Coords playerCoords, Mob mob, int** map, int width, int height) {
     map[mob->entity->coords->y][mob->entity->coords->x] = map_footprint[mob->entity->coords->y][mob->entity->coords->x];
 

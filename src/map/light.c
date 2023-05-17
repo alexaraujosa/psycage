@@ -55,7 +55,6 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             }
             
             int current_x, current_y;
-            
 
             // Calculate the current x and y coordinates based on the octant being checked and the current dx and dy values
             switch (octant) {
@@ -91,6 +90,9 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
                     current_x = x - 2*dx;
                     current_y = y - dy;
                     break;
+                default:
+                    current_x = 0;
+                    current_y = 0;
             }
             
             // If the current coordinates are outside the bounds of the map, skip this cell and move to the next one

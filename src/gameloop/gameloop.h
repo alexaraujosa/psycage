@@ -18,6 +18,11 @@
 #include "../render/render.h"
 #include "../map/map.h"
 #include "../map/light.h"
+#include "../entity/cheats/cheats.h"
+
+#ifndef useconds_t
+typedef unsigned int useconds_t;
+#endif
 
 // Import paths from main
 extern char* BIN_PATH;

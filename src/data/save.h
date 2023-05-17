@@ -10,7 +10,7 @@
 
 int verify_Save(int num_save);
 int delete_Save(int num_save);
-void create_Save(int num_save);
+int create_Save(int num_save);
 
 
 #endif

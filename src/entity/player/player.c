@@ -35,7 +35,8 @@ void levelUp(Player player, Entity entity) {
             player->xp = 0;
             player->entity->basedamage += 1;
             player->entity->maxHealth += 4;
-            player->entity->health == player->entity->maxHealth;
+            player->entity->health = player->entity->maxHealth;
+
             if (player->level <= 25) {
                 entity->maxHealth += 8;
                 entity->basedamage += 4;
@@ -66,7 +67,7 @@ void destroyPlayer(Player player) {
     return;
 }
 
-void getLastDirection(Player player) {  //gpt diz que é int
+int getLastDirection(Player player) {  //gpt diz que é int
     return player->last_direction;
 }
 

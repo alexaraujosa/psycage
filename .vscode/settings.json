@@ -40,7 +40,9 @@
         "pathfind_js.h": "c",
         "optionsmenu.h": "c",
         "gameloop_common.h": "c",
-        "light.h": "c"
+        "light.h": "c",
+        "time.h": "c",
+        "unistd.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

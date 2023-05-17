@@ -4,8 +4,9 @@
 // External Constants
 extern char ASSET_DIR[PATH_MAX];
 extern int ASSET_DIR_LEN;
+extern FILE* dbgOut;
 
-typedef struct dlocale_id {
+struct dlocale_id {
     DataLocale id;
     char* location;
 };
@@ -58,7 +59,7 @@ void load_locales() {
 
         file = fopen(locale_path, "r");
         if (file == NULL) {
-            debug("Missing language file: %s", locale_path);
+            debug_file(dbgOut, "Cannot load locales: Missing language file: %s", locale_path);
             exit(1);
         }
 
@@ -77,23 +78,35 @@ void load_locales() {
             if (lineCount == 1) {
                 int version = -1;
                 if (!sscanf(line, "#version=%d", &version)) {
-                    debug("Invalid version.\n");
+                    debug_file(dbgOut, "Cannot load locales: Invalid version on locale %s.\n", locale->id);
                     exit(1);
                 }
 
                 if (version != LOCALE_VERSION) {
-                    debug("Version not supported.\n");
+                    debug_file(dbgOut, "Cannot load locales: Version not supported on locale %s.\n", locale->id);
                     exit(1);
                 }
             } else {
                 DataLocaleLine localeLine = parse_locale_line(line, read - 1);
                 if (localeLine == NULL) {
-                    debug("Invalid translation at line %d.\n", lineCount);
+                    debug_file(
+                        dbgOut, 
+                        "Cannot load locales: Invalid translation at line %d on locale %s.\n", 
+                        lineCount, 
+                        locale->id
+                    );
                     exit(1);
                 }
 
                 if (hm_has(locale->translations, localeLine->key)) {
-                    debug("Unable to add translation '%s' (at line %d): Translation with same key already registered.\n", localeLine->key, lineCount);
+                    debug_file(
+                        dbgOut, 
+                        "Cannot load locales: Unable to add translation '%s' (at line %d): "
+                        "Translation with same key already registered on locale %s.\n", 
+                        localeLine->key, 
+                        lineCount,
+                        locale->id
+                    );
                     exit(1);
                 }
 
@@ -111,6 +124,8 @@ void load_locales() {
 }
 
 DataLocaleLine parse_locale_line(char* raw, int len) {
+    IGNORE_ARG(len);
+
     DataLocaleLine line = defaultLocaleLine();
 
     char key[MAX_LOCALE_KEY_LEN];

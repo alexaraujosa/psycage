@@ -10,7 +10,8 @@
 #include "menus/charactersmenu.h"
 #include "menus/savemenu.h"
 
-#define LARGURA_RETANGULO 52
+//#define LARGURA_RETANGULO 52
+#define LARGURA_RETANGULO g_renderstate->ncols/3
 #define ESTATISTICAS 6
 
 int g_ui_size[2] = { 0 };

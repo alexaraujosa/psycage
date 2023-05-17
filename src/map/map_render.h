@@ -5,4 +5,6 @@
 #include "map.h"
 #include "../render/render.h"
 
+void print_random_map(int HEIGHT, int WIDTH, int n, int beginY, int beginX);
+
 #endif

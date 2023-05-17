@@ -41,5 +41,7 @@ void print_sewers(int HEIGHT, int WIDTH, int beginY, int beginX);
 void print_asylum(int HEIGHT, int WIDTH, int beginY, int beginX);
 void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX);
 
+int create_random_map(int HEIGHT, int WIDTH, int beginY, int beginX);
+
 
 #endif

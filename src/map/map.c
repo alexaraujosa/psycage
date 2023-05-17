@@ -214,82 +214,6 @@ void init_maze(int HEIGHT, int WIDTH){
     }
 }
 
-Room* create_room_sewers(int x, int y, int width, int height) {
-    
-    Room* room = (Room*)malloc(sizeof(Room));
-    
-    if (room == NULL) {
-        // Error: couldn't allocate memory
-        return NULL;
-    }
-    
-    room->x = x;
-    room->y = y;
-    room->width = width;
-    room->height = height;
-    room->left = NULL;
-    room->right = NULL;
-    
-    return room;
-}
-
-void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
-    
-    int split_horizontal = rand() % 2; // Split either horizontally or vertically
-    int max_size = (split_horizontal ? room->height : room->width); // Leave 1 cell border
-    
-    if (max_size < ROOM_MIN_WIDTH * 2 || max_size < ROOM_MIN_HEIGHT * 2) {
-        // Room is too small to split, so return
-        return;
-    }
-    
-    // Randomly determines the position of the split
-    int split_position = (rand() % (max_size - ROOM_MIN_WIDTH)) + ROOM_MIN_WIDTH + (split_horizontal ? room->y : room->x);
-
-    // Randomize the order in which the rooms are split
-    Room* left_room = NULL;
-    Room* right_room = NULL;
-    
-    // Creates two new sub-rooms based on the split and randomly shuffles the order of the sub-rooms
-    if (rand() % 2 == 0) {
-        if (split_horizontal) {
-            left_room = create_room_sewers(room->x, room->y, room->width, split_position - room->y);
-            right_room = create_room_sewers(room->x, split_position + 1, room->width, room->height - (split_position - room->y) - 1);
-        } 
-        else {
-            left_room = create_room_sewers(room->x, room->y, split_position - room->x, room->height);
-            right_room = create_room_sewers(split_position + 1, room->y, room->width - (split_position - room->x) - 1, room->height);
-        }
-    } else {
-        if (split_horizontal) {
-            right_room = create_room_sewers(room->x, split_position + 1, room->width, room->height - (split_position - room->y) - 1);
-            left_room = create_room_sewers(room->x, room->y, room->width, split_position - room->y);
-        } 
-        else {
-            right_room = create_room_sewers(split_position + 1, room->y, room->width - (split_position - room->x) - 1, room->height);
-            left_room = create_room_sewers(room->x, room->y, split_position - room->x, room->height);
-        }
-    }
-    
-    // Check that the resulting rooms are not too small to split
-    // If the sub-rooms are too small to split, the function returns without creating a corridor
-    if (left_room != NULL && right_room != NULL &&
-        ((split_horizontal && (left_room->height < ROOM_MIN_HEIGHT * 2 || right_room->height < ROOM_MIN_HEIGHT * 2))
-        || (!split_horizontal && (left_room->width < ROOM_MIN_WIDTH * 2 || right_room->width < ROOM_MIN_WIDTH * 2)))) {
-        free(left_room);
-        free(right_room);
-        return;
-    }
-
-    // Otherwise, creates a corridor between the sub-rooms, and recursively calls split_room_sewers() on each of the sub-rooms
-    if (left_room != NULL && right_room != NULL) {
-        create_corridor(left_room, right_room, MAX_CONNECTIONS, CORRIDOR_WIDTH, HEIGHT, WIDTH);
-        split_room_sewers(left_room, HEIGHT, WIDTH);
-        split_room_sewers(right_room, HEIGHT, WIDTH);
-    }
-}
-
-
 void create_corridor(Room* room1, Room* room2, int max_connections, int corridor_width, int HEIGHT, int WIDTH) {
     
     static int num_connections = 0;
@@ -382,6 +306,83 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
 
     // Increment the number of connections
     num_connections++;
+}
+
+
+Room* create_room_sewers(int x, int y, int width, int height) {
+    
+    Room* room = (Room*)malloc(sizeof(Room));
+    
+    if (room == NULL) {
+        // Error: couldn't allocate memory
+        return NULL;
+    }
+    
+    room->x = x;
+    room->y = y;
+    room->width = width;
+    room->height = height;
+    room->left = NULL;
+    room->right = NULL;
+    
+    return room;
+}
+
+
+void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
+    
+    int split_horizontal = rand() % 2; // Split either horizontally or vertically
+    int max_size = (split_horizontal ? room->height : room->width); // Leave 1 cell border
+    
+    if (max_size < ROOM_MIN_WIDTH * 2 || max_size < ROOM_MIN_HEIGHT * 2) {
+        // Room is too small to split, so return
+        return;
+    }
+    
+    // Randomly determines the position of the split
+    int split_position = (rand() % (max_size - ROOM_MIN_WIDTH)) + ROOM_MIN_WIDTH + (split_horizontal ? room->y : room->x);
+
+    // Randomize the order in which the rooms are split
+    Room* left_room = NULL;
+    Room* right_room = NULL;
+    
+    // Creates two new sub-rooms based on the split and randomly shuffles the order of the sub-rooms
+    if (rand() % 2 == 0) {
+        if (split_horizontal) {
+            left_room = create_room_sewers(room->x, room->y, room->width, split_position - room->y);
+            right_room = create_room_sewers(room->x, split_position + 1, room->width, room->height - (split_position - room->y) - 1);
+        } 
+        else {
+            left_room = create_room_sewers(room->x, room->y, split_position - room->x, room->height);
+            right_room = create_room_sewers(split_position + 1, room->y, room->width - (split_position - room->x) - 1, room->height);
+        }
+    } else {
+        if (split_horizontal) {
+            right_room = create_room_sewers(room->x, split_position + 1, room->width, room->height - (split_position - room->y) - 1);
+            left_room = create_room_sewers(room->x, room->y, room->width, split_position - room->y);
+        } 
+        else {
+            right_room = create_room_sewers(split_position + 1, room->y, room->width - (split_position - room->x) - 1, room->height);
+            left_room = create_room_sewers(room->x, room->y, split_position - room->x, room->height);
+        }
+    }
+    
+    // Check that the resulting rooms are not too small to split
+    // If the sub-rooms are too small to split, the function returns without creating a corridor
+    if (left_room != NULL && right_room != NULL &&
+        ((split_horizontal && (left_room->height < ROOM_MIN_HEIGHT * 2 || right_room->height < ROOM_MIN_HEIGHT * 2))
+        || (!split_horizontal && (left_room->width < ROOM_MIN_WIDTH * 2 || right_room->width < ROOM_MIN_WIDTH * 2)))) {
+        free(left_room);
+        free(right_room);
+        return;
+    }
+
+    // Otherwise, creates a corridor between the sub-rooms, and recursively calls split_room_sewers() on each of the sub-rooms
+    if (left_room != NULL && right_room != NULL) {
+        create_corridor(left_room, right_room, MAX_CONNECTIONS, CORRIDOR_WIDTH, HEIGHT, WIDTH);
+        split_room_sewers(left_room, HEIGHT, WIDTH);
+        split_room_sewers(right_room, HEIGHT, WIDTH);
+    }
 }
 
 void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
@@ -616,7 +617,8 @@ int create_random_map(int HEIGHT, int WIDTH, int beginY, int beginX){
         create_sewers(HEIGHT, WIDTH, beginY, beginX);
         return 2;
     }
-    if(random == 2){
+    //if(random == 2)
+    {
         create_asylum(HEIGHT, WIDTH, beginY, beginX);
         return 3;
     }

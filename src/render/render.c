@@ -61,10 +61,10 @@ Renderstate init_render() {
     init_pair(BLUE_PLAYER, COLOR_BLUE, COLOR_BLACK);
     // DUNGEON
     init_pair(DUNGEON_WALLS, GREY, (short)(DARK_DARK_GREY | A_DIM)); 
-    init_pair(DUNGEON_FLOOR, GREY, COLOR_BLACK | A_DIM);
-    init_pair(DUNGEON_BLOOD, DARK_RED, COLOR_BLACK | A_DIM);     
+    init_pair(DUNGEON_FLOOR, GREY, (short)(COLOR_BLACK | A_DIM));
+    init_pair(DUNGEON_BLOOD, DARK_RED, (short)(COLOR_BLACK | A_DIM));     
     // ASYLUM
-    init_pair(ASYLUM_WALLS, COLOR_BLACK, COLOR_WHITE | A_DIM); 
+    init_pair(ASYLUM_WALLS, COLOR_BLACK, (short)(COLOR_WHITE | A_DIM)); 
     init_pair(ASYLUM_FLOOR, COLOR_WHITE, (short)(LIGHT_GREY | A_DIM)); 
     init_pair(ASYLUM_BLOOD, DARK_RED, (short)(LIGHT_GREY | A_DIM));    
     // SEWERS
@@ -96,7 +96,7 @@ Renderstate init_render() {
 void render(Gamestate gs) {
     print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, ALTURA_LOGO + 1, 1); // map
     render_game(gs);
-    print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, ALTURA_LOGO + 1, 1); // RTX_ON
+    // print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, ALTURA_LOGO + 1, 1); // RTX_ON
     render_menu(gs);
     doupdate();
     // refresh();
@@ -189,26 +189,26 @@ void render_game(Gamestate gs) {
     move(g_renderstate->nrows - 1, 0);
 	wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 	// printw("(%d, %d) %d %d | (%d, %d) (%d, %d) | %d | %d", 
-    printw("(%d, %d) %d %d | %d", 
+    printw("(%d, %d) %d %d | %d %d", 
         playerCoords->x, 
-        playerCoords->y,
-        projectileCoords->x,
-        projectileCoords->x, 
+        playerCoords->y, 
         g_renderstate->ncols, 
         g_renderstate->nrows,
+        projectileCoords->x,
+        projectileCoords->x
         // g_gamestate->pointA->x, g_gamestate->pointA->y,
         // g_gamestate->pointB->x, g_gamestate->pointB->y,
         // g_gamestate->path_cell_count,
         // g_gamestate->last_res
-        gs->mob_count
     );
 	wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 
-    if(g_gamestate->player->cheats == 1)	
+    if(g_gamestate->player->cheats == 1) {	
         wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
-    else	
+     }else {	
         wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
-	mvwaddch(g_renderstate->wnd, playerCoords->y, playerCoords->x, '@');
+    }
+	mvwaddch(g_renderstate->wnd, playerCoords->y + ALTURA_LOGO + 1, playerCoords->x + 1, '@');
     mvwaddch(g_renderstate->wnd, projectileCoords->y, projectileCoords->x, 'T' | COLOR_PAIR(WHITE_PLAYER));
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
 	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
@@ -218,8 +218,8 @@ void render_game(Gamestate gs) {
     for (int i = 0; i < gs->mob_count; i++) {
         mvwaddch(
             g_renderstate->wnd, 
-            gs->mobs[i]->entity->coords->y, 
-            gs->mobs[i]->entity->coords->x, 
+            gs->mobs[i]->entity->coords->y + ALTURA_LOGO + 1, 
+            gs->mobs[i]->entity->coords->x + 1, 
             '$' | COLOR_PAIR(ORANGE_LOGO)
         );
     }

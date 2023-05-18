@@ -118,6 +118,8 @@ void tick() {
 			);
 		}
 
+		move_projectile(g_gamestate->projectile->dx, g_gamestate->projectile->dy);
+
 		if(g_gamestate->mob_count == 0) continue_game(g_renderstate->nrows, g_renderstate->ncols);
 
 		// RTX_ON
@@ -225,26 +227,26 @@ void game_keybinds(int key) {
 				g_gamestate->player->last_direction = 3;
 			}
 			break;  
-		case 'r':
+		case 'r': case 'R':
+
+			g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
+			g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
+
 		    if (g_gamestate->player->last_direction == 0) {
-				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
-				g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
-                move_projectile(0, -1); 
+				g_gamestate->projectile->dx = 0;
+				g_gamestate->projectile->dy = -1;
 			}
 			if (g_gamestate->player->last_direction == 1) {
-				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
-				g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
-				move_projectile(0, 1); 
+				g_gamestate->projectile->dx = 0;
+				g_gamestate->projectile->dy = 1;
 			}
 			if (g_gamestate->player->last_direction == 2) {
-				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
-				g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
-				move_projectile(-1, 0); 
+				g_gamestate->projectile->dx = -1;
+				g_gamestate->projectile->dy = 0;
 			}
 			if (g_gamestate->player->last_direction == 3) {
-				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
-				g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
-				move_projectile(1, 0); 
+				g_gamestate->projectile->dx = 1;
+				g_gamestate->projectile->dy = 0;
 			}
 			break;
 
@@ -358,8 +360,16 @@ void move_player(int dx, int dy) {
 }
 
 void move_projectile(int dx, int dy) {
-	g_gamestate->projectile->entity->coords->x += dx;
-	g_gamestate->projectile->entity->coords->y += dy;
+
+	if(is_passable(g_gamestate->projectile->entity->coords->x + dx, g_gamestate->projectile->entity->coords->y + dy)) {
+		g_gamestate->projectile->entity->coords->x += dx;
+		g_gamestate->projectile->entity->coords->y += dy;
+	}
+	else {
+		destroyProjectile(g_gamestate->projectile);
+		defaultProjectile();
+	}
+
 }
 
 int is_passable(int x, int y){

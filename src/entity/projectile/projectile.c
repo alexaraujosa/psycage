@@ -9,6 +9,8 @@ Projectile defaultProjectile() {
     if (entity == NULL) return NULL;
 
     projectile->entity = entity;
+    projectile->dx = 0;
+    projectile->dy = 0;
 
     return projectile;
 }

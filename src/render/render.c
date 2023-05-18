@@ -98,12 +98,18 @@ Renderstate init_render() {
 
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
-    if(isInMenu() == 0)
-        print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, OFFSET_Y, OFFSET_X); // map
-    render_game(gs);
-    print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, OFFSET_Y, OFFSET_X); // RTX_ON
-    render_menu(gs);
-    doupdate();
+    
+    if (g_gamestate->mob_count == 0){
+        print_loading_screen(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
+    }
+    else{
+        if(isInMenu() == 0){
+            print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, OFFSET_Y, OFFSET_X); // map
+            render_game(gs);
+            print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, OFFSET_Y, OFFSET_X);// RTX_ON
+        } 
+        render_menu(gs);
+    }
     // refresh();
 }
 

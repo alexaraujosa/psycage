@@ -1,4 +1,11 @@
 version = 1
-0000 NIL 0 0 0
-0001 Test 1 10 20
-0002 Test2 20 50 19875879
+0000 NIL 0 0
+0001 Gloves 20 10
+0002 Helmet 5 25
+0003 Belt 15 15
+0004 Vest 0 30
+0005 ExpressAmmo 120 0
+0006 SoldierGloves 80 40
+0007 SoldierHelmet 20 100
+0008 SoldierBelt 60 60
+0009 SoldierVest 0 120

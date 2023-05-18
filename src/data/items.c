@@ -1,6 +1,6 @@
 #include "items.h"
 
-#define ITEMS 21
+#define ITEMS 9
 
 
 extern char ASSET_DIR[PATH_MAX];
@@ -73,8 +73,7 @@ DataItemNode defaultItemResource() {
     item->id = 0;
     item->name = "";
     item->damage = 0;
-    item->durability = 0;
-    item->value = 0;
+    item->armor = 0;
 
     return item;
 }
@@ -86,7 +85,7 @@ DataItemNode parse_item(char* raw, int len) {
     DataItemNode item = defaultItemResource();
     char name[MAX_INPUT];
     char id[MAX_ITEM_ID_SIZE];
-    if (!sscanf(raw, "%s %s %d %d %d", id, name, &item->damage, &item->durability, &item->value)) return NULL;
+    if (!sscanf(raw, "%s %s %d %d %d", id, name, &item->damage, &item->armor)) return NULL;
 
     item->id = (char*)malloc(strlen(id) * sizeof(char));
     strcpy(item->id, id);
@@ -113,7 +112,7 @@ DataItemNode get_item_by_name(char* name) {
 
 DataItemNode get_random_item() {
 
-    char *itens[] = {"Test", "Test2"};
+    char *itens[] = {"Gloves", "Helmet", "Belt", "Vest", "ExpressAmmo", "SoldierGloves", "SoldierHelmet", "SoldierBelt", "SoldierVest"};
 
     int index = rand()%ITEMS;
 

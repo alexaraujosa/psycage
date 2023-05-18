@@ -30,9 +30,8 @@
 typedef struct ditem_node {
     char* id;
     char* name;
-    int durability;
     int damage;
-    int value;
+    int armor;
 } DATA_ITEM_NODE, *DataItemNode;
 
 HashMap load_items();

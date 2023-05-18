@@ -7,7 +7,10 @@
 #ifndef __RL_CHEST_H
 #define __RL_CHEST_H
 
+#include <math.h>
+#include "common.h"
 #include "../entity.h"
+#include "../../map/map_common.h"
 
 typedef struct chest {
     Entity entity;

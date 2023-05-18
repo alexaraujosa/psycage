@@ -74,6 +74,22 @@ Gamestate init_gameloop() {
 	gs->mobs = mobs;
 	gs->mob_count = mob_count;
 
+	debug_file(dbgOut, " - Generating chests...\n");
+    int chest_count = 1;
+	Chest* chests = (Chest*)malloc(sizeof(Chest) * chest_count);
+
+	for (int i = 0; i < chest_count; i++) {
+	    Chest chest = defaultChest();
+
+	    addChestToMap(chest, map, LARGURA_JOGO, ALTURA_JOGO);
+
+	    chests[i] = chest;
+	    map[chest->entity->coords->y][chest->entity->coords->x] = 5;
+	}
+
+	gs->chests = chests;
+	gs->chest_count = chest_count;
+
 	gs->last_res = -1;
 
 	gs->paused = FALSE;

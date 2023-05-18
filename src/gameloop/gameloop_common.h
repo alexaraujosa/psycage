@@ -4,6 +4,7 @@
 #include "../entity/player/player.h"
 #include "../entity/projectile/projectile.h"
 #include "../entity/ai/ai.h"
+#include "../entity/chest/chest.h"
 
 #define MAX_MESSAGES ALTURA_LOGO-1
 #define MAX_MESSAGES_LENGTH LARGURA_LOGO*(4/3)
@@ -17,7 +18,9 @@ typedef struct gamestate {
     int clock;             // General tick clock
     int block_clock;       // Stop clock execution
     Mob* mobs;
+    Chest* chests;
     int mob_count;
+    int chest_count;
     int last_res;
     int paused;
     char messages[MAX_MESSAGES][MAX_MESSAGES_LENGTH];

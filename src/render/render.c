@@ -236,6 +236,17 @@ void render_game(Gamestate gs) {
     }
     wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
 
+        wattron(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
+    for (int i = 0; i < gs->chest_count; i++) {
+        mvwaddch(
+            g_renderstate->wnd, 
+            gs->chests[i]->entity->coords->y + ALTURA_LOGO + 1, 
+            gs->chests[i]->entity->coords->x + 1, 
+            'M' | COLOR_PAIR(ORANGE_LOGO)
+        );
+    }
+    wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
+
     //print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
 
 	// wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));

@@ -115,7 +115,7 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             // If it is not, update blocked to false and reset the start slope to the next_start_slope value
             if (blocked) {
                 
-                if (current_x < WIDTH && (map[current_y][current_x] == 1 || map[current_y][current_x] == 3)) {
+                if (current_x < WIDTH && (map[current_y][current_x] == 1 || map[current_y][current_x-1] == 1 || map[current_y][current_x+1] == 1 || map[current_y][current_x+1] == 3 || map[current_y][current_x-1] == 3 || map[current_y][current_x] == 3)) {
                     
                     next_start_slope = r_slope;
                     continue;

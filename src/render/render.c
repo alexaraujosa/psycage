@@ -101,7 +101,7 @@ void render(Gamestate gs) {
     if(isInMenu() == 0)
         print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, OFFSET_Y, OFFSET_X); // map
     render_game(gs);
-    // print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, OFFSET_Y, OFFSET_X); // RTX_ON
+    print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols-2, OFFSET_Y, OFFSET_X); // RTX_ON
     render_menu(gs);
     doupdate();
     // refresh();

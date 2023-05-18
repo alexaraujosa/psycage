@@ -200,21 +200,29 @@ void game_keybinds(int key) {
 
 		// Movement Controls
 		case KEY_UP:
-			move_player(0, -1);
-			g_gamestate->player->last_direction = 0;  
+			if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y-1)){
+				move_player(0, -1);
+				g_gamestate->player->last_direction = 0;  
+			}
 			break;
 		case KEY_DOWN:
-			move_player(0, 1);
-			g_gamestate->player->last_direction = 1;  
+			if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y+1)){
+				move_player(0, 1);
+				g_gamestate->player->last_direction = 1;  
+			}
 			break;
 		case KEY_LEFT:
-			move_player(-1, 0);
-			g_gamestate->player->last_direction = 2;  
+			if(is_passable(g_gamestate->player->entity->coords->x-1, g_gamestate->player->entity->coords->y)){
+				move_player(-1, 0);
+				g_gamestate->player->last_direction = 2;
+			}  
 			break;
 		case KEY_RIGHT:
-			move_player(1, 0);
-			g_gamestate->player->last_direction = 3;  
-			break;
+			if(is_passable(g_gamestate->player->entity->coords->x+1, g_gamestate->player->entity->coords->y)){
+				move_player(1, 0);
+				g_gamestate->player->last_direction = 3;
+			}
+			break;  
 		case 'r':
 		    if (g_gamestate->player->last_direction == 0) {
 				g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
@@ -350,4 +358,17 @@ void move_player(int dx, int dy) {
 void move_projectile(int dx, int dy) {
 	g_gamestate->projectile->entity->coords->x += dx;
 	g_gamestate->projectile->entity->coords->y += dy;
+}
+
+int is_passable(int x, int y){
+
+    if (map[y][x] == 1){
+        return 0;
+    }
+
+	if (map[y][x] == 5){
+		return 0;
+	}
+	
+    return 1;
 }

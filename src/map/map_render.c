@@ -104,11 +104,11 @@ void print_random_map(int HEIGHT, int WIDTH, int n, int beginY, int beginX){
     }
     if (n == 2){
         print_sewers(HEIGHT, WIDTH, beginY, beginX);
-                drawGameInterface();
+        drawGameInterface();
     }
     if (n == 3){
         print_asylum(HEIGHT, WIDTH, beginY, beginX);
-                drawGameInterface();
+        drawGameInterface();
     }
 }
 

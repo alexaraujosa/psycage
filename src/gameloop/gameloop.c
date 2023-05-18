@@ -22,7 +22,6 @@ Gamestate init_gameloop() {
     debug_file(dbgOut, " - Initializing player...\n");
 	Player player = defaultPlayer();
 	gs->player = player;
-
     debug_file(dbgOut, " - Initializing projectile...\n");
 	Projectile projectile = defaultProjectile();
 	gs->projectile = projectile;

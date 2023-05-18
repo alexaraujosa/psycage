@@ -63,6 +63,10 @@ int main() {
     Renderstate rs = init_render();
     debug_file(dbgOut, "Renderer initialized successfully.\n");
 
+    // Initialize items
+    debug_file(dbgOut, "Initializing items...\n");
+    load_items();
+    
     // Initialize gameloop
     debug_file(dbgOut, "Initializing gameloop...\n");
     Gamestate gs = init_gameloop();

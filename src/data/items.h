@@ -39,5 +39,6 @@ HashMap load_items();
 DataItemNode parse_item(char* raw, int len);
 DataItemNode get_item_by_id(char* name);
 DataItemNode get_item_by_name(char* name);
+DataItemNode get_random_item();
 
 #endif

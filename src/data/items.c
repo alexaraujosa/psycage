@@ -1,5 +1,8 @@
 #include "items.h"
 
+#define ITEMS 21
+
+
 extern char ASSET_DIR[PATH_MAX];
 extern int ASSET_DIR_LEN;
 
@@ -105,4 +108,14 @@ DataItemNode get_item_by_name(char* name) {
     }
 
     return NULL; 
+}
+
+
+DataItemNode get_random_item() {
+
+    char *itens[] = {"Test", "Test2"};
+
+    int index = rand()%ITEMS;
+
+    return get_item_by_name(itens[index]);
 }

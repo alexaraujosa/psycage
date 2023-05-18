@@ -8,9 +8,11 @@
 #define __RL_PLAYER_H
 
 #include "../entity.h"
+#include "../../data/items.h"
 
 typedef struct player {
     Entity entity;
+    DataItemNode item;
     int level;
     int kills;
     int xp;

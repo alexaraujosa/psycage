@@ -17,6 +17,10 @@ Player defaultPlayer() {
     Entity entity = defaultEntity();
     if (entity == NULL) return NULL;
     
+    DataItemNode item = (DataItemNode)malloc(sizeof(DataItemNode));
+    if (item == NULL) return NULL;
+
+    player->item = item;
     player->entity = entity;
     player->level = 0;
     player->kills = 0;
@@ -24,6 +28,8 @@ Player defaultPlayer() {
     player->cheats = 0;
     player->class = Priest;
     player->radius = 0;
+
+    player->item = get_random_item();
 
     return player;
 }

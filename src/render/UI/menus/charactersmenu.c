@@ -4,6 +4,9 @@
 #define CLASSES 3
 #define TAMANHO_MAX_BOTAO 20
 #define TAMANHO_MAX_CLASSE 20
+#define PRIEST_INFOS 6
+#define DETECTIVE_INFOS 6
+#define MERCENARY_INFOS 6
 
 static unsigned short int botao_selecionado_principal = 0, effect = 0;
 static char *botoes[BOTOES_CHARACTERS] = {"menu.characters.priest", "menu.characters.detective", "menu.characters.mercenary"};
@@ -51,6 +54,11 @@ void draw_CharactersMenu(Menu menu) {
 
 void draw_CharactersInfo(Menu menu){
 
+    static *info[] = {"menu.characters.info.priest.one", "menu.characters.info.priest.two", "menu.characters.info.priest.three", "menu.characters.info.priest.four", "menu.characters.info.priest.five", "menu.characters.info.priest.six",
+                      "menu.characters.info.detective.one", "menu.characters.info.detective.two", "menu.characters.info.detective.three", "menu.characters.info.detective.four", "menu.characters.info.detective.five", "menu.characters.info.detective.six", 
+                      "menu.characters.info.mercenary.one", "menu.characters.info.mercenary.two", "menu.characters.info.mercenary.three", "menu.characters.info.mercenary.four", "menu.characters.info.mercenary.five", "menu.characters.info.mercenary.six", 
+                    };
+
     box(menu->wnd, 0 , 0);
 
         // Display the description of each class
@@ -62,7 +70,8 @@ void draw_CharactersInfo(Menu menu){
                 mvwprintw(menu->wnd, 1, 2, "%s", get_localized_string(g_renderstate->language, botoes[0]));
                 wattroff(menu->wnd, A_BOLD | A_UNDERLINE);
 
-                // Print da descrição da class
+                for(int i = 0 ; i < PRIEST_INFOS ; i++)
+                    mvwprintw(menu->wnd, 4 + i, 2, "%s", get_localized_string(g_renderstate->language, info[i]));
                 break;
             }
             
@@ -70,7 +79,8 @@ void draw_CharactersInfo(Menu menu){
                 mvwprintw(menu->wnd, 1, 2, "%s", get_localized_string(g_renderstate->language, botoes[1]));
                 wattroff(menu->wnd, A_BOLD | A_UNDERLINE);
 
-                // Print da descrição da class
+                for(int i = PRIEST_INFOS, j = 0 ; i < PRIEST_INFOS+DETECTIVE_INFOS ; i++, j++)
+                    mvwprintw(menu->wnd, 4 + j, 2, "%s", get_localized_string(g_renderstate->language, info[i]));
                 break;
             }
             
@@ -78,7 +88,8 @@ void draw_CharactersInfo(Menu menu){
                 mvwprintw(menu->wnd, 1, 2, "%s", get_localized_string(g_renderstate->language, botoes[2]));
                 wattroff(menu->wnd, A_BOLD | A_UNDERLINE);
 
-                // Print da descrição da class
+                for(int i = PRIEST_INFOS + DETECTIVE_INFOS, j = 0 ; i < PRIEST_INFOS+DETECTIVE_INFOS+MERCENARY_INFOS ; i++, j++)
+                    mvwprintw(menu->wnd, 4 + j, 2, "%s", get_localized_string(g_renderstate->language, info[i]));
                 break;
             }
 

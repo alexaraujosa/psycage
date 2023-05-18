@@ -5,6 +5,8 @@
 
 #define BOTOES_CHARACTERS 3
 #define ESPACAMENTO_CHARACTERS 2
+#define LARGURA_CHARACTERS_INFO g_renderstate->ncols/4
+#define ALTURA_CHARACTERS_INFO g_renderstate->nrows/3 + ESPACAMENTO_CHARACTERS + BOTOES_CHARACTERS*2 + 2
 
 void draw_CharactersMenu(Menu menu);
 void draw_CharactersInfo(Menu menu);

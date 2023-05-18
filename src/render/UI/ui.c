@@ -79,7 +79,7 @@ void drawMenu(Menu menu) {
             break;
         }
         case MENU_CHARACTERS_INFO: {
-            WINDOW* win = newwin(yMAX/3, xMAX/2, yMAX/3 + ESPACAMENTO_CHARACTERS + BOTOES_CHARACTERS*2 + 2, xMAX/4);
+            WINDOW* win = newwin(yMAX/3, xMAX/2, ALTURA_CHARACTERS_INFO, LARGURA_CHARACTERS_INFO);
             PANEL * panel = new_panel(win);
             menu->wnd = win;
             menu->panel = panel;

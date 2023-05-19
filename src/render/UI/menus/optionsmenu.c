@@ -5,7 +5,7 @@
 #define LARGURA_OPTIONS 76
 #define ALTURA_OPTIONS 8
 
-static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static unsigned short int botao_selecionado_principal = 0;
 static char *botoes[BOTOES] = {"menu.options.return", "menu.options.language"};
 
 static char *options[ALTURA_OPTIONS] = {
@@ -18,8 +18,6 @@ static char *options[ALTURA_OPTIONS] = {
         "Y88b. .d88P 888           888       888  Y88b. .d88P 888   Y8888 Y88b  d88P\0",
         " \"Y88888P\"  888           888     8888888 \"Y88888P\"  888    Y888  \"Y8888P\" \0"
 };
-
-
 
 
 void draw_OptionsMenu(Menu menu) {
@@ -50,9 +48,9 @@ void draw_OptionsMenu(Menu menu) {
 
     // Create the rectangle around the buttons
     rectangle(menu->wnd, 
-              g_renderstate->nrows/2 - ALTURA_OPTIONS/2           , g_renderstate->ncols/2 - tamanhoBotaoMaior/2 - 1, 
-              g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + BOTOES*2, g_renderstate->ncols/2 + tamanhoBotaoMaior/2 
-             );
+        g_renderstate->nrows/2 - ALTURA_OPTIONS/2           , g_renderstate->ncols/2 - tamanhoBotaoMaior/2 - 1, 
+        g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + BOTOES*2, g_renderstate->ncols/2 + tamanhoBotaoMaior/2 
+    );
 
     // Print the logo
     printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
@@ -60,17 +58,15 @@ void draw_OptionsMenu(Menu menu) {
     // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
-        if(i == effect) 
-            wattron(menu->wnd, A_REVERSE);
+        if(i == botao_selecionado_principal) wattron(menu->wnd, A_REVERSE);
         
         mvwprintw(menu->wnd, 
-                  g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + separador + i + 1 ,
-                  g_renderstate->ncols/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
-                  "%s", get_localized_string(g_renderstate->language, botoes[i])
-                );
+            g_renderstate->nrows/2 - ALTURA_OPTIONS/2 + separador + i + 1 ,
+            g_renderstate->ncols/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
+            "%s", get_localized_string(g_renderstate->language, botoes[i])
+        );
         
-        if(i == effect)
-            wattroff(menu->wnd, A_REVERSE);
+        if(i == botao_selecionado_principal) wattroff(menu->wnd, A_REVERSE);
 
     }
 
@@ -80,51 +76,50 @@ void tick_OptionsMenu() {
     return;
 }
 
-
 void handle_OptionsMenu_keybinds(int key) {
-
-
     if(botao_selecionado_principal == 0 && key == KEY_UP) {
-
         botao_selecionado_principal = BOTOES - 1;
-        effect = BOTOES - 1;
+        // effect = BOTOES - 1;
 
         return;
     }
 
     if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
-
         botao_selecionado_principal = 0;
-        effect = 0;
+        // effect = 0;
 
         return;
     }
     
     switch(key) {
-
         case KEY_UP :
             botao_selecionado_principal--;
-            effect--;
+            // effect--;
             break;
-
 
         case KEY_DOWN :
             botao_selecionado_principal++;
-            effect++;
+            // effect++;
             break;
 
-
-        case 10 : case 13 : switch(botao_selecionado_principal) {
-
-                            case 0 :
-                                closeMenu(MENU_OPTIONS);
-                                break;
-                            case 1 :
-                                change_locale();
-                                break;
-                            
-                        }
-
+        case 10 : case 13 : 
+            switch(botao_selecionado_principal) {
+                case 0 :
+                    closeMenu(MENU_OPTIONS);
+                    break;
+                case 1 :
+                    change_locale();
+                    break;
+                                
+            }
+            break;
+        case 'Q':
+        case 'q':
+            closeMenu(MENU_OPTIONS);
+            break;
     }
+}
 
+void cleanup_options_menu() {
+    botao_selecionado_principal = 0;
 }

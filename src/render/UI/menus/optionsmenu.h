@@ -6,5 +6,6 @@
 void draw_OptionsMenu(Menu menu);
 void tick_OptionsMenu();
 void handle_OptionsMenu_keybinds(int key);
+void cleanup_options_menu();
 
 #endif

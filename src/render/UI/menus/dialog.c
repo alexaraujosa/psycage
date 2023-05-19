@@ -2,10 +2,11 @@
 
 char* g_dialog_text;
 char**** g_dialog_page_data;
-int g_dialog_control[3] = { 0, 0, 0 }; // max per line, max lines, max page
+int g_dialog_control[4] = { 0, 0, 0, 1 }; // max per line, max lines, max page, allow control
+int (*g_dialog_keybinds)(int key); // additional keybinds
 static int page_control[2] = { 0 }; // max pages, current page
 
-void drawDialog(Menu menu) {
+void draw_Dialog(Menu menu) {
     wmove(menu->wnd, 10, 10);
     box(menu->wnd, 0, 0);
 
@@ -13,6 +14,7 @@ void drawDialog(Menu menu) {
 
     // int ln = 1;
     for (int i = 0; i < g_dialog_control[1]; i++) {
+        if (page_data[page_control[0]] == NULL) break;
         mvwprintw(menu->wnd, 1 + i, 1, "%s", page_data[page_control[0]][i]);
     }
 
@@ -29,24 +31,62 @@ void drawDialog(Menu menu) {
     refresh();
 }
 
-void tick_dialog() {
+void tick_Dialog() {
     return;
 }
 
-void handle_dialog_keybinds(int key) {
+void handle_Dialog_keybinds(int key) {
+    if (!g_dialog_control[3]) return;
+
     switch(key) {
-        case 10:
-        case 13:
+        // case 10:
+        // case 13:
+        //     if (page_control[0] + 1 >= g_dialog_control[2]) {
+        //         closeMenu(MENU_DIALOG);
+        //         page_control[0] = 0;
+        //     } else page_control[0]++;
+
+        //     // closeMenu(MENU_DIALOG);
+        //     break;
+        // case KEY_UP:
+        //     closeMenu(MENU_DIALOG);
+        default:
+            if (g_dialog_keybinds != NULL) {
+                int res = g_dialog_keybinds(key);
+                if (!res) break;
+            }
+
             if (page_control[0] + 1 >= g_dialog_control[2]) {
                 closeMenu(MENU_DIALOG);
                 page_control[0] = 0;
             } else page_control[0]++;
-
-            // closeMenu(MENU_DIALOG);
             break;
-        case KEY_UP:
-            closeMenu(MENU_DIALOG);
     }   
+}
+
+void cleanup_Dialog() {
+    g_dialog_text = NULL;
+    g_dialog_page_data;
+
+    for (int i = 0; i < g_dialog_control[2]; i++) {
+        for (int j = 0; j < g_dialog_control[1]; j++) {
+            free(g_dialog_page_data[i][j]);
+        }
+
+        free(g_dialog_page_data[i]);
+    }
+
+    free(g_dialog_page_data);
+    g_dialog_page_data = NULL;
+
+
+    g_dialog_control[0] = 0;
+    g_dialog_control[1] = 0;
+    g_dialog_control[2] = 0;
+    g_dialog_control[3] = 1;
+
+    g_dialog_keybinds = NULL;
+    page_control[0] = 0;
 }
 
 void rectangle(WINDOW* win, int y1, int x1, int y2, int x2) {

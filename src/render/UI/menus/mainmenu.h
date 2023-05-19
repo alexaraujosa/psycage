@@ -6,5 +6,6 @@
 void draw_MainMenu(Menu menu);
 void tick_MainMenu();
 void handle_MainMenu_keybinds(int key);
+void cleanup_MainMenu();
 
 #endif

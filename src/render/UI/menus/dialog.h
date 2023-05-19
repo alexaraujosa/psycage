@@ -7,12 +7,14 @@
 
 extern char* g_dialog_text;
 extern char**** g_dialog_page_data;
-extern int g_dialog_control[3];
+extern int g_dialog_control[4];
+extern int (*g_dialog_keybinds)(int key);
 
 /* FUNCTION SIGNATURES */
-void drawDialog(Menu menu);
-void tick_dialog();
-void handle_dialog_keybinds(int key);
+void draw_Dialog(Menu menu);
+void tick_Dialog();
+void handle_Dialog_keybinds(int key);
+void cleanup_Dialog();
 int calculate_dialog_metadata(char* text, char**** ret);
 
 #endif

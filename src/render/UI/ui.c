@@ -39,7 +39,7 @@ void drawMenu(Menu menu) {
             menu->wnd = win;
             menu->panel = panel;
 
-            drawDialog(menu);
+            draw_Dialog(menu);
             break;
         }
         case MENU_OPTIONS: {
@@ -118,7 +118,7 @@ void tick_menu(Menu menu) {
             break;
         }
         case MENU_DIALOG: {
-            tick_dialog();
+            tick_Dialog();
             break;
         }
         case MENU_OPTIONS: {
@@ -159,7 +159,7 @@ void handle_menu_keybinds(Menu menu, int key) {
             break;
         }
         case MENU_DIALOG: {
-            handle_dialog_keybinds(key);
+            handle_Dialog_keybinds(key);
             break;
         }
         case MENU_OPTIONS: {
@@ -194,6 +194,47 @@ void handle_menu_keybinds(Menu menu, int key) {
             break;
     }
 }
+
+void cleanup_menu(Menu menu) {
+    switch (menu->id) {
+        case MENU_NONE: break;
+        case MENU_MAIN_MENU: {
+            cleanup_MainMenu();
+            break;
+        }
+        case MENU_DIALOG: {
+            cleanup_Dialog();
+            break;
+        }
+        case MENU_OPTIONS: {
+            cleanup_options_menu();
+            break;
+        }
+        case MENU_PAUSE: {
+            // tick_PauseMenu();
+            break;
+        }
+        case MENU_DEAD: {
+            // tick_DeadMenu();
+            break;
+        }
+        case MENU_CHARACTERS: {
+            // tick_CharactersMenu();
+            break;
+        }
+        case MENU_CHARACTERS_INFO: {
+            // tick_CharactersMenu();
+            break;
+        }
+        case MENU_SAVE: {
+            cleanup_SaveMenu();
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 
 void drawGameInterface() {
 

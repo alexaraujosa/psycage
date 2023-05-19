@@ -6,7 +6,11 @@
 #define LARGURA_CAGE 56
 #define ALTURA_CAGE 31
 
-static unsigned short int effect = 0, botao_selecionado_principal = 0;
+extern int EXIT;
+
+static unsigned short int 
+    // effect = 0, 
+    botao_selecionado_principal = 0;
 static char *botoes[BOTOES] = {"menu.main.new_game", "menu.main.saves", "menu.main.options", "menu.main.quit_game"};
 
 static char *cage[ALTURA_CAGE] = {
@@ -92,7 +96,8 @@ void draw_MainMenu(Menu menu) {
     // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
-        if(i == effect) 
+        // if(i == effect) 
+        if(i == botao_selecionado_principal) 
             wattron(menu->wnd, A_REVERSE);
         
         mvwprintw(menu->wnd, 
@@ -101,7 +106,8 @@ void draw_MainMenu(Menu menu) {
                   "%s", get_localized_string(g_renderstate->language, botoes[i])
                 );
 
-        if(i == effect)
+        // if(i == effect)
+        if(i == botao_selecionado_principal)
             wattroff(menu->wnd, A_REVERSE);
             
     }
@@ -118,7 +124,7 @@ void handle_MainMenu_keybinds(int key) {
     if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
         botao_selecionado_principal = BOTOES - 1;
-        effect = BOTOES - 1;
+        // effect = BOTOES - 1;
 
         return;
     }
@@ -126,48 +132,56 @@ void handle_MainMenu_keybinds(int key) {
     if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
 
         botao_selecionado_principal = 0;
-        effect = 0;
+        // effect = 0;
 
         return;
     }
     
     switch(key) {
-
         case KEY_UP :
             botao_selecionado_principal--;
-            effect--;
+            // effect--;
             break;
-
 
         case KEY_DOWN :
             botao_selecionado_principal++;
-            effect++;
+            // effect++;
             break;
 
+        case 10 : case 13 : 
+            switch(botao_selecionado_principal) {
+                case 0 : 
+                    closeMenu(MENU_MAIN_MENU);
+                    // startGame(); cujo codigo seria, por exemplo, utilizar as funcoes: create_asylum; print_asylum; drawGameInterface();
+                    // create_asylum(g_renderstate->nrows, g_renderstate->ncols, 5);
+                    // print_asylum(g_renderstate->nrows, g_renderstate->ncols, 5);
+                    drawGameInterface();
+                    break;
 
-        case 10 : case 13 : switch(botao_selecionado_principal) {
+                case 1 : 
+                    displayMenu(MENU_SAVE);
+                    break; //saves
 
-                            case 0 : 
-                                closeMenu(MENU_MAIN_MENU);
-                                // startGame(); cujo codigo seria, por exemplo, utilizar as funcoes: create_asylum; print_asylum; drawGameInterface();
-                                // create_asylum(g_renderstate->nrows, g_renderstate->ncols, 5);
-                                // print_asylum(g_renderstate->nrows, g_renderstate->ncols, 5);
-                                drawGameInterface();
-                                break;
+                case 2 : 
+                    displayMenu(MENU_OPTIONS); 
+                    break;
 
-                            case 1 : 
-                                displayMenu(MENU_SAVE);
-                                break; //saves
-
-                            case 2 : 
-                                displayMenu(MENU_OPTIONS); 
-                                break;
-
-                            case 3 : 
-                                exit(0);
-                                endwin();
-                        }
+                case 3 : 
+                    EXIT = TRUE;
+                    // exit(0);
+                    // endwin();
+            }
+            break;
+        case 'Q':
+        case 'q':
+            closeMenu(MENU_MAIN_MENU);
+            drawGameInterface();
+            break;
 
     }
     
+}
+
+void cleanup_MainMenu() {
+    botao_selecionado_principal = 0;
 }

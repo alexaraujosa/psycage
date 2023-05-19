@@ -197,7 +197,7 @@ void handle_menu_keybinds(Menu menu, int key) {
 
 void drawGameInterface() {
 
-    static char *stats[ESTATISTICAS+1] = {"user.interface.stats.class", "user.interface.stats.level","user.interface.stats.kills", "user.interface.stats.armor", "user.interface.stats.hp", "user.interface.stats.xp", "user.interface.stats.monsters"};
+    static char *stats[ESTATISTICAS+2] = {"user.interface.stats.class", "user.interface.stats.level","user.interface.stats.kills", "user.interface.stats.armor", "user.interface.stats.hp", "user.interface.stats.xp", "user.interface.stats.monsters", "user.interface.stats.item"};
 
     //Desenha o retângulo à esquerda do Logo
     rectangle(g_renderstate->wnd, 0, 0, ALTURA_LOGO, g_renderstate->ncols/2 - LARGURA_LOGO/2 -1);
@@ -237,11 +237,18 @@ void drawGameInterface() {
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
 
-    //Print da quantidade de Monstros Vivos no meio do retângulo da esquerda
+    //Print da quantidade de Monstros Vivos no canto inferior esquerdo do retângulo da esquerda
     mvwprintw(g_renderstate->wnd,
               ALTURA_LOGO - 1,
-              LARGURA_RETANGULO/3 - strlen(get_localized_string(g_renderstate->language, stats[ESTATISTICAS]))/2,
+              2,
               "%s",     get_localized_string(g_renderstate->language, stats[ESTATISTICAS])   
+            );
+
+    //Print do Item Atual no meio do retângulo da esquerda
+    mvwprintw(g_renderstate->wnd,
+              ALTURA_LOGO - 1,
+              LARGURA_RETANGULO*0.4,
+              "%s  ",     get_localized_string(g_renderstate->language, stats[ESTATISTICAS+1])   
             );
 
     wattroff(g_renderstate->wnd, A_BOLD);
@@ -313,10 +320,16 @@ void drawGameInterface() {
     //Print da quantidade de Monstros Vivos
     mvwprintw(g_renderstate->wnd,
               ALTURA_LOGO - 1,
-              LARGURA_RETANGULO/3 + strlen(get_localized_string(g_renderstate->language, stats[ESTATISTICAS]))/2 + 2,
+              3 + strlen(get_localized_string(g_renderstate->language, stats[ESTATISTICAS])),
               "%d",     g_gamestate->mob_count   
             );
 
+    //Print do Item atual
+    mvwprintw(g_renderstate->wnd,
+              ALTURA_LOGO - 1,
+              LARGURA_RETANGULO*0.4 + 1 + strlen(get_localized_string(g_renderstate->language, stats[ESTATISTICAS+1])),
+              "%s  ",     g_gamestate->player->item->name
+            );
 
 // CONSOLA
 

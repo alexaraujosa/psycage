@@ -54,3 +54,4 @@ user.interface.stats.detective=Detective
 user.interface.stats.mercenary=Mercenary
 user.interface.stats.monsters=Monsters Alive:
 user.interface.console.lost.hp=You lost %d HP.
+user.interface.stats.item=Current Item:

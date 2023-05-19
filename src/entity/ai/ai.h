@@ -23,5 +23,7 @@ typedef struct mob {
 Mob defaultMob();
 int attemptMoveMob(Coords playerCoords, Mob mob, int** map, int width, int height);
 int addMobToMap(Mob mob, int** map, int width, int height);
+void destroyMob(Mob mob);
+int _isObstacle(int cell);
 
 #endif

@@ -3,8 +3,6 @@
 #include <unistd.h>
 #include "gameloop.h"
 
-#define ALTURA_JOGO g_renderstate->nrows - ALTURA_LOGO - 2
-#define LARGURA_JOGO g_renderstate->ncols - 2
 
 Gamestate g_gamestate;
 int** map_footprint;
@@ -126,8 +124,6 @@ void tick() {
 				g_gamestate->player->entity->coords, 
 				g_gamestate->mobs[i],
 				map, 
-				//g_renderstate->ncols,
-				//g_renderstate->nrows
 				LARGURA_JOGO,
 				ALTURA_JOGO
 			);
@@ -266,7 +262,7 @@ void game_keybinds(int key) {
 			break;
 
 		// Open Menu
-		case '5': 
+		case 'p': case 'P' : 
 			displayMenu(MENU_MAIN_MENU);
 			break;
 		// case 'a':

@@ -54,7 +54,7 @@ void draw_CharactersMenu(Menu menu) {
 
 void draw_CharactersInfo(Menu menu){
 
-    static *info[] = {"menu.characters.info.priest.one", "menu.characters.info.priest.two", "menu.characters.info.priest.three", "menu.characters.info.priest.four", "menu.characters.info.priest.five", "menu.characters.info.priest.six",
+    static char *info[] = {"menu.characters.info.priest.one", "menu.characters.info.priest.two", "menu.characters.info.priest.three", "menu.characters.info.priest.four", "menu.characters.info.priest.five", "menu.characters.info.priest.six",
                       "menu.characters.info.detective.one", "menu.characters.info.detective.two", "menu.characters.info.detective.three", "menu.characters.info.detective.four", "menu.characters.info.detective.five", "menu.characters.info.detective.six", 
                       "menu.characters.info.mercenary.one", "menu.characters.info.mercenary.two", "menu.characters.info.mercenary.three", "menu.characters.info.mercenary.four", "menu.characters.info.mercenary.five", "menu.characters.info.mercenary.six", 
                     };

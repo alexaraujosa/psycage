@@ -1,7 +1,7 @@
 #include "chest.h"
+#include "../ai/ai.h"
 
 #define NUM_OBSTACLES 3
-static int obstacles[NUM_OBSTACLES] = { 1, 3, 5 };
 
 Chest defaultChest() {
     Chest chest = (Chest)malloc(sizeof(Chest));

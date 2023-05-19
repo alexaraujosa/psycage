@@ -35,5 +35,6 @@ Player defaultPlayer();
 void destroyPlayer(Player player);
 char* getClassInterface(int classe);
 void verifyPlayerRadius();
+void player_spawn(Player player, int **map, int HEIGHT, int WIDTH);
 
 #endif

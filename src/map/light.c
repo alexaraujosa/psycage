@@ -181,7 +181,6 @@ void print_light(WINDOW* win, int HEIGHT, int WIDTH, int beginY, int beginX){
             }
         }
         
-        wprintw(win, "%c");
     }
 
     wrefresh(win);

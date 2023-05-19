@@ -85,13 +85,13 @@ DataItemNode parse_item(char* raw, int len) {
     DataItemNode item = defaultItemResource();
     char name[MAX_INPUT];
     char id[MAX_ITEM_ID_SIZE];
-    if (!sscanf(raw, "%s %s %d %d %d", id, name, &item->damage, &item->armor)) return NULL;
+    if (!sscanf(raw, "%s %s %d %d", id, name, &item->damage, &item->armor)) return NULL;
 
-    item->id = (char*)malloc(strlen(id) * sizeof(char));
+    item->id = (char*)malloc((strlen(id)+1) * sizeof(char));
     strcpy(item->id, id);
 
     // debug("NAME: %s\n", name);
-    item->name = (char*)malloc(strlen(name) * sizeof(char));
+    item->name = (char*)malloc((strlen(name)+1) * sizeof(char));
     strcpy(item->name, name);
 
     return item;

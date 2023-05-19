@@ -4,6 +4,11 @@
 #include "gameloop.h"
 
 
+extern int EXIT;
+
+int ALTURA_JOGO;
+int LARGURA_JOGO;
+
 Gamestate g_gamestate;
 int** map_footprint;
 int find_map;
@@ -13,18 +18,23 @@ clock_t tickStart, tickEnd;
 float tickDuration, taskDuration;
 
 Gamestate init_gameloop() {
-    debug_file(dbgOut, " - Allocating gameloop memory...\n");
+	debug_file(dbgOut, 0, " - Generating dimensions...\n");
+	ALTURA_JOGO = g_renderstate->nrows - ALTURA_LOGO - 2;
+	LARGURA_JOGO = g_renderstate->ncols - 2;
+
+    debug_file(dbgOut, 0, " - Allocating gameloop memory...\n");
 
 	Gamestate gs = (Gamestate)malloc(sizeof(GAMESTATE));
 
-    debug_file(dbgOut, " - Initializing player...\n");
+    debug_file(dbgOut, 0, " - Initializing player...\n");
 	Player player = defaultPlayer();
 	gs->player = player;
-    debug_file(dbgOut, " - Initializing projectile...\n");
+
+    debug_file(dbgOut, 0, " - Initializing projectile...\n");
 	Projectile projectile = defaultProjectile();
 	gs->projectile = projectile;
 
-    debug_file(dbgOut, " - Initializing clock-related variables...\n");
+    debug_file(dbgOut, 0, " - Initializing clock-related variables...\n");
 	gs->input_initialized = 0;
 	gs->clock = 0;
 	gs->block_clock = 1;
@@ -35,14 +45,19 @@ Gamestate init_gameloop() {
 	// gs->path_cell_count = 0;
 	// gs->path_cells = NULL;
 
-    debug_file(dbgOut, " - Generating initial map...\n");
+    debug_file(dbgOut, 0, " - Generating initial map...\n");
 	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); // map
+	// (g_renderstate->nrows - ALTURA_LOGO - 2) + (ALTURA_LOGO + 1)
+	// g_renderstate->nrows - ALTURA_LOGO - 2 + ALTURA_LOGO + 1
+	// g_renderstate->nrows - ALTURA_LOGO + ALTURA_LOGO - 2 + 1
+	// g_renderstate->nrows - 0 - 1
+	// g_renderstate->nrows - 1, LARGURA_JOGO
 
-    debug_file(dbgOut, " -- Generating light map...\n");
+    debug_file(dbgOut, 0, " -- Generating light map...\n");
 	init_light_map(g_renderstate->nrows-1, g_renderstate->ncols-2);
 
 
-    debug_file(dbgOut, " - Generating map footprint...\n");
+    debug_file(dbgOut, 0, " - Generating map footprint...\n");
 	map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));
     for (int i = 0; i < ALTURA_JOGO; i++) {
         map_footprint[i] = (int *)malloc((LARGURA_JOGO) * sizeof(int));
@@ -56,7 +71,7 @@ Gamestate init_gameloop() {
 
 	// gs->pointB = mob->entity->coords;
 
-    debug_file(dbgOut, " - Generating mobs...\n");
+    debug_file(dbgOut, 0, " - Generating mobs...\n");
 	int mob_count = 3;
 	Mob* mobs = (Mob*)malloc(sizeof(Mob) * mob_count);
 
@@ -72,7 +87,7 @@ Gamestate init_gameloop() {
 	gs->mobs = mobs;
 	gs->mob_count = mob_count;
 
-	debug_file(dbgOut, " - Generating chests...\n");
+	debug_file(dbgOut, 0 , " - Generating chests...\n");
     int chest_count = 1;
 	Chest* chests = (Chest*)malloc(sizeof(Chest) * chest_count);
 
@@ -158,10 +173,10 @@ void tick() {
 
 		// IF DEBUG NEEDED
 		float actualTickDuration = ((float)(tickEnd - tickStart)) / CLOCKS_PER_SEC * 1000;
-		// debug_file(dbgOut, "Tick duration: %.2f ms\n", actualTickDuration);
+		// debug_file(dbgOut, 0, "Tick duration: %.2f ms\n", actualTickDuration);
 
-		if (tickDuration > TICK_DURATION_MS) 
-			debug_file(dbgOut, "Tick took too long (%.2f / %d ms). Skipping.\n", actualTickDuration, TICK_DURATION_MS);
+		if (actualTickDuration > TICK_DURATION_MS) 
+			debug_file(dbgOut, 0, "Tick took too long (%.2f / %d ms). Skipping.\n", actualTickDuration, TICK_DURATION_MS);
 	}
 }
 
@@ -284,8 +299,9 @@ void game_keybinds(int key) {
 
 		// Seppuku
 		case 'q': 
-			endwin(); 
-			exit(0); 
+			// endwin(); 
+			// exit(0); 
+			EXIT = TRUE;
 			break;
 
 
@@ -306,9 +322,9 @@ void game_keybinds(int key) {
 		// 	move_player(+0, -1);
 		// 	break;
 		// case KEY_B2:
-		// case '5': 
-		// 	displayMenu(MENU_MAIN_MENU);
-		// 	break;
+		case '5': 
+			displayMenu(MENU_MAIN_MENU);
+			break;
 		// case 'a':
 		// case 'A': {
 		// 	g_dialog_text = "A\nB\nLorem ipsum dolore sit amet. Some random fuckery here.\0";

@@ -20,12 +20,15 @@
 #include "../map/light.h"
 #include "../entity/cheats/cheats.h"
 
-#define ALTURA_JOGO g_renderstate->nrows - ALTURA_LOGO - 2
-#define LARGURA_JOGO g_renderstate->ncols - 2
-
 #ifndef useconds_t
 typedef unsigned int useconds_t;
 #endif
+
+// #define ALTURA_JOGO g_renderstate->nrows - ALTURA_LOGO - 2
+// #define LARGURA_JOGO g_renderstate->ncols - 2
+
+extern int ALTURA_JOGO;
+extern int LARGURA_JOGO;
 
 // Import paths from main
 extern char* BIN_PATH;
@@ -51,7 +54,8 @@ extern int find_map;
 
 extern char* g_dialog_text;
 extern char**** g_dialog_page_data;
-extern int g_dialog_control[3];
+extern int g_dialog_control[4];
+extern int (*g_dialog_keybinds)(int key);
 
 /* FUNCTION SIGNATURES */
 Gamestate init_gameloop();

@@ -7,14 +7,33 @@
 #include "gameloop/gameloop.h"
 #include "render/render.h"
 
+int EXIT = FALSE;
+
 // char BIN_PATH[PATH_MAX];
 char* BIN_PATH;
 int BIN_PATH_LEN;
 char ASSET_DIR[PATH_MAX];
 int ASSET_DIR_LEN = PATH_MAX;
 FILE* dbgOut;
+int DEBUG_LEVEL = 0;
 
-int main() {
+int main(int argc, char *argv[]) {
+    // Parse arguments
+    for (int i = 1; i < argc; i++) {
+
+        // Debug level flag
+        if (strcmp(argv[i], "-d") == 0 && i + 1 < argc) {
+           char *endptr;
+            int level = strtol(argv[i + 1], &endptr, 10);
+
+            if (*endptr == '\0') {
+                
+                DEBUG_LEVEL = level;
+                break;
+            }
+        }
+    }
+
     // Setup Paths
     char BIN_PATH_TMP[PATH_MAX];
     if (!readlink("/proc/self/exe", BIN_PATH_TMP, PATH_MAX)) {
@@ -51,36 +70,38 @@ int main() {
         exit(1);
     }
 
-    dbgOut = fopen(new_dbgout_path, "w");
+    dbgOut = fopen(new_dbgout_path, "a");
 
-    debug_file(dbgOut, "Logger initialized.\n");
+    debug_file(dbgOut, 0, "Logger initialized.\n");
     
     // Initialize random
     srandom(time(NULL));
 
     // Initialize renderer
-    debug_file(dbgOut, "Initializing renderer...\n");
+    debug_file(dbgOut, 0, "Initializing renderer...\n");
     Renderstate rs = init_render();
-    debug_file(dbgOut, "Renderer initialized successfully.\n");
+    debug_file(dbgOut, 0, "Renderer initialized successfully.\n");
 
     // Initialize items
-    debug_file(dbgOut, "Initializing items...\n");
+    debug_file(dbgOut, 0, "Initializing items...\n");
     load_items();
     
     // Initialize gameloop
-    debug_file(dbgOut, "Initializing gameloop...\n");
+    debug_file(dbgOut, 0, "Initializing gameloop...\n");
     Gamestate gs = init_gameloop();
 
-    debug_file(dbgOut, "Gameloop initialized succesfully.\n");
+    debug_file(dbgOut, 0, "Gameloop initialized succesfully.\n");
     
     player_spawn(gs->player, map, g_renderstate->nrows-1, g_renderstate->ncols-2); // spawn
 
     // Event Loop
-    debug_file(dbgOut, "Event loop started.\n");
-    while (1) {
+    debug_file(dbgOut, 0, "Event loop started.\n");
+    while (!EXIT) {
         tick();
         render(gs);
     }
+
+    endwin();
     
     return 0;
 }

@@ -151,16 +151,12 @@ void handle_MainMenu_keybinds(int key) {
         case 10 : case 13 : 
             switch(botao_selecionado_principal) {
                 case 0 : 
-                    closeMenu(MENU_MAIN_MENU);
-                    // startGame(); cujo codigo seria, por exemplo, utilizar as funcoes: create_asylum; print_asylum; drawGameInterface();
-                    // create_asylum(g_renderstate->nrows, g_renderstate->ncols, 5);
-                    // print_asylum(g_renderstate->nrows, g_renderstate->ncols, 5);
-                    drawGameInterface();
+                    displayMenu(MENU_CHARACTERS);
                     break;
 
                 case 1 : 
                     displayMenu(MENU_SAVE);
-                    break; //saves
+                    break;
 
                 case 2 : 
                     displayMenu(MENU_OPTIONS); 

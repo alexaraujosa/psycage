@@ -20,4 +20,5 @@ Chest defaultChest();
 void destroyChest(Chest chest);
 int addChestToMap(Chest chest, int** map, int width, int height);
 
+
 #endif

@@ -1,12 +1,12 @@
 #include "pausemenu.h"
 #include "util/ncurses.h"
 
-#define BOTOES 3
+#define BOTOES 4
 #define LARGURA_PAUSE 59
 #define ALTURA_PAUSE 8
 
 static unsigned short int effect = 0, botao_selecionado_principal = 0;
-static char *botoes[BOTOES] = {"menu.pause.return", "menu.pause.options", "menu.pause.exit"};
+static char *botoes[BOTOES] = {"menu.pause.return", "menu.pause.save", "menu.pause.options", "menu.pause.exit"};
 
 static char *pause[ALTURA_PAUSE] = {
         "  8888888b.      d8888 888     888  .d8888b.  8888888888  \0",
@@ -121,11 +121,16 @@ void handle_PauseMenu_keybinds(int key) {
                                 closeMenu(MENU_PAUSE);
                                 break;
                             
-                            case 1 : 
+                            case 1 :
+                                displayMenu(MENU_SAVE);
+                                break;
+
+                            case 2 : 
                                 displayMenu(MENU_OPTIONS); 
                                 break;
-                            case 2 : 
-                                closeMenu(MENU_PAUSE);      // Aqui devo fazer clean do PATH todo dos menus
+                            case 3 : 
+                                closeMenu(g_renderstate->menus[0]->id);
+                                // end_game(LARGURA_JOGO);
                                 displayMenu(MENU_MAIN_MENU); 
                                 break;
 

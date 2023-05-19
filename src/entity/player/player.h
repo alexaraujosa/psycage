@@ -9,15 +9,16 @@
 
 #include "../entity.h"
 #include "../../data/items.h"
+#include "../cheats/cheats.h"
 
 typedef struct player {
     Entity entity;
     DataItemNode item;
+    Cheats cheats;
     int level;
     int kills;
     int xp;
     int last_direction;
-    int cheats;
     int class;
     int radius;
 } PLAYER, *Player;

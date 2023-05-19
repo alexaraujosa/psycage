@@ -115,8 +115,6 @@ Gamestate init_gameloop() {
 	
 	g_gamestate = gs;
 
-    gs->player->radius = 5; // DELETE BEFORE SENDING THE PROJECT	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 	return gs;
 }
 
@@ -203,6 +201,7 @@ void game_keybinds(int key) {
 	// mvaddch(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, ' ');
 
 	godmode_code_checker(key);
+	vision_code_checker(key);
 
 	switch(key) {
 		// case '1': {
@@ -278,7 +277,7 @@ void game_keybinds(int key) {
 
 		// Open Menu
 		case 'p': case 'P' : 
-			displayMenu(MENU_MAIN_MENU);
+			displayMenu(MENU_PAUSE);
 			break;
 		// case 'a':
 		// case 'A': {
@@ -412,7 +411,43 @@ int is_passable(int x, int y){
     return 1;
 }
 
+void end_game(int HEIGHT) {
+	for (int i = 0; i < g_gamestate->mob_count; i++){
+
+	if (g_gamestate->mobs[i] == NULL) break;
+		
+		destroyMob(g_gamestate->mobs[i]);
+	}
+
+	for(int i = 0; i < g_gamestate->chest_count; i++){
+		
+		if (g_gamestate->chests== NULL) break;
+
+		destroyChest(g_gamestate->chests[i]);
+	}	
+	
+	for(int y = 0; y < ALTURA_JOGO; y++){
+
+		if (map_footprint == NULL) break;
+				
+		free(map_footprint[y]);
+	}
+	free(map_footprint);	
+	destroyProjectile(g_gamestate->projectile);	//necessario?
+	destroyPlayer(g_gamestate->player);			//necessario?
+
+	for(int y = 0; y < HEIGHT; y++){
+			
+		if (map == NULL) break;
+        		
+		free(map[y]);
+	}
+	free(map);
+}
+
 void continue_game(int HEIGHT, int WIDTH){
+
+	closeMenu(g_renderstate->menus[0]->id);
 
 	// Free of the old map	
 	for (int i = 0; i < g_gamestate->mob_count; i++){
@@ -426,7 +461,7 @@ void continue_game(int HEIGHT, int WIDTH){
 		
 		if (g_gamestate->chests== NULL) break;
 
-		destroyItem(g_gamestate->chests[i]);
+		destroyChest(g_gamestate->chests[i]);
 	}	
 	
 	for(int y = 0; y < ALTURA_JOGO; y++){

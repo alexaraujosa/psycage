@@ -20,12 +20,15 @@ Player defaultPlayer() {
     DataItemNode item = (DataItemNode)malloc(sizeof(DataItemNode));
     if (item == NULL) return NULL;
 
+    Cheats cheats = defaultCheats();
+    if (cheats == NULL) return NULL;
+
+    player->cheats = cheats;
     player->item = item;
     player->entity = entity;
     player->level = 0;
     player->kills = 0;
     player->xp = 0;
-    player->cheats = 0;
     player->class = Priest;
     player->radius = 0;
 
@@ -66,7 +69,7 @@ void killXp(Player player) {
 void destroyPlayer(Player player) {
     // for(int i = 1 ; i <= 3 ; i++)
     //     delete_Save(i);
-    
+    destroyCheats(player->cheats);
     destroyEntity(player->entity);
     free(player);
 
@@ -96,7 +99,9 @@ char* getClassInterface(int classe) {
 }
 
 void verifyPlayerRadius() {
-
+    if(g_gamestate->player->cheats->vision == 1)
+        return;
+    
     switch(g_gamestate->player->class) {
 
         case Priest: {

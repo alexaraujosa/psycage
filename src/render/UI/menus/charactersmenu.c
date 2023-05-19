@@ -139,13 +139,14 @@ void handle_CharactersMenu_keybinds(int key) {
             break;
 
 
-        case 10 : case 13 : switch(botao_selecionado_principal) {
+        case 10 : case 13 : 
+                continue_game(ALTURA_JOGO, LARGURA_JOGO);
+                switch(botao_selecionado_principal) {
 
                             case Priest : {
                                 g_gamestate->player->entity->basedamage = 3;
                                 g_gamestate->player->class = Priest;
                                 g_gamestate->player->radius = 2;
-                                //startgame
                                 break;            
                             }
 
@@ -153,7 +154,6 @@ void handle_CharactersMenu_keybinds(int key) {
                                 g_gamestate->player->entity->basedamage = 3;
                                 g_gamestate->player->class = Detective;
                                 g_gamestate->player->radius = 8;
-                                //startgame
                                 break;             
                             }
 
@@ -161,7 +161,6 @@ void handle_CharactersMenu_keybinds(int key) {
                                 g_gamestate->player->entity->basedamage = 3;
                                 g_gamestate->player->class = Mercenary;
                                 g_gamestate->player->radius = 5;
-                                //startgame
                                 break;             
                             }
 

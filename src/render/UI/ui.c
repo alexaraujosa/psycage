@@ -274,7 +274,7 @@ void drawGameInterface() {
     for(int i = ESTATISTICAS/2, j = 0 ; i < ESTATISTICAS ; i++, j++)
         mvwprintw(g_renderstate->wnd,
                   ALTURA_LOGO/3 + j,
-                  LARGURA_RETANGULO*0.5,
+                  LARGURA_RETANGULO*0.6,
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
 
@@ -305,7 +305,7 @@ void drawGameInterface() {
     mvwprintw(g_renderstate->wnd, 
               ALTURA_LOGO/3,    
               LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.class")),
-              "%s  " , getClassInterface(g_gamestate->player->class)
+              "%s   " , getClassInterface(g_gamestate->player->class)
             );
 
     //Print do Level
@@ -328,16 +328,16 @@ void drawGameInterface() {
     //Print da Armor
     mvwprintw(g_renderstate->wnd, 
             ALTURA_LOGO/3,    
-            LARGURA_RETANGULO*0.5 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.armor")),
+            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.armor")),
             "%d", g_gamestate->player->entity->armor
         );
 
     //Print do Health e Max Health
-    if(g_gamestate->player->cheats == 0) {
+    if(g_gamestate->player->cheats->godmode == 0) {
 
         mvwprintw(g_renderstate->wnd,
                 ALTURA_LOGO/3 + 1, 
-                LARGURA_RETANGULO*0.5 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
+                LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
                 "%d/%d     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
                 );
 
@@ -345,7 +345,7 @@ void drawGameInterface() {
 
         mvwprintw(g_renderstate->wnd,
                 ALTURA_LOGO/3 + 1, 
-                LARGURA_RETANGULO*0.5 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
+                LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
                 "%s", get_localized_string(g_renderstate->language, "user.interface.stats.god")
                 );
 
@@ -354,7 +354,7 @@ void drawGameInterface() {
     //Print do XP
     mvwprintw(g_renderstate->wnd, 
             ALTURA_LOGO/3 + 2,    
-            LARGURA_RETANGULO*0.5 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.xp")),
+            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.xp")),
             "%d", g_gamestate->player->xp
         );
 

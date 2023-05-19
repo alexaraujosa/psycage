@@ -6,7 +6,7 @@
 
 extern FILE* dbgOut;
 
-static unsigned short SAVE_VERSION = 1;
+static unsigned short SAVE_VERSION = 2;
 
 int get_savepath(char *save_path, int num_save) {
     int res = snprintf(save_path, PATH_MAX, "%s/saves/save%d.dat", BIN_PATH, num_save);
@@ -355,14 +355,14 @@ int load_save(int num_save) {
 
     debug_file(dbgOut, 0, " - Regenerating light map...\n");
     debug_file(dbgOut, 2, "-- Clearning old light map...\n");
-    for (int i = 0; i < g_renderstate->nrows; i++) {
+    for (int i = 0; i < g_renderstate->nrows-1; i++) {
         free(visible[i]);
     }
     free(visible);
     visible = NULL;
 
     debug_file(dbgOut, 0, "-- Generating new light map...\n");
-	init_light_map(g_renderstate->nrows, g_renderstate->ncols-2);
+	init_light_map(g_renderstate->nrows-1, g_renderstate->ncols-2);
 
     debug_file(dbgOut, 1, "- Regenerating map footprint...\n");
     debug_file(dbgOut, 2, "-- Clearning old map footprint...\n");

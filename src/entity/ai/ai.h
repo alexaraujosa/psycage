@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include "common.h"
+#include "debug.h"
 #include "util/math.h"
 #include "../entity.h"
 #include "./pathfind.h"
@@ -11,6 +12,7 @@
 
 typedef struct gamestate GAMESTATE, *Gamestate;
 extern Gamestate g_gamestate;
+extern FILE* dbgOut;
 
 typedef struct mob {
     Entity entity;
@@ -21,6 +23,7 @@ typedef struct mob {
 
 /* FUNCTION SIGNATURES */
 Mob defaultMob();
+void destroyMob(Mob mob);
 int attemptMoveMob(Coords playerCoords, Mob mob, int** map, int width, int height);
 int addMobToMap(Mob mob, int** map, int width, int height);
 void destroyMob(Mob mob);

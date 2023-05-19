@@ -22,8 +22,12 @@ void destroyMob(Mob mob) {
 }
 
 int trackPlayer(Coords playerCoords, Mob mob, int** map, int width, int height) {
+    debug_file(dbgOut, 2, "Calculating path for mob (X %d, Y %d).\n", mob->entity->coords->x, mob->entity->coords->y);
+
+    debug_file(dbgOut, 2, "- Resetting mob tile.\n");
     map[mob->entity->coords->y][mob->entity->coords->x] = map_footprint[mob->entity->coords->y][mob->entity->coords->x];
 
+    debug_file(dbgOut, 2, "- Calculating path.\n");
 	As_Node path = pathfind(
 		height, 
 		width, 
@@ -40,6 +44,13 @@ int trackPlayer(Coords playerCoords, Mob mob, int** map, int width, int height) 
 
         if (path_cell_count > 2) { // Points not adjacent cardinally
             // asylum[mob->entity->coords->y][mob->entity->coords->x] = map_footprint[mob->entity->coords->y][mob->entity->coords->x];
+            debug_file(
+                dbgOut, 2, 
+                "Path found. Moving mob from (X %d, Y %d) to (X %d, Y %d).\n", 
+                mob->entity->coords->x, mob->entity->coords->y,
+                path_cells[1]->x, path_cells[1]->y
+            );
+            
             mob->entity->coords = path_cells[1];
             map[mob->entity->coords->y][mob->entity->coords->x] = 5;
 
@@ -48,8 +59,12 @@ int trackPlayer(Coords playerCoords, Mob mob, int** map, int width, int height) 
 
         map[mob->entity->coords->y][mob->entity->coords->x] = 5;
 
+        debug_file(dbgOut, 2, "Mob is already adjacent to player. Skipping.\n");
+
         return 1;
     }
+
+    debug_file(dbgOut, 2, "- Path not found.\n");
 
     return 1;
 }
@@ -60,6 +75,8 @@ int attemptMoveMob(Coords playerCoords, Mob mob, int** map, int width, int heigh
     mob->lastMove++;
 
     if (mob->lastMove >= mob->moveCooldown) {
+        debug_file(dbgOut, 2, "Attempting to move mob (X %d, Y %d).\n", mob->entity->coords->x, mob->entity->coords->y);
+
         mob->lastMove = 0;
         return trackPlayer(playerCoords, mob, map, width, height);
     }

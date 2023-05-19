@@ -144,23 +144,29 @@ void handle_CharactersMenu_keybinds(int key) {
                 switch(botao_selecionado_principal) {
 
                             case Priest : {
-                                g_gamestate->player->entity->basedamage = 3;
+                                g_gamestate->player->entity->basedamage = 12;
                                 g_gamestate->player->class = Priest;
                                 g_gamestate->player->radius = 2;
+                                g_gamestate->player->entity->health = 8;
+                                g_gamestate->player->entity->maxHealth = 8;
                                 break;            
                             }
 
                             case Detective : {
-                                g_gamestate->player->entity->basedamage = 3;
+                                g_gamestate->player->entity->basedamage = 4;
                                 g_gamestate->player->class = Detective;
                                 g_gamestate->player->radius = 8;
+                                g_gamestate->player->entity->health = 16;
+                                g_gamestate->player->entity->maxHealth = 16;
                                 break;             
                             }
 
                             case Mercenary : {
-                                g_gamestate->player->entity->basedamage = 3;
+                                g_gamestate->player->entity->basedamage = 8;
                                 g_gamestate->player->class = Mercenary;
                                 g_gamestate->player->radius = 5;
+                                g_gamestate->player->entity->health = 12;
+                                g_gamestate->player->entity->maxHealth = 12;
                                 break;             
                             }
 

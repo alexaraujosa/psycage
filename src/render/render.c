@@ -219,7 +219,7 @@ void render_game(Gamestate gs) {
     );
 	wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
 
-    if(g_gamestate->player->cheats == 1) {	
+    if(g_gamestate->player->cheats->godmode == 1) {	
         wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
      }else {	
         wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));

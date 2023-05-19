@@ -2,9 +2,10 @@
 
 #define ITEMS 9
 
-
+extern int EXIT;
 extern char ASSET_DIR[PATH_MAX];
 extern int ASSET_DIR_LEN;
+extern FILE* dbgOut;
 
 static HashMap items;
 static int items_len;
@@ -33,25 +34,33 @@ HashMap load_items() {
         if (lineCount == 1) {
             int version = -1;
             if (!sscanf(line, "version = %d", &version)) {
-                debug("Invalid version.\n");
-                exit(1);
+                debug_file(dbgOut, 0, "Invalid version.\n");
+                //exit(1);
+                EXIT = TRUE;
+                return NULL;
             }
 
             if (version != ITEM_VERSION) {
-                debug("Version not supported.\n");
-                exit(1);
+                debug_file(dbgOut, 0, "Version not supported.\n");
+                // exit(1);
+                EXIT = TRUE;
+                return NULL;
             }
         } 
         else {
             DataItemNode item = parse_item(line, read - 1);
             if (item == NULL) {
-                debug("Invalid item at line %d.\n", lineCount);
-                exit(1);
+                debug_file(dbgOut, 0, "Invalid item at line %d.\n", lineCount);
+                // exit(1);
+                EXIT = TRUE;
+                return NULL;
             }
 
             if (hm_has(map, item->name)) {
-                debug("Unable to add item '%s' (at line %d): Item with same name already registered.\n", item->name, lineCount);
-                exit(1);
+                debug_file(dbgOut, 0, "Unable to add item '%s' (at line %d): Item with same name already registered.\n", item->name, lineCount);
+                // exit(1);
+                EXIT = TRUE;
+                return NULL;
             }
 
             hm_set(map, item->id, item);
@@ -80,7 +89,7 @@ DataItemNode defaultItemResource() {
 
 DataItemNode parse_item(char* raw, int len) {
     IGNORE_ARG(len);
-    // debug("LINE: %d | '%s'\n", len, raw);
+    // debug_file(dbgOut, 0, "LINE: %d | '%s'\n", len, raw);
 
     DataItemNode item = defaultItemResource();
     char name[MAX_INPUT];
@@ -90,7 +99,7 @@ DataItemNode parse_item(char* raw, int len) {
     item->id = (char*)malloc((strlen(id)+1) * sizeof(char));
     strcpy(item->id, id);
 
-    // debug("NAME: %s\n", name);
+    // debug_file(dbgOut, 0, "NAME: %s\n", name);
     item->name = (char*)malloc((strlen(name)+1) * sizeof(char));
     strcpy(item->name, name);
 

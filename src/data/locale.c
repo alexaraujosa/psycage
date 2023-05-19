@@ -2,6 +2,7 @@
 #include "../render/render.h"
 
 // External Constants
+extern int EXIT;
 extern char ASSET_DIR[PATH_MAX];
 extern int ASSET_DIR_LEN;
 extern FILE* dbgOut;
@@ -59,8 +60,10 @@ void load_locales() {
 
         file = fopen(locale_path, "r");
         if (file == NULL) {
-            debug_file(dbgOut, "Cannot load locales: Missing language file: %s", locale_path);
-            exit(1);
+            debug_file(dbgOut, 0, "Cannot load locales: Missing language file: %s", locale_path);
+            // exit(1);
+            EXIT = TRUE;
+            return;
         }
 
         DataLocaleNode locale = defaultLocale();
@@ -78,13 +81,17 @@ void load_locales() {
             if (lineCount == 1) {
                 int version = -1;
                 if (!sscanf(line, "#version=%d", &version)) {
-                    debug_file(dbgOut, "Cannot load locales: Invalid version on locale %s.\n", locale->id);
-                    exit(1);
+                    debug_file(dbgOut, 0, "Cannot load locales: Invalid version on locale %s.\n", locale->id);
+                    // exit(1);
+                    EXIT = TRUE;
+                    return;
                 }
 
                 if (version != LOCALE_VERSION) {
-                    debug_file(dbgOut, "Cannot load locales: Version not supported on locale %s.\n", locale->id);
-                    exit(1);
+                    debug_file(dbgOut, 0, "Cannot load locales: Version not supported on locale %s.\n", locale->id);
+                    // exit(1);
+                    EXIT = TRUE;
+                    return;
                 }
             } else {
                 DataLocaleLine localeLine = parse_locale_line(line, read - 1);
@@ -95,7 +102,9 @@ void load_locales() {
                         lineCount, 
                         locale->id
                     );
-                    exit(1);
+                    // exit(1);
+                    EXIT = TRUE;
+                    return;
                 }
 
                 if (hm_has(locale->translations, localeLine->key)) {
@@ -107,7 +116,9 @@ void load_locales() {
                         lineCount,
                         locale->id
                     );
-                    exit(1);
+                    // exit(1);
+                    EXIT = TRUE;
+                    return;
                 }
 
                 hm_set(locale->translations, localeLine->key, localeLine->translation);
@@ -164,6 +175,30 @@ char* get_localized_string(DataLocale loc, char* key) {
     char* transl = hm_get(locales[loc]->translations, key);
 
     if (transl == NULL) return key;
+    return transl;
+}
+
+char* get_args_localized_string(DataLocale loc, char* key, ...) {
+    va_list valist;
+    va_start(valist, key);
+
+    char* format = get_localized_string(loc, key);
+
+    char* transl = (char*)malloc(MAX_LOCALE_TRANSLATION_LEN * sizeof(char));
+
+    vsnprintf(transl, MAX_LOCALE_TRANSLATION_LEN, format, valist);
+
+    return transl;
+}
+
+char* format_localized_string(char* format, ...) {
+    va_list valist;
+    va_start(valist, format);
+
+    char* transl = (char*)malloc(MAX_LOCALE_TRANSLATION_LEN * sizeof(char));
+
+    vsnprintf(transl, MAX_LOCALE_TRANSLATION_LEN, format, valist);
+
     return transl;
 }
 

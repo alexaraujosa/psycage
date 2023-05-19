@@ -27,6 +27,7 @@
 #define __RL_DATA_LOCALE_H
 
 #include <stdio.h>
+#include <stdarg.h>
 #include "common.h"
 #include "util/string.h"
 #include "util/hashmap.h"
@@ -53,6 +54,7 @@ typedef struct dlocale_line {
 void load_locales();
 DataLocaleLine parse_locale_line(char* raw, int len);
 char* get_localized_string(DataLocale loc, char* key);
+char* get_args_localized_string(DataLocale loc, char* key, ...);
 void change_locale();
 
 #endif

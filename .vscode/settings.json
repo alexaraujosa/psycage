@@ -43,6 +43,8 @@
         "light.h": "c",
         "time.h": "c",
         "unistd.h": "c",
+        "memory": "c",
+        "streambuf": "c",
         "cheats.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",

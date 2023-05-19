@@ -7,7 +7,7 @@
 Renderstate g_renderstate;
 
 Renderstate init_render() {
-    debug_file(dbgOut, " - Allocating renderstate memory...\n");
+    debug_file(dbgOut, 0, " - Allocating renderstate memory...\n");
 
     Renderstate rs = (Renderstate)malloc(sizeof(RENDERSTATE));
 
@@ -17,11 +17,11 @@ Renderstate init_render() {
     // setlocale(LC_ALL, "");
 
     // Initialize window
-    debug_file(dbgOut, " - Initializing window...\n");
+    debug_file(dbgOut, 0, " - Initializing window...\n");
     WINDOW *wnd = initscr();
 
     // Get window size
-    debug_file(dbgOut, " - Initializing settings...\n");
+    debug_file(dbgOut, 0, " - Initializing settings...\n");
 
     int ncols, nrows;
     getmaxyx(wnd,nrows,ncols);
@@ -41,7 +41,7 @@ Renderstate init_render() {
 
     
     // COLORS
-    debug_file(dbgOut, " - Initializing colors...\n");
+    debug_file(dbgOut, 0, " - Initializing colors...\n");
 
     start_color();
 
@@ -90,7 +90,7 @@ Renderstate init_render() {
 
     g_renderstate = rs;
 
-    debug_file(dbgOut, " - Loading localization files...\n");
+    debug_file(dbgOut, 0, " - Loading localization files...\n");
     load_locales();
 
     return rs;
@@ -110,7 +110,7 @@ void render(Gamestate gs) {
         } 
         render_menu(gs);
     }
-    // refresh();
+    refresh();
 }
 
 #pragma region Menu functions
@@ -161,6 +161,8 @@ void _removeMenu(MenuId menu) {
         if (g_renderstate->menus[i]->id == menu) {
             for (int j = i; j < MENU_STACK_MAX - 1; j++) {
                 if (g_renderstate->menus[j] != NULL) {
+                    cleanup_menu(g_renderstate->menus[j]);
+
                     del_panel(g_renderstate->menus[j]->panel);
                     delwin(g_renderstate->menus[j]->wnd);
 

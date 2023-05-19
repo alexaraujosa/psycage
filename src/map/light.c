@@ -169,7 +169,7 @@ void print_light(WINDOW* win, int HEIGHT, int WIDTH, int beginY, int beginX){
     
     for (int y = 0; y < HEIGHT- beginY-1; y++) {
         
-        for (int x = 0; x < WIDTH-1; x++) {
+        for (int x = 0; x < WIDTH; x++) {
             
             if(visible[y][x] == 0){
                 

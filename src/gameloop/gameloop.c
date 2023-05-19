@@ -39,7 +39,7 @@ Gamestate init_gameloop() {
 	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); // map
 
     debug_file(dbgOut, " -- Generating light map...\n");
-	init_light_map(g_renderstate->nrows, g_renderstate->ncols-2);
+	init_light_map(g_renderstate->nrows-1, g_renderstate->ncols-2);
 
 
     debug_file(dbgOut, " - Generating map footprint...\n");
@@ -129,18 +129,18 @@ void tick() {
 			);
 		}
 
-		move_projectile(g_gamestate->projectile->dx, g_gamestate->projectile->dy);
-
-		if(g_gamestate->mob_count == 0) continue_game(g_renderstate->nrows, g_renderstate->ncols);
+		move_projectile(g_gamestate->projectile->dx, g_gamestate->projectile->dy);	
 
 		// RTX_ON
 		calculate_visibility(
 			g_gamestate->player->entity->coords->x, 
 			g_gamestate->player->entity->coords->y, 
 			map, 
-			g_renderstate->nrows, 
+			g_renderstate->nrows-1, 
 			g_renderstate->ncols-2
 		); 
+		
+		if(g_gamestate->mob_count == 0) continue_game(g_renderstate->nrows-1, g_renderstate->ncols-2);
 	}
 
 	tick_end: {
@@ -398,32 +398,56 @@ int is_passable(int x, int y){
 
 void continue_game(int HEIGHT, int WIDTH){
 
-	for(int y = 0; y < HEIGHT; y++){
-		
-		for (int x = 0; x < WIDTH; x++){
-			free(map[y][x]);
-		}
-	}
-	free(map);
-	
+	// Free of the old map	
 	for (int i = 0; i < g_gamestate->mob_count; i++){
+
+		if (g_gamestate->mobs[i] == NULL) break;
 		
 		destroyMob(g_gamestate->mobs[i]);
 	}
 
-	for(int y = 0; y < HEIGHT; y++){
+	for(int i = 0; i < g_gamestate->chest_count; i++){
 		
-		for (int x = 0; x < WIDTH; x++){
-			free(map[y][x]);
-		}
-	}
-	free(visible);
-	
-	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); // map
+		if (g_gamestate->chests== NULL) break;
 
-	player_spawn(g_gamestate->player, map, g_renderstate->nrows, g_renderstate->ncols-2); // spawn
+		destroyItem(g_gamestate->chests[i]);
+	}	
 	
-	init_light_map(g_renderstate->nrows, g_renderstate->ncols-2); // light
+	for(int y = 0; y < ALTURA_JOGO; y++){
+
+		if (map_footprint == NULL) break;
+				
+		free(map_footprint[y]);
+	}
+	free(map_footprint);	
+
+	for(int y = 0; y < HEIGHT; y++){
+			
+		if (map == NULL) break;
+        		
+		free(map[y]);
+	}
+	free(map);
+
+	// Creation of the new map
+	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); 
+	
+	// check if the map is valid
+	while(!valid_map(HEIGHT, WIDTH)){
+		
+		for(int y = 0; y < HEIGHT-1; y++){
+			
+			if (map == NULL) break;
+        		
+			free(map[y]);
+		}
+		free(map);
+
+		find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); 
+	}
+
+	// spawn
+	player_spawn(g_gamestate->player, map, g_renderstate->nrows - 1, LARGURA_JOGO); 
 	
 	// footprint
 	map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));
@@ -452,6 +476,22 @@ void continue_game(int HEIGHT, int WIDTH){
 
 	g_gamestate->mobs = mobs;
 	g_gamestate->mob_count = mob_count;
+
+	// chests
+	int chest_count = 1;
+	Chest* chests = (Chest*)malloc(sizeof(Chest) * chest_count);
+
+	for (int i = 0; i < chest_count; i++) {
+	    Chest chest = defaultChest();
+
+	    addChestToMap(chest, map, LARGURA_JOGO, ALTURA_JOGO);
+
+	    chests[i] = chest;
+	    map[chest->entity->coords->y][chest->entity->coords->x] = 5;
+	}
+
+	g_gamestate->chests = chests;
+	g_gamestate->chest_count = chest_count;
 }
 
 void print_loading_screen(WINDOW* win, int HEIGHT, int WIDTH){
@@ -462,7 +502,5 @@ void print_loading_screen(WINDOW* win, int HEIGHT, int WIDTH){
 			
 			mvwaddch(win, y, x, ' ' | COLOR_BLACK);
 		}
-
-		wprintw(win, "\n");
 	}
 }

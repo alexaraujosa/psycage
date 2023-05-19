@@ -73,7 +73,7 @@ int main() {
 
     debug_file(dbgOut, "Gameloop initialized succesfully.\n");
     
-    player_spawn(gs->player, map, g_renderstate->nrows, g_renderstate->ncols-2); // spawn
+    player_spawn(gs->player, map, g_renderstate->nrows-1, g_renderstate->ncols-2); // spawn
 
     // Event Loop
     debug_file(dbgOut, "Event loop started.\n");

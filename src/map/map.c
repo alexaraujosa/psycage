@@ -195,7 +195,6 @@ void create_dungeon( int HEIGHT, int WIDTH, int beginY, int beginX){
 #define ROOM_MIN_WIDTH 7
 #define ROOM_MIN_HEIGHT 7
 #define CORRIDOR_WIDTH 3
-#define MAX_CONNECTIONS 10
 
 void init_maze(int HEIGHT, int WIDTH){
     
@@ -214,16 +213,11 @@ void init_maze(int HEIGHT, int WIDTH){
     }
 }
 
-void create_corridor(Room* room1, Room* room2, int max_connections, int corridor_width, int HEIGHT, int WIDTH) {
+void create_corridor(Room* room1, Room* room2, int corridor_width, int HEIGHT, int WIDTH) {
     
-    static int num_connections = 0;
+
     static int prev_x = -1;
     static int prev_y = -1;
-    
-    // Check if we have reached the maximum number of connections
-    if (num_connections >= max_connections) {
-        return;
-    }
     
     // Randomly select one of the two rooms
     Room* source_room;
@@ -304,8 +298,6 @@ void create_corridor(Room* room1, Room* room2, int max_connections, int corridor
         prev_y = target_y;
     }
 
-    // Increment the number of connections
-    num_connections++;
 }
 
 
@@ -379,7 +371,7 @@ void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
 
     // Otherwise, creates a corridor between the sub-rooms, and recursively calls split_room_sewers() on each of the sub-rooms
     if (left_room != NULL && right_room != NULL) {
-        create_corridor(left_room, right_room, MAX_CONNECTIONS, CORRIDOR_WIDTH, HEIGHT, WIDTH);
+        create_corridor(left_room, right_room, CORRIDOR_WIDTH, HEIGHT, WIDTH);
         split_room_sewers(left_room, HEIGHT, WIDTH);
         split_room_sewers(right_room, HEIGHT, WIDTH);
     }
@@ -407,7 +399,7 @@ void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
         rooms[i] = *create_room_sewers(room_x, room_y, room_width, room_height);
 
         if (prev_room != NULL) {
-            create_corridor(prev_room, &rooms[i], MAX_CONNECTIONS, CORRIDOR_WIDTH, HEIGHT, WIDTH);
+            create_corridor(prev_room, &rooms[i], CORRIDOR_WIDTH, HEIGHT, WIDTH);
         }
         
         prev_room = &rooms[i];
@@ -465,8 +457,9 @@ Room create_room(int HEIGHT, int WIDTH) {
 
     room.width = rand() % (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE; // random area
     room.height = rand() % (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE;
-    room.x = rand() % (WIDTH - room.width - 1) + 1; // random location
-    room.y = rand() % (HEIGHT - room.height - 1) + 1;
+    room.x = rand() % (abs(WIDTH - room.width - 1)) + 1; // random location
+    room.y = rand() % (abs(HEIGHT - room.height) +1) + 1;
+
 
     return room;
 }
@@ -597,6 +590,27 @@ void create_asylum(int HEIGHT, int WIDTH, int beginY, int beginX){
 
     carve_corridors(rooms, num_rooms);
     blood_stains_asylum(HEIGHT, WIDTH);
+
+    // Check top and bottom borders
+    for (int x = 0; x < WIDTH; x++) {
+        if (map[0][x] == 0) {
+            map[0][x] = 1;
+        }
+        if (map[HEIGHT - 1][x] == 0) {
+            map[HEIGHT - 1][x] = 1;
+        }
+    }
+    
+    // Check left and right borders (excluding corners)
+    for (int y = 1; y < HEIGHT - 1; y++) {
+        if (map[y][0] == 0) {
+            map[y][0] = 1;
+        }
+        if (map[y][WIDTH - 1] == 0) {
+            map[y][WIDTH - 1] = 1;
+        }
+    }
+
     make_borders(map, HEIGHT, WIDTH);
     print_asylum(HEIGHT, WIDTH, beginY, beginX);
 }
@@ -622,4 +636,23 @@ int create_random_map(int HEIGHT, int WIDTH, int beginY, int beginX){
         create_asylum(HEIGHT, WIDTH, beginY, beginX);
         return 3;
     }
+}
+
+//====================================
+// Valid Map
+//====================================
+	
+int valid_map(int HEIGHT, int WIDTH){
+    
+    for (int y = 0; y < HEIGHT; y++){
+		
+		for (int x = 0; x < WIDTH; x++){
+			
+			if (map[y][x] == 0){
+				return 1;
+			}
+		}	
+	}
+    
+    return 0;
 }

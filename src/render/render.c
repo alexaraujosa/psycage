@@ -1,8 +1,5 @@
 #include "render.h"
 
-#define OFFSET_X 1
-#define OFFSET_Y ALTURA_LOGO + 1
-
 
 Renderstate g_renderstate;
 
@@ -107,7 +104,7 @@ void render(Gamestate gs) {
     }
     else{
         if(isInMenu() == 0){
-            print_random_map(g_renderstate->nrows, g_renderstate->ncols - 2, find_map, OFFSET_Y, OFFSET_X); // map
+            print_random_map(ALTURA_JOGO, LARGURA_JOGO, find_map, OFFSET_Y, OFFSET_X); // map
             render_game(gs);
             print_light(g_renderstate->wnd, ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X);// RTX_ON
         } 
@@ -184,6 +181,7 @@ void _removeMenu(MenuId menu) {
 
 #pragma region Renderers
 void render_game(Gamestate gs) {
+
     Coords playerCoords = gs->player->entity->coords;
     Coords projectileCoords = gs->projectile->entity->coords;
 
@@ -236,7 +234,7 @@ void render_game(Gamestate gs) {
             g_renderstate->wnd, 
             gs->mobs[i]->entity->coords->y + OFFSET_Y, 
             gs->mobs[i]->entity->coords->x + OFFSET_X, 
-            '$' | COLOR_PAIR(ORANGE_LOGO)
+            '$'
         );
     }
     wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
@@ -245,9 +243,9 @@ void render_game(Gamestate gs) {
     for (int i = 0; i < gs->chest_count; i++) {
         mvwaddch(
             g_renderstate->wnd, 
-            gs->chests[i]->entity->coords->y + ALTURA_LOGO + 1, 
-            gs->chests[i]->entity->coords->x + 1, 
-            'M' | COLOR_PAIR(ORANGE_LOGO)
+            gs->chests[i]->entity->coords->y + OFFSET_Y, 
+            gs->chests[i]->entity->coords->x + OFFSET_X, 
+            'M'
         );
     }
     wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));

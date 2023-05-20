@@ -27,6 +27,6 @@ int addChestToMap(Chest chest, int** map, int width, int height) {
 }
 
 void destroyChest(Chest chest) {
-    free(chest->entity);
+    destroyEntity(chest->entity);
     free(chest);
 }

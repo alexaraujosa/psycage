@@ -188,7 +188,7 @@ void handle_DeadMenu_keybinds(int key) {
         case 10 : case 13 : switch(botao_selecionado_principal) {
 
                             case 0 : 
-                                // aqui seria a startGame(), igual à função que está no main menu
+                                displayMenu(MENU_CHARACTERS);
                                 break;
 
                             case 1 :
@@ -196,9 +196,9 @@ void handle_DeadMenu_keybinds(int key) {
                                 break;
 
                             case 2 :
-                                // aqui falta acabar o jogo e, como estamos dentro de um jogo, o PATH dos menus esta limpo, portanto vai dar para dar display
-                                displayMenu(MENU_MAIN_MENU);    // do MENU_MAIN_MENU, coisa que nao acontece agora porque o PATH nao esta limpo e nos
-                                break;      // estamos a aceder ao MENU_DEAD pelo MENU_MAIN_MENU
+                                end_game(LARGURA_JOGO);
+                                displayMenu(MENU_MAIN_MENU);
+                                break;
                         }
 
     }

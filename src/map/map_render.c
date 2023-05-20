@@ -7,7 +7,7 @@
 
 void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
     
-    for (int y = 0; y < HEIGHT - beginY; y++) {
+    for (int y = 0; y < HEIGHT; y++) {
         
         for (int x = 0; x < WIDTH; x++) {
             
@@ -38,7 +38,7 @@ void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
 void print_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
     
     // Print the map
-    for (int j = 0; j < HEIGHT - beginY; j++) {
+    for (int j = 0; j < HEIGHT; j++) {
         
         for (int i = 0; i < WIDTH; i++) {
             
@@ -68,7 +68,7 @@ void print_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
 
 void print_asylum(int HEIGHT, int WIDTH, int beginY, int beginX) {
     
-    for (int y = 0; y < HEIGHT - beginY; y++) {
+    for (int y = 0; y < HEIGHT; y++) {
         
         for (int x = 0; x < WIDTH; x++) {
             

@@ -65,7 +65,9 @@ void game_keybinds(int key);
 void menu_keybinds(int key);
 void move_player(int dx, int dy);
 void move_projectile(int dx, int dy);
+void start_game(int HEIGHT, int WIDTH);
 void continue_game(int HEIGHT, int WIDTH);
+void end_game(int HEIGHT);
 int is_passable(int x, int y);
 void print_loading_screen(WINDOW* win, int HEIGHT, int WIDTH);
 

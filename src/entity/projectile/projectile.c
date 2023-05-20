@@ -16,6 +16,6 @@ Projectile defaultProjectile() {
 }
 
 void destroyProjectile(Projectile projectile) {
-    free(projectile->entity);
+    destroyEntity(projectile->entity);
     free(projectile);
 }

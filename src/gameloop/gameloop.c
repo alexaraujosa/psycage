@@ -46,15 +46,15 @@ Gamestate init_gameloop() {
 	// gs->path_cells = NULL;
 
     debug_file(dbgOut, 0, " - Generating initial map...\n");
-	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); // map
-	// (g_renderstate->nrows - ALTURA_LOGO - 2) + (ALTURA_LOGO + 1)
-	// g_renderstate->nrows - ALTURA_LOGO - 2 + ALTURA_LOGO + 1
+	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); // map
+	// (g_renderstate->nrows - ALTURA_LOGO - 2) + (OFFSET_Y)
+	// g_renderstate->nrows - ALTURA_LOGO - 2 + OFFSET_Y
 	// g_renderstate->nrows - ALTURA_LOGO + ALTURA_LOGO - 2 + 1
 	// g_renderstate->nrows - 0 - 1
 	// g_renderstate->nrows - 1, LARGURA_JOGO
 
     debug_file(dbgOut, 0, " -- Generating light map...\n");
-	init_light_map(g_renderstate->nrows-1, g_renderstate->ncols-2);
+	init_light_map(ALTURA_JOGO, LARGURA_JOGO);
 
 
     debug_file(dbgOut, 0, " - Generating map footprint...\n");
@@ -149,11 +149,11 @@ void tick() {
 			g_gamestate->player->entity->coords->x, 
 			g_gamestate->player->entity->coords->y, 
 			map, 
-			g_renderstate->nrows-1, 
-			g_renderstate->ncols-2
+			ALTURA_JOGO, 
+			LARGURA_JOGO
 		); 
 		
-		if(g_gamestate->mob_count == 0) continue_game(g_renderstate->nrows-1, g_renderstate->ncols-2);
+		if(g_gamestate->mob_count == 0) continue_game(ALTURA_JOGO, LARGURA_JOGO);
 	}
 
 	tick_end: {
@@ -392,8 +392,7 @@ void move_projectile(int dx, int dy) {
 		g_gamestate->projectile->entity->coords->y += dy;
 	}
 	else {
-		destroyProjectile(g_gamestate->projectile);
-		defaultProjectile();
+		g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
 	}
 
 }
@@ -481,7 +480,7 @@ void continue_game(int HEIGHT, int WIDTH){
 	free(map);
 
 	// Creation of the new map
-	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); 
+	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); 
 	
 	// check if the map is valid
 	while(!valid_map(HEIGHT, WIDTH)){
@@ -494,11 +493,11 @@ void continue_game(int HEIGHT, int WIDTH){
 		}
 		free(map);
 
-		find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, ALTURA_LOGO + 1, 1); 
+		find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); 
 	}
 
 	// spawn
-	player_spawn(g_gamestate->player, map, g_renderstate->nrows - 1, LARGURA_JOGO); 
+	player_spawn(g_gamestate->player, map, ALTURA_JOGO, LARGURA_JOGO); 
 	
 	// footprint
 	map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));

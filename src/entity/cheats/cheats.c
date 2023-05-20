@@ -77,6 +77,6 @@ void vision_Radius() {
         visaoAntes = g_gamestate->player->radius;
     }
 
-    g_gamestate->player->radius = (g_gamestate->player->cheats->vision == 0) ? visaoAntes : 50;
+    g_gamestate->player->radius = (g_gamestate->player->cheats->vision == 0) ? visaoAntes : 100;
 
 }

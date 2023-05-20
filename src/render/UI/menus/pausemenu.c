@@ -130,7 +130,7 @@ void handle_PauseMenu_keybinds(int key) {
                                 break;
                             case 3 : 
                                 closeMenu(g_renderstate->menus[0]->id);
-                                // end_game(LARGURA_JOGO);
+                                end_game(ALTURA_JOGO);
                                 displayMenu(MENU_MAIN_MENU); 
                                 break;
 

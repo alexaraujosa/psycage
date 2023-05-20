@@ -180,7 +180,7 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
 
 void create_dungeon( int HEIGHT, int WIDTH, int beginY, int beginX){
     
-    init_dungeon(HEIGHT+beginY, WIDTH);
+    init_dungeon(HEIGHT, WIDTH);
     generate_dungeon(HEIGHT, WIDTH);
     blood_stains_dungeon(HEIGHT, WIDTH);
     print_dungeon(HEIGHT, WIDTH, beginY, beginX);
@@ -379,7 +379,7 @@ void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
 
 void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
     
-    init_maze(HEIGHT+beginY, WIDTH);
+    init_maze(HEIGHT, WIDTH);
 
     // The root_room is the starting point of the map generation process, which is a single room that occupies the entire map
     Room* root_room = create_room_sewers(0, 0, WIDTH, HEIGHT);
@@ -405,6 +405,8 @@ void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
         prev_room = &rooms[i];
     }
 
+    free(rooms->left);
+    free(rooms->right);
     free(rooms);
     
     for (int i = 0; i < HEIGHT; i++) {
@@ -577,7 +579,7 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
 
 void create_asylum(int HEIGHT, int WIDTH, int beginY, int beginX){
  
-    init_asylum(HEIGHT+beginY, WIDTH);
+    init_asylum(HEIGHT, WIDTH);
 
     Room rooms[MAX_ROOMS];
     int num_rooms = rand() % (MAX_ROOMS - 1) + 2;

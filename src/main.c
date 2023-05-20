@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 
     debug_file(dbgOut, 0, "Gameloop initialized succesfully.\n");
     
-    player_spawn(gs->player, map, g_renderstate->nrows-1, g_renderstate->ncols-2); // spawn
+    player_spawn(gs->player, map, ALTURA_JOGO, LARGURA_JOGO); // spawn
 
     // Event Loop
     debug_file(dbgOut, 0, "Event loop started.\n");

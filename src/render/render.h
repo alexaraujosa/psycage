@@ -22,6 +22,8 @@ extern FILE* dbgOut;
 typedef struct gamestate GAMESTATE, *Gamestate;
 
 #define MENU_STACK_MAX 5
+#define OFFSET_X 1
+#define OFFSET_Y ALTURA_LOGO + 1
 
 typedef struct renderstate {
     WINDOW* wnd;

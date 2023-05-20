@@ -15,7 +15,7 @@ Entity defaultEntity() {
 
 
 void destroyEntity(Entity entity) {
-    free(entity->coords);
+    destroyCoords(entity->coords);
     free(entity);
 }
 

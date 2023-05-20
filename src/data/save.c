@@ -91,8 +91,6 @@ void _save_write_entity(FILE* save, Entity entity) {
     _save_write_int(save, entity->health);
     _save_write_int(save, entity->armor);
     _save_write_int(save, entity->basedamage);
-    _save_write_int(save, entity->damage);
-    _save_write_int(save, entity->dead);
 }
 
 void _save_write_player(FILE* save, Player player) {
@@ -244,8 +242,6 @@ void _save_read_entity(FILE* save, Entity entity) {
     fread(&entity->health, sizeof(int), 1, save);
     fread(&entity->armor, sizeof(int), 1, save);
     fread(&entity->basedamage, sizeof(int), 1, save);
-    fread(&entity->damage, sizeof(int), 1, save);
-    fread(&entity->dead, sizeof(int), 1, save);
 }
 
 void _save_read_player(FILE* save, Player player) {

@@ -9,7 +9,6 @@ Entity defaultEntity() {
     entity->health = 12;
     entity->armor = 0;
     entity->basedamage = 4;
-    entity->damage = entity->basedamage;
 
     return entity;
 }
@@ -38,9 +37,4 @@ void damageEntity(Entity entity, int hp) {
 
 void healEntity(Entity entity, int hp) {
     entity->health += imin(hp, entity->maxHealth - entity->health);
-}
-
-void entityIsDead(Entity entity) {
-    if (entity->health == 0) entity->dead = 1;
-    else entity->dead = 0;
 }

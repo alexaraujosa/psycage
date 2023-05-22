@@ -1,0 +1,2 @@
+This library was made by:
+- kokke @ https://github.com/kokke/tiny-regex-c

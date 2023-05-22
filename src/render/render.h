@@ -18,6 +18,7 @@
 #include "../map/map_render.h"
 #include "../src/data/locale.h"
 
+extern int EXIT;
 extern FILE* dbgOut;
 typedef struct gamestate GAMESTATE, *Gamestate;
 
@@ -76,7 +77,9 @@ enum colors{
     // TEST
     GREEN_BG,
     RED_BG,
-    YELLOW_BG
+    YELLOW_BG,
+    MATRIX_BG,
+    MATRIX_FG
 };
 
 enum languages{

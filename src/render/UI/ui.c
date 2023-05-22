@@ -9,6 +9,7 @@
 #include "menus/dialog.h"
 #include "menus/charactersmenu.h"
 #include "menus/savemenu.h"
+#include "menus/console.h"
 
 //#define LARGURA_RETANGULO 52
 #define LARGURA_RETANGULO g_renderstate->ncols/3
@@ -16,93 +17,262 @@
 
 int g_ui_size[2] = { 0 };
 
+int menu_wins = 0;
+static Menu menuCache[__MENU_COUNT];
+
+Menu getMenuCacheOrCreate(MenuId id) {
+    debug_file(dbgOut, 1, "Verifying Menu Cache for menu %s.\n", stringify_menu_id(id));
+
+    if (menuCache[id] != NULL) {
+        debug_file(dbgOut, 1, "- Menu Cache hit. Returning cached element.\n");
+        return menuCache[id];
+    } else {
+        debug_file(dbgOut, 1, "- Menu Cache miss. Creating new element.\n");
+        Menu menu = (Menu)malloc(sizeof(MENU));
+        menu->wnd = NULL;
+        menu->id = id;
+        menu->active = 1;
+
+        menu_wins++;
+
+        switch (id) {
+            case MENU_NONE: break;
+            case MENU_MAIN_MENU: {
+                WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+                PANEL* panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            case MENU_DIALOG: {
+                WINDOW* win = newwin( 
+                    g_ui_size[0],
+                    g_ui_size[1],
+                    (g_renderstate->nrows / 2) - (g_ui_size[0] / 2), 
+                    (g_renderstate->ncols / 2) - (g_ui_size[1] / 2)
+                );
+                PANEL* panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            case MENU_OPTIONS: {
+                WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+                PANEL * panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            case MENU_PAUSE: {
+                WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+                PANEL * panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            case MENU_DEAD: {
+                WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+                PANEL * panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break; 
+            }
+            case MENU_CHARACTERS: {
+                WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+                PANEL * panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            case MENU_CHARACTERS_INFO: {
+                WINDOW* win = newwin(yMAX/3, xMAX/2, ALTURA_CHARACTERS_INFO, LARGURA_CHARACTERS_INFO);
+                PANEL * panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            case MENU_SAVE: {
+                WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+                PANEL * panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            case MENU_SAVE_SLOT: {
+                WINDOW* win = newwin(g_renderstate->nrows/3, g_renderstate->ncols/4, g_renderstate->nrows/2, 3*g_renderstate->ncols/8);
+                PANEL * panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            case MENU_CONSOLE: {
+                WINDOW* win = newwin(g_renderstate->nrows - 6, g_renderstate->ncols - 6, 3, 3);
+                // WINDOW* win = newwin(10, 10, 3, 3);
+                PANEL* panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
+            default:
+                menu_wins--;
+                return NULL;
+                break;
+        }
+
+        menuCache[id] = menu;
+        return menu;
+    }
+}
+
+// void drawMenu(Menu menu) {
+//     switch (menu->id) {
+//         case MENU_NONE: break;
+//         case MENU_MAIN_MENU: {
+//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+//             PANEL* panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_MainMenu(menu);
+//             break;
+//         }
+//         case MENU_DIALOG: {
+//             WINDOW* win = newwin( 
+//                 g_ui_size[0],
+//                 g_ui_size[1],
+//                 (g_renderstate->nrows / 2) - (g_ui_size[0] / 2), 
+//                 (g_renderstate->ncols / 2) - (g_ui_size[1] / 2)
+//             );
+//             PANEL* panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_Dialog(menu);
+//             break;
+//         }
+//         case MENU_OPTIONS: {
+//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+//             PANEL * panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_OptionsMenu(menu);
+//             break;
+//         }
+//         case MENU_PAUSE: {
+//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+//             PANEL * panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_PauseMenu(menu);
+//             break;
+//         }
+//         case MENU_DEAD: {
+//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+//             PANEL * panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_DeadMenu(menu);
+//             break; 
+//         }
+//         case MENU_CHARACTERS: {
+//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+//             PANEL * panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_CharactersMenu(menu);
+//             break;
+//         }
+//         case MENU_CHARACTERS_INFO: {
+//             WINDOW* win = newwin(yMAX/3, xMAX/2, ALTURA_CHARACTERS_INFO, LARGURA_CHARACTERS_INFO);
+//             PANEL * panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_CharactersInfo(menu);
+//             break;
+//         }
+//         case MENU_SAVE: {
+//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
+//             PANEL * panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_SaveMenu(menu);
+//             break;
+//         }
+//         case MENU_SAVE_SLOT: {
+//             WINDOW* win = newwin(g_renderstate->nrows/3, g_renderstate->ncols/4, g_renderstate->nrows/2, 3*g_renderstate->ncols/8);
+//             PANEL * panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_SaveInfo(menu);
+//             break;
+//         }
+//         case MENU_CONSOLE: {
+//             WINDOW* win = newwin(g_renderstate->nrows - 6, g_renderstate->ncols - 6, 3, 3);
+//             // WINDOW* win = newwin(10, 10, 3, 3);
+//             PANEL* panel = new_panel(win);
+//             menu->wnd = win;
+//             menu->panel = panel;
+
+//             draw_ConsoleMenu(menu);
+//             break;
+//         }
+//         default:
+//             break;
+//     }
+// }
+
 void drawMenu(Menu menu) {
+    if (menu == NULL) return;
+
+    wclear(menu->wnd);
+
     switch (menu->id) {
         case MENU_NONE: break;
         case MENU_MAIN_MENU: {
-            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-            PANEL* panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_MainMenu(menu);
             break;
         }
         case MENU_DIALOG: {
-            WINDOW* win = newwin( 
-                g_ui_size[0],
-                g_ui_size[1],
-                (g_renderstate->nrows / 2) - (g_ui_size[0] / 2), 
-                (g_renderstate->ncols / 2) - (g_ui_size[1] / 2)
-            );
-            PANEL* panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_Dialog(menu);
             break;
         }
         case MENU_OPTIONS: {
-            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-            PANEL * panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_OptionsMenu(menu);
             break;
         }
         case MENU_PAUSE: {
-            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-            PANEL * panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_PauseMenu(menu);
             break;
         }
         case MENU_DEAD: {
-            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-            PANEL * panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_DeadMenu(menu);
             break; 
         }
         case MENU_CHARACTERS: {
-            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-            PANEL * panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_CharactersMenu(menu);
             break;
         }
         case MENU_CHARACTERS_INFO: {
-            WINDOW* win = newwin(yMAX/3, xMAX/2, ALTURA_CHARACTERS_INFO, LARGURA_CHARACTERS_INFO);
-            PANEL * panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_CharactersInfo(menu);
             break;
         }
         case MENU_SAVE: {
-            WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-            PANEL * panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_SaveMenu(menu);
             break;
         }
         case MENU_SAVE_SLOT: {
-            WINDOW* win = newwin(g_renderstate->nrows/3, g_renderstate->ncols/4, g_renderstate->nrows/2, 3*g_renderstate->ncols/8);
-            PANEL * panel = new_panel(win);
-            menu->wnd = win;
-            menu->panel = panel;
-
             draw_SaveInfo(menu);
+            break;
+        }
+        case MENU_CONSOLE: {
+            draw_ConsoleMenu(menu);
             break;
         }
         default:
@@ -143,6 +313,10 @@ void tick_menu(Menu menu) {
         }
         case MENU_SAVE: {
             tick_SaveMenu();
+            break;
+        }
+        case MENU_CONSOLE: {
+            tick_ConsoleMenu();
             break;
         }
         default:
@@ -190,6 +364,10 @@ void handle_menu_keybinds(Menu menu, int key) {
             handle_SaveMenu_keybinds(key);
             break;
         }
+        case MENU_CONSOLE: {
+            handle_ConsoleMenu_keybinds(key);
+            break;
+        }
         default:
             break;
     }
@@ -228,6 +406,10 @@ void cleanup_menu(Menu menu) {
         }
         case MENU_SAVE: {
             cleanup_SaveMenu();
+            break;
+        }
+        case MENU_CONSOLE: {
+            cleanup_ConsoleMenu();
             break;
         }
         default:

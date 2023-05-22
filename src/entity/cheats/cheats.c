@@ -23,24 +23,24 @@ void destroyCheats(Cheats cheats) {
 }
 
 
-void godmode_code_checker(int key) {
+// void godmode_code_checker(int key) {
 
-	if(toupper(key) == godmode_code[godmode_code_index]) {
+// 	if(toupper(key) == godmode_code[godmode_code_index]) {
 
-		godmode_code_index++;
+// 		godmode_code_index++;
 
-        if(godmode_code_index == (int)strlen(godmode_code)) {
-            g_gamestate->player->cheats->godmode = (g_gamestate->player->cheats->godmode == 0) ? 1 : 0;
-            godmode_Health();
-        }
-	} else {
+//         if(godmode_code_index == (int)strlen(godmode_code)) {
+//             g_gamestate->player->cheats = (g_gamestate->player->cheats == 0) ? 1 : 0;
+//             godmode_Health();
+//         }
+// 	} else {
 
-        godmode_code_index = 0;
+//         godmode_code_index = 0;
 
-    }
+//     }
 
 
-}
+// }
 
 void godmode_Health() {
 
@@ -52,24 +52,24 @@ void godmode_Health() {
 
 }
 
-void vision_code_checker(int key) {
+// void vision_code_checker(int key) {
 
-	if(toupper(key) == vision_code[vision_code_index]) {
+// 	if(toupper(key) == vision_code[vision_code_index]) {
 
-		vision_code_index++;
+// 		vision_code_index++;
 
-        if(vision_code_index == (int)strlen(vision_code)) {
-            g_gamestate->player->cheats->vision = (g_gamestate->player->cheats->vision == 0) ? 1 : 0;
-            vision_Radius();
-        }
-	} else {
+//         if(vision_code_index == (int)strlen(vision_code)) {
+//             g_gamestate->player->cheats->vision = (g_gamestate->player->cheats->vision == 0) ? 1 : 0;
+//             vision_Radius();
+//         }
+// 	} else {
 
-        vision_code_index = 0;
+//         vision_code_index = 0;
 
-    }
+//     }
 
 
-}
+// }
 
 void vision_Radius() {
 

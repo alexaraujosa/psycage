@@ -2,6 +2,7 @@
 #define __RL_RENDER_UI_MENU_DM_H
 
 #include "../ui.h"
+#include "util/ncurses.h"
 
 void draw_DeadMenu(Menu menu);
 void tick_DeadMenu();

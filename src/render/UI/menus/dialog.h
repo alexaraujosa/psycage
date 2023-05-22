@@ -4,6 +4,7 @@
 #include "../ui.h"
 #include "common.h"
 #include "util/string.h"
+#include "util/ncurses.h"
 
 extern char* g_dialog_text;
 extern char**** g_dialog_page_data;

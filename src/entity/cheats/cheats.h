@@ -12,9 +12,9 @@ typedef struct cheats {
 /* FUNCTION SIGNATURES */
 Cheats defaultCheats();
 void destroyCheats(Cheats cheats);
-void godmode_code_checker(int key);
+// void godmode_code_checker(int key);
 void godmode_Health();
-void vision_code_checker(int key);
+// void vision_code_checker(int key);
 void vision_Radius();
 
 #endif

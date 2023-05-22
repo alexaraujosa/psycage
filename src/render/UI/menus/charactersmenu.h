@@ -2,6 +2,7 @@
 #define __RL_RENDER_UI_MENU_CM_H
 
 #include "../ui.h"
+#include "util/ncurses.h"
 
 #define BOTOES_CHARACTERS 3
 #define ESPACAMENTO_CHARACTERS 2

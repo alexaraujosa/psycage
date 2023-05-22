@@ -83,6 +83,9 @@ Renderstate init_render() {
     init_pair(RED_BG, COLOR_WHITE, COLOR_RED);
     init_pair(GREEN_BG, COLOR_WHITE, COLOR_GREEN);
     init_pair(YELLOW_BG, COLOR_WHITE, COLOR_YELLOW);
+
+    init_pair(MATRIX_BG, GREEN, DARK_GREEN);
+    init_pair(MATRIX_FG, COLOR_BLACK, COLOR_BLACK);
     rs->wnd = wnd;
 
     g_renderstate = rs;
@@ -108,6 +111,7 @@ void render(Gamestate gs) {
             render_game(gs);
             print_light(g_renderstate->wnd, ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X);// RTX_ON
         } 
+
         render_menu(gs);
     }
     refresh();
@@ -121,21 +125,47 @@ Menu getActiveMenu() {
 }
 
 Menu displayMenu(MenuId menu) {
-    if (g_renderstate->activeMenus == MENU_STACK_MAX) return NULL;
-    if (isMenuDisplayed(menu)) return NULL;
+    debug_file(dbgOut, 1, "Attempting to change menu to %s.\n", stringify_menu_id(menu));
 
-    Menu nmenu = (Menu)malloc(sizeof(MENU));
-    nmenu->wnd = NULL;
-    nmenu->id = menu;
-    nmenu->active = 1;
+    if (g_renderstate->activeMenus == MENU_STACK_MAX) {
+        debug_file(dbgOut, 3, "- Maximum menu stack reached. Ignoring incoming request.\n");
+        return NULL;
+    }
+    if (isMenuDisplayed(menu)) {
+        debug_file(dbgOut, 3, "- Menu already on display. Ignoring incoming request.\n");
+        return NULL;
+    }
+
+    debug_file(dbgOut, 3, "- Accepting incoming request.\n");
+
+    // Menu nmenu = (Menu)malloc(sizeof(MENU));
+    // nmenu->wnd = NULL;
+    // nmenu->id = menu;
+    // nmenu->active = 1;
+
+    Menu nmenu = getMenuCacheOrCreate(menu);
+    if (nmenu == NULL) {
+        debug_file(dbgOut, 1, "- Unable to create menu. Exiting.");
+        EXIT = TRUE;
+        return;
+    }
 
     g_renderstate->menus[g_renderstate->activeMenus++] = nmenu;
     return nmenu;
 }
 
 int closeMenu(MenuId menu) {
-    if (g_renderstate->activeMenus == 0) return 0;
-    if (!isMenuDisplayed(menu)) return 0;
+    debug_file(dbgOut, 1, "Attempting to close menu %s.\n", stringify_menu_id(menu));
+    if (g_renderstate->activeMenus == 0) {
+        debug_file(dbgOut, 1, "- No menu displayed. Skipping.\n");
+        return 0;
+    }
+    if (!isMenuDisplayed(menu)) {
+        debug_file(dbgOut, 1, "- Menu not displayed. Skipping.\n");
+        return 0;
+    }
+
+    debug_file(dbgOut, 1, "- Proceeding.\n");
         
     _removeMenu(menu);
     return 0;
@@ -155,22 +185,30 @@ int isInMenu() {
 }
 
 void _removeMenu(MenuId menu) {
+    debug_file(dbgOut, 1, "- Removing menu hierarchy for %s.\n", stringify_menu_id(menu));
     if (g_renderstate->activeMenus == 0) return;
 
     for (int i = 0; i < MENU_STACK_MAX; i++) {
         if (g_renderstate->menus[i]->id == menu) {
             for (int j = i; j < MENU_STACK_MAX - 1; j++) {
                 if (g_renderstate->menus[j] != NULL) {
+                    debug_file(dbgOut, 1, "-- Clearing menu %s.\n", stringify_menu_id(g_renderstate->menus[j]->id));
                     cleanup_menu(g_renderstate->menus[j]);
 
-                    del_panel(g_renderstate->menus[j]->panel);
-                    delwin(g_renderstate->menus[j]->wnd);
+                    // del_panel(g_renderstate->menus[j]->panel);
+                    // delwin(g_renderstate->menus[j]->wnd);
+                    wclear(g_renderstate->menus[j]->wnd);
+                    hide_panel(g_renderstate->menus[j]->panel);
+                    g_renderstate->menus[j]->active = 0;
 
                     g_renderstate->menus[j] = NULL;
                     g_renderstate->activeMenus--;
                 }
             }
 
+            debug_file(dbgOut, 1, "-- Menus cleared.\n");
+
+            update_panels();
             doupdate();
 
             return;
@@ -269,7 +307,15 @@ void render_game(Gamestate gs) {
 
 void render_menu(Gamestate gs) {
     IGNORE_ARG(gs);
+    
+    debug_file(dbgOut, 3, "New menu render cycle.\n");
     for (int i = 0; i < g_renderstate->activeMenus; i++) {
+        debug_file(dbgOut, 3, "- Rendering menu #%d.\n", g_renderstate->menus[i]->id);
+        if (g_renderstate->menus[i]->active == 0) {
+            show_panel(g_renderstate->menus[i]->panel);
+            g_renderstate->menus[i]->active = 1;
+        }
+
         drawMenu(g_renderstate->menus[i]);
     }
 

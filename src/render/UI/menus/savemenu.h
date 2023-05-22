@@ -3,6 +3,7 @@
 
 #include "../ui.h"
 #include "../../../data/save.h"
+#include "util/ncurses.h"
 
 void draw_SaveMenu(Menu menu);
 void tick_SaveMenu();

@@ -11,6 +11,8 @@
 #include "../../data/items.h"
 #include "../cheats/cheats.h"
 
+#define is_player_dead(player) ((player)->entity->health <= 0)
+
 typedef struct player {
     Entity entity;
     DataItemNode item;

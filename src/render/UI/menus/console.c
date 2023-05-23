@@ -19,6 +19,8 @@ static int blink = 0;
 
 static int console_win[2] = { 0, 0 }; // mrows, mcols
 
+static FILE* consoleOut;
+
 void setupConsole();
 void _processCommand();
 void _makeProcessorPatterns();
@@ -161,6 +163,18 @@ void cleanup_ConsoleMenu() {
 }
 
 #pragma region CONSOLE HELPERS
+void logMessage(const char* format, ...) {
+    if (consoleOut == NULL) return;
+
+    va_list valist;
+
+    va_start(valist, format);
+    vfprintf(consoleOut, format, valist);
+    va_end(valist);
+
+    fflush(consoleOut);
+}
+
 void addMessage(const char* msg) {
     for (int i = console_output_control[0] - 1; i > 0; i--) {
         strcpy(console_output[i], console_output[i - 1]);
@@ -169,6 +183,45 @@ void addMessage(const char* msg) {
     strncpy(console_output[0], msg, console_output_control[1] - 1);
     console_output[0][console_output_control[1]] = '\0';
     console_output_ind++;
+
+    char* logMsg = (char*)malloc(console_output_control[1] * sizeof(char));
+    strncpy(logMsg, msg, console_output_control[1] - 1);
+    strcat(logMsg, "\n");
+
+    logMessage(logMsg);
+}
+
+void createSessionFile() {
+    char out_path[PATH_MAX];
+    snprintf(out_path, sizeof(out_path), "%.*s/logs/console-", BIN_PATH_LEN, BIN_PATH);
+
+	time_t now = time(NULL);
+    struct tm* tmInfo = localtime(&now);
+    size_t dateFormatSize = 20;
+    size_t new_out_len = BIN_PATH_LEN + sizeof("/logs/console-") - 1 + dateFormatSize;
+
+    char* new_out_path = malloc(new_out_len);
+    if (new_out_path == NULL) {
+        debug_file(dbgOut, 1, "Unable to initialize console: Failed to generate log path.\n");
+        closeMenu(MENU_CONSOLE);
+        return;
+    }
+    strcpy(new_out_path, out_path);
+    strftime(new_out_path + new_out_len - dateFormatSize, dateFormatSize, "%Y-%m-%dT%H:%M:%S", tmInfo);
+    strcat(new_out_path, ".log");
+
+	if (createParentFolder(new_out_path) != 0) {
+        debug_file(dbgOut, 1, "Unable to initialize console: Unable to create log folder.\n");
+        closeMenu(MENU_CONSOLE);
+        return;
+    }
+
+    consoleOut = fopen(new_out_path, "a");
+    if (consoleOut == NULL) {
+        debug_file(dbgOut, 1, "Unable to initialize console: Unable to open log file.\n");
+        closeMenu(MENU_CONSOLE);
+        return;
+    }
 }
 
 void setupConsole() {
@@ -180,6 +233,8 @@ void setupConsole() {
         console_output[i] = (char*)malloc(console_output_control[1] * sizeof(char));
         console_output[i][0] = '\0';
     }
+
+    createSessionFile();
 
     // addMessage("Hello world");
 }
@@ -198,6 +253,9 @@ void nukeConsoleMenu() {
     free(console_output);
 
     cleanup_ConsoleMenu();
+
+    fclose(consoleOut);
+
     setupConsole();
 }
 

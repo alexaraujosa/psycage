@@ -1,6 +1,8 @@
 #ifndef __RL_RENDER_UI_MENU_CONSOLE_H
 #define __RL_RENDER_UI_MENU_CONSOLE_H
 
+#include <unistd.h>
+#include <time.h>
 #include "../ui.h"
 #include "util/ncurses.h"
 #include "../../../vendor/tiny-regex/re.h"

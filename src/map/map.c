@@ -431,8 +431,8 @@ void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
 #pragma region Asylum
 
 #define MAX_ROOMS 10
-#define MIN_SIZE 12
-#define MAX_SIZE 17
+#define MIN_SIZE 13
+#define MAX_SIZE 15
 
 // Initialize the "map" array with all cells set to 1 (representing walls).
 void init_asylum(int HEIGHT, int WIDTH){
@@ -458,9 +458,9 @@ Room create_room(int HEIGHT, int WIDTH) {
     Room room;
 
     room.width = rand() % (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE; // random area
-    room.height = rand() % (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE;
-    room.x = rand() % (abs(WIDTH - room.width - 1)) + 1; // random location
-    room.y = rand() % (abs(HEIGHT - room.height) +1) + 1;
+    room.height = rand() % (MAX_SIZE - MIN_SIZE - 1) + MIN_SIZE;
+    room.x = rand() % (abs(WIDTH - room.width-1)) + 1; // random location
+    room.y = rand() % (abs(HEIGHT - room.height-1)) + 1;
 
 
     return room;

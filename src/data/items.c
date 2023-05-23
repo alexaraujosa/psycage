@@ -106,13 +106,34 @@ DataItemNode parse_item(char* raw, int len) {
     return item;
 }
 
+DataItemNode clone_item(DataItemNode orig_item) {
+    DataItemNode item = defaultItemResource();
+    item->id = orig_item->id;
+
+    item->name = (char*)malloc(strlen(orig_item) * sizeof(char));
+    strcpy(item->name, orig_item->name);
+
+    item->damage = orig_item->damage;
+    item->armor = orig_item->armor;
+
+    return item;
+}
+
 DataItemNode get_item_by_id(char* name) {
-    return (DataItemNode)hm_get(items, name);
+    DataItemNode orig_item = (DataItemNode)hm_get(items, name);
+    if (orig_item == NULL) return NULL;
+
+    return clone_item(orig_item);
 }
 
 DataItemNode get_item_by_name(char* name) {
     for (int i = 0; i < items_len; i++) {
-        if (!strcmp(((DataItemNode)item_entries[i].val)->name, name)) return (DataItemNode)item_entries[i].val;
+        if (!strcmp(((DataItemNode)item_entries[i].val)->name, name)) {
+            DataItemNode orig_item = (DataItemNode)item_entries[i].val;
+            if (orig_item == NULL) return NULL;
+
+            return clone_item(orig_item);
+        }
     }
 
     return NULL; 

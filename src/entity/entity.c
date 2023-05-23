@@ -24,10 +24,12 @@ void damageEntity(Entity entity, int hp) {
     if (entity->armor >= hp) {
         entity->armor -= hp;
     } else {
-        entity->armor = 0;
+        // entity->armor = 0;
 
         if (entity->health >= hp) {
             hp -= entity->armor;
+
+            entity->armor = 0;
             entity->health -= hp;
         } else {
             entity->health = 0;

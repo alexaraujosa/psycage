@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include "gameloop.h"
 
-
 extern int EXIT;
 
 int ALTURA_JOGO;
@@ -13,7 +12,7 @@ Gamestate g_gamestate;
 int** map_footprint;
 int find_map;
 
-#define TICK_DURATION_MS 100
+#define TICK_DURATION_MS 60
 clock_t tickStart, tickEnd;
 float tickDuration, taskDuration;
 
@@ -35,7 +34,7 @@ Gamestate init_gameloop() {
 	gs->projectile = projectile;
 
     debug_file(dbgOut, 0, " - Initializing clock-related variables...\n");
-	gs->input_initialized = 0;
+	gs->input_initialized = 1;
 	gs->clock = 0;
 	gs->block_clock = 1;
 
@@ -77,6 +76,7 @@ Gamestate init_gameloop() {
 
 	for (int i = 0; i < mob_count; i++) {
 		Mob mob = defaultMob();
+		addRandomItemToMob(mob);
 
 		addMobToMap(mob, map, LARGURA_JOGO, ALTURA_JOGO);
 
@@ -132,6 +132,11 @@ void tick() {
 
 		tick_menu(active_menu);
 	} else {
+		if (is_player_dead(g_gamestate->player)) {
+			displayMenu(MENU_DEAD);
+			goto tick_end;
+		}
+
 		for (int i = 0; i < g_gamestate->mob_count; i++) {
 			attemptMoveMob(
 				g_gamestate->player->entity->coords, 
@@ -183,15 +188,28 @@ void handle_keybinds() {
 
 	if (key == ERR) return;
 
-	// Fix initial duplicate keys
-	if (!g_gamestate->input_initialized) {
-		if (g_gamestate->block_clock) g_gamestate->block_clock = 0;
-		if (g_gamestate->clock < 2) return;
+	debug_file(dbgOut, 1, "Recieved key event: %d\n", key);
 
-		g_gamestate->block_clock = 1;
-		g_gamestate->clock = 0;
-		g_gamestate->input_initialized = 1;
-	}
+	// Fix initial duplicate keys
+	// if (!g_gamestate->input_initialized) {
+	// 	if (g_gamestate->block_clock) g_gamestate->block_clock = 0;
+	// 	if (g_gamestate->clock < 2) return;
+
+	// 	g_gamestate->block_clock = 1;
+	// 	g_gamestate->clock = 0;
+	// 	g_gamestate->input_initialized = 1;
+	// }
+
+	// switch (key) {
+	// 	case '\\':
+	// 		if (isMenuDisplayed(MENU_CONSOLE)) { menu_keybinds(key); return; }
+	// 		else { displayMenu(MENU_CONSOLE); return; }
+	// 		break;
+	// 	default:
+	// 		if (isInMenu()) { menu_keybinds(key); return; }
+	// 		else { game_keybinds(key); return; }
+	// 		break;
+	// }
 
 	if (isInMenu()) { menu_keybinds(key); return; }
 	else { game_keybinds(key); return; }
@@ -200,32 +218,10 @@ void handle_keybinds() {
 void game_keybinds(int key) {
 	// mvaddch(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, ' ');
 
-	godmode_code_checker(key);
-	vision_code_checker(key);
+	// godmode_code_checker(key);
+	// vision_code_checker(key);
 
 	switch(key) {
-		// case '1': {
-		// 	g_gamestate->pointA->x = g_gamestate->player->entity->coords->x;
-		// 	g_gamestate->pointA->y = g_gamestate->player->entity->coords->y;
-
-		// 	break;
-		// }
-		// case '2': {
-		// 	g_gamestate->pointB->x = g_gamestate->player->entity->coords->x;
-		// 	g_gamestate->pointB->y = g_gamestate->player->entity->coords->y;
-		// 	break;
-		// }
-		case '3': {
-			// g_gamestate->recalculate = TRUE;
-			g_gamestate->last_res = attemptMoveMob(
-				g_gamestate->player->entity->coords, 
-				g_gamestate->mobs[0],
-				map, 
-				g_renderstate->ncols,
-				g_renderstate->nrows
-			);
-			break;
-		}
 
 		// Movement Controls
 		case KEY_UP:
@@ -279,6 +275,12 @@ void game_keybinds(int key) {
 		case 'p': case 'P' : 
 			displayMenu(MENU_PAUSE);
 			break;
+
+		// Open Console
+		case '\\':
+			displayMenu(MENU_CONSOLE);
+			break;
+
 		// case 'a':
 		// case 'A': {
 		// 	g_dialog_text = "A\nB\nLorem ipsum dolore sit amet. Some random fuckery here.\0";
@@ -368,9 +370,14 @@ void menu_keybinds(int key) {
 
 	switch (key) {
 		case KEY_B2:
-		case '5': 
-			closeMenu(MENU_MAIN_MENU);
-			break;
+		case '5': {
+			Menu active_menu = getActiveMenu();
+			if (active_menu == NULL) break;
+			if (active_menu->id == MENU_MAIN_MENU) {
+				closeMenu(MENU_MAIN_MENU);
+				break;
+			}
+		}
 		default: {
 			Menu active_menu = getActiveMenu();
 			if (active_menu == NULL) break;

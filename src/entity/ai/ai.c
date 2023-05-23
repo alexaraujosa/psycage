@@ -3,14 +3,24 @@
 #define NUM_OBSTACLES 3
 static int obstacles[NUM_OBSTACLES] = { 1, 3, 5 };
 
+#define NUM_ITEMS 1
+static char *mob_itens[NUM_ITEMS] = {"Broken_Sword"};
+
 Mob defaultMob() {
     Mob mob = (Mob)malloc(sizeof(MOB));
     if (mob == NULL) return NULL;
 
     mob->entity = defaultEntity();
+    mob->item = get_item_by_id("0000");
+
     mob->moveCooldown = 10;
-    mob->lastMove = FALSE;
+    mob->lastMove = 0;
+
     mob->hasAI = TRUE;
+
+    mob->hitChance = 3;
+    mob->hitCooldown = 1;
+    mob->lastHit = 0;
 
     return mob;
 }
@@ -46,7 +56,7 @@ int trackPlayer(Coords playerCoords, Mob mob, int** map, int width, int height) 
             // asylum[mob->entity->coords->y][mob->entity->coords->x] = map_footprint[mob->entity->coords->y][mob->entity->coords->x];
             debug_file(
                 dbgOut, 2, 
-                "Path found. Moving mob from (X %d, Y %d) to (X %d, Y %d).\n", 
+                "- Path found. Moving mob from (X %d, Y %d) to (X %d, Y %d).\n", 
                 mob->entity->coords->x, mob->entity->coords->y,
                 path_cells[1]->x, path_cells[1]->y
             );
@@ -55,6 +65,11 @@ int trackPlayer(Coords playerCoords, Mob mob, int** map, int width, int height) 
             map[mob->entity->coords->y][mob->entity->coords->x] = 5;
 
             return 0;
+        } else {
+            debug_file(dbgOut, 2, "- Mob is adjacent to player. Attempting to damage.\n");
+
+            map[mob->entity->coords->y][mob->entity->coords->x] = 5;
+            return attemptDamagePlayer(mob);
         }
 
         map[mob->entity->coords->y][mob->entity->coords->x] = 5;
@@ -80,6 +95,43 @@ int attemptMoveMob(Coords playerCoords, Mob mob, int** map, int width, int heigh
         mob->lastMove = 0;
         return trackPlayer(playerCoords, mob, map, width, height);
     }
+
+    return 1;
+}
+
+int attemptDamagePlayer(Mob mob) {
+    debug_file(dbgOut, 2, "Attempting to damage player, mob (X %d, Y %d).\n", mob->entity->coords->x, mob->entity->coords->y);
+
+    int distX = g_gamestate->player->entity->coords->x - mob->entity->coords->x;
+    int distY = g_gamestate->player->entity->coords->y - mob->entity->coords->y;
+    double distance = sqrt(distX * distX + distY * distY);
+
+    mob->lastHit++;
+    
+    if (distance <= sqrt(2)) {
+        if (mob->lastHit <= mob->hitCooldown) {
+            debug_file(dbgOut, 2, "- On hit cooldown (%d / %d). Skipping\n", mob->lastHit, mob->hitCooldown);
+            return 1;
+        }
+
+        int chance = rand() % mob->hitChance + 1;
+
+        if (chance == mob->hitChance / 2) {
+            int dmg = mob->entity->basedamage + mob->item->damage;
+
+            debug_file(dbgOut, 2, "- Chance hit. Damaging player with %d damage points.\n", dmg);
+            debug_file(dbgOut, 2, "- Damage components: %d %d.\n", mob->entity->basedamage, mob->item->damage);
+
+            damageEntity(g_gamestate->player->entity, dmg);
+            mob->lastHit = 0;
+            return 0;
+        } else {
+            debug_file(dbgOut, 2, "- Chance miss.\n");
+            return 1;
+        }
+    }
+
+    debug_file(dbgOut, 2, "- Player is too far away. No damage can be done.\n");
 
     return 1;
 }
@@ -113,4 +165,10 @@ int addMobToMap(Mob mob, int** map, int width, int height) {
     mob->entity->coords->y = cellY;
 
     return 0;
+}
+
+void addRandomItemToMob(Mob mob) {
+    int index = rand() % NUM_ITEMS;
+    
+    mob->item = get_item_by_name(mob_itens[index]);
 }

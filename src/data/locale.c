@@ -169,13 +169,25 @@ DataLocaleLine parse_locale_line(char* raw, int len) {
 }
 
 // Data accessors
+DataLocale get_locale_id(char* key) {
+    for (int i = 0; i < LOCALES; i++) {
+        if (strcmp(locale_meta[i].location, key) == 0) return locale_meta[i].id;
+    }
+
+    return EN_US;
+}
+
 char* get_localized_string(DataLocale loc, char* key) {
     if (key == NULL) return NULL;
 
     char* transl = hm_get(locales[loc]->translations, key);
 
     if (transl == NULL) return key;
-    return transl;
+
+    char* ntransl = (char*)malloc(strlen(transl) * sizeof(char));
+    strcpy(ntransl, transl);
+    replace_substring(ntransl, "{__NL}", "\n");
+    return ntransl;
 }
 
 char* get_args_localized_string(DataLocale loc, char* key, ...) {

@@ -46,8 +46,11 @@ Renderstate init_render() {
     init_color(DARK_DARK_GREY, 80, 80, 80);     
     init_color(DARK_GREY, 192, 192, 180); 
     init_color(BROWN, 624, 296, 0); 
+    init_color(DARK_BROWN, 600, 270, 0);
     init_color(DARK_RED, 400, 0, 0); 
+    init_color(DARK_DARK_RED, 200, 0, 100);
     init_color(DARK_GREEN, 0, 300,0);     
+    init_color(DARK_DARK_GREEN, 0, 250, 0);
     init_color(LIGHT_GREY, 160, 160, 160);
     init_color(GREEN, 0, 700, 0);
     init_color(ORANGE, 830, 470, 0);
@@ -64,14 +67,23 @@ Renderstate init_render() {
     init_pair(DUNGEON_WALLS, GREY, (short)(DARK_DARK_GREY | A_DIM)); 
     init_pair(DUNGEON_FLOOR, GREY, (short)(COLOR_BLACK | A_DIM));
     init_pair(DUNGEON_BLOOD, DARK_RED, (short)(COLOR_BLACK | A_DIM));     
+    init_pair(DUNGEON_WALLS_VISITED, DARK_GREY, (short)(DARK_DARK_GREY | A_DIM)); 
+    init_pair(DUNGEON_FLOOR_VISITED, DARK_GREY, (short)(COLOR_BLACK | A_DIM));
+    init_pair(DUNGEON_BLOOD_VISITED, DARK_DARK_RED, (short)(COLOR_BLACK | A_DIM));     
     // ASYLUM
     init_pair(ASYLUM_WALLS, COLOR_BLACK, (short)(COLOR_WHITE | A_DIM)); 
     init_pair(ASYLUM_FLOOR, COLOR_WHITE, (short)(LIGHT_GREY | A_DIM)); 
     init_pair(ASYLUM_BLOOD, DARK_RED, (short)(LIGHT_GREY | A_DIM));    
+    init_pair(ASYLUM_WALLS_VISITED, DARK_GREY, (short)(GREY | A_DIM)); 
+    init_pair(ASYLUM_FLOOR_VISITED, GREY, (short)(DARK_GREY | A_DIM)); 
+    init_pair(ASYLUM_BLOOD_VISITED, DARK_DARK_RED, (short)(DARK_GREY | A_DIM));   
     // SEWERS
     init_pair(SEWERS_BLOOD, COLOR_WHITE, (short)(DARK_RED | A_DIM));
     init_pair(SEWERS_FLOOR, BROWN, (short)(DARK_GREY | A_DIM)); 
     init_pair(SEWERS_WALLS, GREEN, (short)(DARK_GREEN | A_DIM));
+    init_pair(SEWERS_BLOOD_VISITED, COLOR_WHITE, (short)(DARK_DARK_RED | A_DIM));
+    init_pair(SEWERS_FLOOR_VISITED, DARK_BROWN, (short)(DARK_DARK_GREY | A_DIM)); 
+    init_pair(SEWERS_WALLS_VISITED, DARK_GREEN, (short)(DARK_DARK_GREEN | A_DIM));
     // MENUS
     init_pair(ORANGE_LOGO, ORANGE, 0);
     init_pair(LIGHT_ORANGE_LOGO, LIGHT_ORANGE, 0);
@@ -261,30 +273,38 @@ void render_game(Gamestate gs) {
         wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     }
 	mvwaddch(g_renderstate->wnd, playerCoords->y + OFFSET_Y, playerCoords->x + OFFSET_X, '@');
-    mvwaddch(g_renderstate->wnd, projectileCoords->y + OFFSET_Y, projectileCoords->x + OFFSET_X, 'T' | COLOR_PAIR(WHITE_PLAYER));
+    
+    if(visible[projectileCoords->y][projectileCoords->x] == 1)
+        mvwaddch(g_renderstate->wnd, projectileCoords->y + OFFSET_Y, projectileCoords->x + OFFSET_X, 'T' | COLOR_PAIR(WHITE_PLAYER));
+
+
+
+
+
     // mvaddwstr(playerCoords->x, playerCoords->y, L"█");
 	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
     wattron(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
     for (int i = 0; i < gs->mob_count; i++) {
-        mvwaddch(
-            g_renderstate->wnd, 
-            gs->mobs[i]->entity->coords->y + OFFSET_Y, 
-            gs->mobs[i]->entity->coords->x + OFFSET_X, 
-            '$'
-        );
+        if(visible[gs->mobs[i]->entity->coords->y][gs->mobs[i]->entity->coords->x] == 1)
+            mvwaddch(
+                g_renderstate->wnd, 
+                gs->mobs[i]->entity->coords->y + OFFSET_Y, 
+                gs->mobs[i]->entity->coords->x + OFFSET_X, 
+                '$'
+            );
     }
     wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
 
         wattron(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
     for (int i = 0; i < gs->chest_count; i++) {
-        mvwaddch(
-            g_renderstate->wnd, 
-            gs->chests[i]->entity->coords->y + OFFSET_Y, 
-            gs->chests[i]->entity->coords->x + OFFSET_X, 
-            'M'
-        );
+            mvwaddch(
+                g_renderstate->wnd, 
+                gs->chests[i]->entity->coords->y + OFFSET_Y, 
+                gs->chests[i]->entity->coords->x + OFFSET_X, 
+                'M'
+            );
     }
     wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
 

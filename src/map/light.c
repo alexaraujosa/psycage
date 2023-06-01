@@ -144,11 +144,12 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
 }
 
 void calculate_visibility(int x, int y, int **map, int HEIGHT, int WIDTH){
-    
+
     if (visible != NULL) {
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
-                visible[i][j] = 0;
+                if(visible[i][j] == 1)
+                    visible[i][j] = 2;
             }
         }
 
@@ -171,14 +172,11 @@ void print_light(WINDOW* win, int HEIGHT, int WIDTH, int beginY, int beginX){
         
         for (int x = 0; x < WIDTH; x++) {
             
-            if(visible[y][x] == 0){
-                
+            if(visible[y][x] == 0) 
                 mvwaddch(win, y + beginY, x + beginX, ' ' | COLOR_BLACK);
-            }
-            else{
-
+            else
                 mvwprintw(win, y + beginY, x + beginX, "%c",'\0');
-            }
+
         }
         
     }

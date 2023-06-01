@@ -14,14 +14,21 @@ void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
             if (map[y][x] == 1) {
                 
                 mvaddch(y + beginY, x + beginX, '#' | COLOR_PAIR(DUNGEON_WALLS));
+
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '#' | COLOR_PAIR(DUNGEON_WALLS_VISITED));
             } 
             if(map[y][x] == 0) {
 
                 mvaddch(y + beginY, x + beginX, '.' | COLOR_PAIR(DUNGEON_FLOOR));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '.' | COLOR_PAIR(DUNGEON_FLOOR_VISITED));
             }
             if (map[y][x] == 2){
                 
                 mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(DUNGEON_BLOOD));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(DUNGEON_BLOOD_VISITED));
             }
         }
         
@@ -44,15 +51,24 @@ void print_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
             
             if (map[j][i] == 1) {
                 mvaddch(j + beginY,i + beginX, '#' | COLOR_PAIR(SEWERS_WALLS));
+
+                if(visible[j][i] == 2)
+                    mvaddch(j + beginY, i + beginX, '#' | COLOR_PAIR(SEWERS_WALLS_VISITED));
             }
             if (map[j][i] == 3) {
                 mvaddch(j + beginY, i + beginX, ' ' | COLOR_BLACK);
             }
             if (map[j][i] == 2) {
                 mvaddch(j + beginY, i + beginX, '~' | COLOR_PAIR(SEWERS_BLOOD));
+        
+                if(visible[j][i] == 2)
+                    mvaddch(j + beginY, i + beginX, '~' | COLOR_PAIR(SEWERS_BLOOD_VISITED));
             }
             if (map[j][i] == 0){
                 mvaddch(j + beginY, i + beginX, 'H' | COLOR_PAIR(SEWERS_FLOOR));
+
+                if(visible[j][i] == 2)
+                    mvaddch(j + beginY, i + beginX, 'H' | COLOR_PAIR(SEWERS_FLOOR_VISITED));
             }
         }
     
@@ -74,15 +90,24 @@ void print_asylum(int HEIGHT, int WIDTH, int beginY, int beginX) {
             
             if (map[y][x] == 1) {
                 mvaddch(y + beginY, x + beginX, '#' | COLOR_PAIR(ASYLUM_WALLS));
+
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '#' | COLOR_PAIR(ASYLUM_WALLS_VISITED));
             } 
             if(map[y][x] == 0) {
                 mvaddch(y + beginY, x + beginX, '.' | COLOR_PAIR(ASYLUM_FLOOR));
+
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '.' | COLOR_PAIR(ASYLUM_FLOOR_VISITED));
             }
             if (map[y][x] == 3){
                 mvaddch(y + beginY, x + beginX, ' ' | COLOR_BLACK);
             }
             if(map[y][x] == 4){
                 mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(ASYLUM_BLOOD));
+
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(ASYLUM_BLOOD_VISITED));
             }
         }
         

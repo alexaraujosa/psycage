@@ -44,6 +44,9 @@ Gamestate init_gameloop() {
 	// gs->path_cell_count = 0;
 	// gs->path_cells = NULL;
 
+    debug_file(dbgOut, 0, " -- Generating light map...\n");
+	init_light_map(ALTURA_JOGO, LARGURA_JOGO);
+
     debug_file(dbgOut, 0, " - Generating initial map...\n");
 	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); // map
 	// (g_renderstate->nrows - ALTURA_LOGO - 2) + (OFFSET_Y)
@@ -52,8 +55,7 @@ Gamestate init_gameloop() {
 	// g_renderstate->nrows - 0 - 1
 	// g_renderstate->nrows - 1, LARGURA_JOGO
 
-    debug_file(dbgOut, 0, " -- Generating light map...\n");
-	init_light_map(ALTURA_JOGO, LARGURA_JOGO);
+
 
 
     debug_file(dbgOut, 0, " - Generating map footprint...\n");
@@ -147,7 +149,8 @@ void tick() {
 			);
 		}
 
-		move_projectile(g_gamestate->projectile->dx, g_gamestate->projectile->dy);	
+		if(g_gamestate->projectile->entity->coords->x != 0 && g_gamestate->projectile->entity->coords->y != 0)
+			move_projectile(g_gamestate->projectile->dx, g_gamestate->projectile->dy);	
 
 		// RTX_ON
 		calculate_visibility(
@@ -157,7 +160,10 @@ void tick() {
 			ALTURA_JOGO, 
 			LARGURA_JOGO
 		); 
-		
+
+
+
+
 		if(g_gamestate->mob_count == 0) continue_game(ALTURA_JOGO, LARGURA_JOGO);
 	}
 
@@ -441,6 +447,12 @@ void end_game(int HEIGHT) {
 	free(map_footprint);	
 	destroyProjectile(g_gamestate->projectile);	//necessario?
 	destroyPlayer(g_gamestate->player);			//necessario?
+	for(int i = 0 ; i < HEIGHT ; i++) {
+		if(visible == NULL)	break;
+	
+		free(visible[i]);
+	}
+	free(visible);
 
 	for(int y = 0; y < HEIGHT; y++){
 			
@@ -485,6 +497,10 @@ void continue_game(int HEIGHT, int WIDTH){
 		free(map[y]);
 	}
 	free(map);
+
+	for(int y = 0 ; y < HEIGHT ; y++)
+		for(int x = 0 ; x < WIDTH ; x++)
+			visible[y][x] = 0;
 
 	// Creation of the new map
 	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); 

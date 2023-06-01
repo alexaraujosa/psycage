@@ -63,6 +63,13 @@ Menu getMenuCacheOrCreate(MenuId id) {
                 menu->panel = panel;
                 break;
             }
+            case MENU_OPTIONS_KEYBINDER: {
+                WINDOW* win = newwin(yMAX/2, xMAX/2, ALTURA_OPTIONS_KEYBINDER, LARGURA_OPTIONS_KEYBINDER);
+                PANEL * panel = new_panel(win);
+                menu->wnd = win;
+                menu->panel = panel;
+                break;
+            }
             case MENU_PAUSE: {
                 WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
                 PANEL * panel = new_panel(win);
@@ -247,6 +254,10 @@ void drawMenu(Menu menu) {
             draw_OptionsMenu(menu);
             break;
         }
+        case MENU_OPTIONS_KEYBINDER: {
+            draw_OptionsKeybinderMenu(menu);
+            break;
+        }
         case MENU_PAUSE: {
             draw_PauseMenu(menu);
             break;
@@ -295,6 +306,10 @@ void tick_menu(Menu menu) {
             tick_OptionsMenu();
             break;
         }
+        case MENU_OPTIONS_KEYBINDER: {
+            tick_OptionsKeybinderMenu();
+            break;
+        }
         case MENU_PAUSE: {
             tick_PauseMenu();
             break;
@@ -338,6 +353,10 @@ void handle_menu_keybinds(Menu menu, int key) {
         }
         case MENU_OPTIONS: {
             handle_OptionsMenu_keybinds(key);
+            break;
+        }
+        case MENU_OPTIONS_KEYBINDER: {
+            handle_OptionsKeybinderMenu_keybinds(key);
             break;
         }
         case MENU_PAUSE: {
@@ -386,6 +405,10 @@ void cleanup_menu(Menu menu) {
         }
         case MENU_OPTIONS: {
             cleanup_options_menu();
+            break;
+        }
+        case MENU_OPTIONS_KEYBINDER: {
+            cleanup_options_keybinder();
             break;
         }
         case MENU_PAUSE: {

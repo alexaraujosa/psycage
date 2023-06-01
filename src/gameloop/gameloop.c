@@ -4,6 +4,15 @@
 #include "gameloop.h"
 
 extern int EXIT;
+int keybinds[] = {
+		KEY_UP,		
+		KEY_DOWN,
+		KEY_LEFT,
+		KEY_RIGHT,
+		114,		// 'r'
+		112,		// 'p'
+		92			// '\\'
+};
 
 int ALTURA_JOGO;
 int LARGURA_JOGO;
@@ -227,34 +236,36 @@ void game_keybinds(int key) {
 	godmode_code_checker(key);
 	vision_code_checker(key);
 
-	switch(key) {
-
 		// Movement Controls
-		case KEY_UP:
-			if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y-1)){
-				move_player(0, -1);
-				g_gamestate->player->last_direction = 0;  
-			}
-			break;
-		case KEY_DOWN:
-			if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y+1)){
-				move_player(0, 1);
-				g_gamestate->player->last_direction = 1;  
-			}
-			break;
-		case KEY_LEFT:
+	if(key == keybinds[0]) {
+
+		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y-1)){
+			move_player(0, -1);
+			g_gamestate->player->last_direction = 0;  
+		}
+
+	} else if (key == keybinds[1]) {	
+
+		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y+1)){
+			move_player(0, 1);
+			g_gamestate->player->last_direction = 1;  
+		}
+
+	} else if (key == keybinds[2]) {
+
 			if(is_passable(g_gamestate->player->entity->coords->x-1, g_gamestate->player->entity->coords->y)){
 				move_player(-1, 0);
 				g_gamestate->player->last_direction = 2;
 			}  
-			break;
-		case KEY_RIGHT:
+	
+	} else if (key == keybinds[3]) {
+
 			if(is_passable(g_gamestate->player->entity->coords->x+1, g_gamestate->player->entity->coords->y)){
 				move_player(1, 0);
 				g_gamestate->player->last_direction = 3;
 			}
-			break;  
-		case 'r': case 'R':
+
+	} else if (key == keybinds[4] || key == toupper(keybinds[4]) ) {
 
 			g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
 			g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
@@ -275,100 +286,24 @@ void game_keybinds(int key) {
 				g_gamestate->projectile->dx = 1;
 				g_gamestate->projectile->dy = 0;
 			}
-			break;
 
-		// Open Menu
-		case 'p': case 'P' : 
-			displayMenu(MENU_PAUSE);
-			break;
+	} else if (key == keybinds[5] || key == toupper(keybinds[5])) {
+		displayMenu(MENU_PAUSE);
 
-		// Open Console
-		case '\\':
-			displayMenu(MENU_CONSOLE);
-			break;
+	} else if (key == keybinds[6]) 
+		displayMenu(MENU_CONSOLE);
 
-		// case 'a':
-		// case 'A': {
-		// 	g_dialog_text = "A\nB\nLorem ipsum dolore sit amet. Some random fuckery here.\0";
-		// 	g_ui_size[0] = 5;
-		// 	g_ui_size[1] = 29;
-		// 	g_dialog_control[0] = 29;
-		// 	g_dialog_control[1] = 1;
+	
 
-		// 	char**** _page_data = malloc(sizeof(char****));
-		// 	int page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
-
-		// 	g_dialog_control[2] = page_count;
-		// 	g_dialog_page_data = _page_data;
-		// 	displayMenu(MENU_DIALOG);
-		// 	break;
-		// }
 
 		// Seppuku
-		case 'q': 
-			// endwin(); 
-			// exit(0); 
-			EXIT = TRUE;
-			break;
+	if(key == 'q')
+		EXIT = TRUE;
+
+	if(key == '5')
+		displayMenu(MENU_MAIN_MENU);
 
 
-		// case KEY_A1:
-		// case '7': 
-		// 	move_player(-1, -1); 
-		// 	break;
-		// case KEY_UP:
-		// case '8': 
-		// 	move_player(-1, +0); 
-		// 	break;
-		// case KEY_A3:
-		// case '9': 
-		// 	move_player(-1, +1);
-		// 	break;
-		// case KEY_LEFT:
-		// case '4': 
-		// 	move_player(+0, -1);
-		// 	break;
-		// case KEY_B2:
-		case '5': 
-			displayMenu(MENU_MAIN_MENU);
-			break;
-		// case 'a':
-		// case 'A': {
-		// 	g_dialog_text = "A\nB\nLorem ipsum dolore sit amet. Some random fuckery here.\0";
-		// 	g_ui_size[0] = 5;
-		// 	g_ui_size[1] = 29;
-		// 	g_dialog_control[0] = 29;
-		// 	g_dialog_control[1] = 1;
-
-		// 	char**** _page_data = malloc(sizeof(char****));
-		// 	int page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
-
-		// 	g_dialog_control[2] = page_count;
-		// 	g_dialog_page_data = _page_data;
-		// 	displayMenu(MENU_DIALOG);
-		// 	break;
-		// }
-		// case KEY_RIGHT:
-		// case '6': 
-		// 	move_player(+0, +1);
-		// 	break;
-		// case KEY_C1:
-		// // case '1': 
-		// 	move_player(+1, -1);
-		// 	break;
-		// case KEY_DOWN:
-		// // case '2': 
-		// 	move_player(+1, +0);
-		// 	break;
-		// case KEY_C3:
-		// // case '3': 
-		// 	move_player(+1, +1);
-		// 	break;
-		// case 'q': 
-		// 	endwin(); 
-		// 	exit(0); 
-		// 	break;
-	}
 }
 
 void menu_keybinds(int key) {

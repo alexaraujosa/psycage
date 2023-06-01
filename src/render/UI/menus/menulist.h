@@ -8,6 +8,7 @@ typedef enum {
     MENU_MAIN_MENU,
     MENU_DIALOG,
     MENU_OPTIONS,
+    MENU_OPTIONS_KEYBINDER,
     MENU_PAUSE,
     MENU_DEAD,
     MENU_CHARACTERS,
@@ -31,6 +32,9 @@ static inline char* stringify_menu_id(MenuId id) {
             break;
         case MENU_OPTIONS:
             return "MENU_OPTIONS\0";
+            break;
+        case MENU_OPTIONS_KEYBINDER:
+            return "MENU_OPTIONS_KEYBINDER\0";
             break;
         case MENU_PAUSE:
             return "MENU_PAUSE\0";

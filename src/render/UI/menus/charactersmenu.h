@@ -13,5 +13,6 @@ void draw_CharactersMenu(Menu menu);
 void draw_CharactersInfo(Menu menu);
 void tick_CharactersMenu();
 void handle_CharactersMenu_keybinds(int key);
+void cleanup_characters_menu();
 
 #endif

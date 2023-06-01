@@ -7,5 +7,6 @@
 void draw_PauseMenu(Menu menu);
 void tick_PauseMenu();
 void handle_PauseMenu_keybinds(int key);
+void cleanup_pause_menu();
 
 #endif

@@ -389,19 +389,19 @@ void cleanup_menu(Menu menu) {
             break;
         }
         case MENU_PAUSE: {
-            // tick_PauseMenu();
+            cleanup_pause_menu();
             break;
         }
         case MENU_DEAD: {
-            // tick_DeadMenu();
+            cleanup_dead_menu();
             break;
         }
         case MENU_CHARACTERS: {
-            // tick_CharactersMenu();
+            cleanup_characters_menu();
             break;
         }
         case MENU_CHARACTERS_INFO: {
-            // tick_CharactersMenu();
+            cleanup_characters_menu();
             break;
         }
         case MENU_SAVE: {

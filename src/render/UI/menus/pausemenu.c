@@ -5,7 +5,7 @@
 #define LARGURA_PAUSE 59
 #define ALTURA_PAUSE 8
 
-static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static unsigned short int botao_selecionado_principal = 0;
 static char *botoes[BOTOES] = {"menu.pause.return", "menu.pause.save", "menu.pause.options", "menu.pause.exit"};
 
 static char *pause[ALTURA_PAUSE] = {
@@ -61,7 +61,7 @@ void draw_PauseMenu(Menu menu) {
     // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
-        if(i == effect)
+        if(i == botao_selecionado_principal)
             wattron(menu->wnd, A_REVERSE);
 
         mvwprintw(menu->wnd, 
@@ -70,7 +70,7 @@ void draw_PauseMenu(Menu menu) {
                   "%s", get_localized_string(g_renderstate->language, botoes[i])
                 );
         
-        if(i == effect)
+        if(i == botao_selecionado_principal)
             wattroff(menu->wnd, A_REVERSE);
 
     }
@@ -88,7 +88,6 @@ void handle_PauseMenu_keybinds(int key) {
     if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
         botao_selecionado_principal = BOTOES - 1;
-        effect = BOTOES - 1;
 
         return;
     }
@@ -96,7 +95,6 @@ void handle_PauseMenu_keybinds(int key) {
     if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
 
         botao_selecionado_principal = 0;
-        effect = 0;
 
         return;
     }
@@ -105,13 +103,11 @@ void handle_PauseMenu_keybinds(int key) {
 
         case KEY_UP :
             botao_selecionado_principal--;
-            effect--;
             break;
 
 
         case KEY_DOWN :
             botao_selecionado_principal++;
-            effect++;
             break;
 
 
@@ -138,4 +134,8 @@ void handle_PauseMenu_keybinds(int key) {
 
     }
     
+}
+
+void cleanup_pause_menu() {
+    botao_selecionado_principal = 0;
 }

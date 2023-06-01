@@ -8,7 +8,7 @@
 #define DETECTIVE_INFOS 6
 #define MERCENARY_INFOS 6
 
-static unsigned short int botao_selecionado_principal = 0, effect = 0;
+static unsigned short int botao_selecionado_principal = 0;
 static char *botoes[BOTOES_CHARACTERS] = {"menu.characters.priest", "menu.characters.detective", "menu.characters.mercenary"};
 
 
@@ -35,7 +35,7 @@ void draw_CharactersMenu(Menu menu) {
     // Prints the buttons to choose the class (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES_CHARACTERS ; i++, separador += 1) {
 
-        if(i == effect) 
+        if(i == botao_selecionado_principal) 
             wattron(menu->wnd, A_REVERSE);
         
         mvwprintw(menu->wnd, 
@@ -44,7 +44,7 @@ void draw_CharactersMenu(Menu menu) {
                   "%s", get_localized_string(g_renderstate->language, botoes[i])
                 );
 
-        if(i == effect)
+        if(i == botao_selecionado_principal)
             wattroff(menu->wnd, A_REVERSE);
             
     }
@@ -110,7 +110,6 @@ void handle_CharactersMenu_keybinds(int key) {
     if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
         botao_selecionado_principal = BOTOES_CHARACTERS - 1;
-        effect = BOTOES_CHARACTERS - 1;
 
         return;
     }
@@ -118,7 +117,6 @@ void handle_CharactersMenu_keybinds(int key) {
     if(botao_selecionado_principal == BOTOES_CHARACTERS-1 && key == KEY_DOWN) {
 
         botao_selecionado_principal = 0;
-        effect = 0;
 
         return;
     }
@@ -128,14 +126,12 @@ void handle_CharactersMenu_keybinds(int key) {
         case KEY_UP :
 
             botao_selecionado_principal--;
-            effect--;
             break;
 
 
         case KEY_DOWN :
 
             botao_selecionado_principal++;
-            effect++;
             break;
 
 
@@ -176,4 +172,9 @@ void handle_CharactersMenu_keybinds(int key) {
 
 
 
+}
+
+
+void cleanup_characters_menu() {
+    botao_selecionado_principal = 0;
 }

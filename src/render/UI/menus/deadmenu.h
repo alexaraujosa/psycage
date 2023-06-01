@@ -7,5 +7,6 @@
 void draw_DeadMenu(Menu menu);
 void tick_DeadMenu();
 void handle_DeadMenu_keybinds(int key);
+void cleanup_dead_menu();
 
 #endif

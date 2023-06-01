@@ -7,7 +7,7 @@
 #define LARGURA_DIED 84
 #define ALTURA_DIED 8
 
-static unsigned short int effect = 0, botao_selecionado_principal = 0;
+static unsigned short int botao_selecionado_principal = 0;
 static char *botoes[BOTOES] = {"menu.dead.new_game", "menu.dead.options", "menu.dead.quit"};
 
 static char *died[ALTURA_DIED] = {
@@ -131,7 +131,7 @@ void draw_DeadMenu(Menu menu) {
     // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
 
-        if(i == effect) 
+        if(i == botao_selecionado_principal) 
             wattron(menu->wnd, A_REVERSE);
         
         mvwprintw(menu->wnd, 
@@ -140,7 +140,7 @@ void draw_DeadMenu(Menu menu) {
                   "%s", get_localized_string(g_renderstate->language, botoes[i])
                 );
 
-        if(i == effect)
+        if(i == botao_selecionado_principal)
             wattroff(menu->wnd, A_REVERSE);
             
     }
@@ -158,7 +158,6 @@ void handle_DeadMenu_keybinds(int key) {
     if(botao_selecionado_principal == 0 && key == KEY_UP) {
 
         botao_selecionado_principal = BOTOES - 1;
-        effect = BOTOES - 1;
 
         return;
     }
@@ -166,7 +165,6 @@ void handle_DeadMenu_keybinds(int key) {
     if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
 
         botao_selecionado_principal = 0;
-        effect = 0;
 
         return;
     }
@@ -175,13 +173,11 @@ void handle_DeadMenu_keybinds(int key) {
 
         case KEY_UP :
             botao_selecionado_principal--;
-            effect--;
             break;
 
 
         case KEY_DOWN :
             botao_selecionado_principal++;
-            effect++;
             break;
 
 
@@ -203,4 +199,9 @@ void handle_DeadMenu_keybinds(int key) {
 
     }
 
+}
+
+
+void cleanup_dead_menu() {
+    botao_selecionado_principal = 0;
 }

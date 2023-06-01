@@ -420,6 +420,7 @@ void cleanup_menu(Menu menu) {
 
 void drawGameInterface() {
 
+    refresh();
     static char *stats[ESTATISTICAS+2] = {"user.interface.stats.class", "user.interface.stats.level","user.interface.stats.kills", "user.interface.stats.armor", "user.interface.stats.hp", "user.interface.stats.xp", "user.interface.stats.monsters", "user.interface.stats.item"};
 
     //Desenha o retângulo à esquerda do Logo
@@ -520,7 +521,7 @@ void drawGameInterface() {
         mvwprintw(g_renderstate->wnd,
                 ALTURA_LOGO/3 + 1, 
                 LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
-                "%d/%d     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
+                "%lld/%lld     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
                 );
 
     } else {

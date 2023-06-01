@@ -136,7 +136,6 @@ void handle_CharactersMenu_keybinds(int key) {
 
 
         case 10 : case 13 : 
-                continue_game(ALTURA_JOGO, LARGURA_JOGO);
                 switch(botao_selecionado_principal) {
 
                             case Priest : {
@@ -167,6 +166,7 @@ void handle_CharactersMenu_keybinds(int key) {
                             }
 
                         }
+                continue_game(ALTURA_JOGO, LARGURA_JOGO);
 
     }
 

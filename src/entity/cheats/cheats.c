@@ -5,7 +5,7 @@
 static char godmode_code[] = "GODMODE";
 static char vision_code[] = "VISION";
 static int godmode_code_index = 0, vision_code_index = 0;
-static int vidaAntes = 0, visaoAntes = 0;
+static int vidaAntes = 0, visaoAntes = 0, vidaMaxAntes = 0;
 
 Cheats defaultCheats() {
     Cheats cheats = (Cheats)malloc(sizeof(CHEATS));
@@ -30,7 +30,7 @@ void godmode_code_checker(int key) {
 		godmode_code_index++;
 
         if(godmode_code_index == (int)strlen(godmode_code)) {
-            g_gamestate->player->cheats = (g_gamestate->player->cheats == 0) ? 1 : 0;
+            g_gamestate->player->cheats->godmode = (g_gamestate->player->cheats->godmode == 0) ? 1 : 0;
             godmode_Health();
         }
 	} else {
@@ -46,9 +46,11 @@ void godmode_Health() {
 
     if (g_gamestate->player->cheats->godmode == 1) {
         vidaAntes = g_gamestate->player->entity->health;
+        vidaMaxAntes = g_gamestate->player->entity->maxHealth;
     }
 
     g_gamestate->player->entity->health = (g_gamestate->player->cheats->godmode == 0) ? vidaAntes : 999999999999999;
+    g_gamestate->player->entity->maxHealth = (g_gamestate->player->cheats->godmode == 0) ? vidaMaxAntes : 999999999999999;
 
 }
 

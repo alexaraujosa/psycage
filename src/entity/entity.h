@@ -15,8 +15,8 @@
 
 typedef struct entity {
     Coords coords;
-    int maxHealth;
-    int health;
+    unsigned int maxHealth;
+    unsigned long long health;
     int armor;
     int basedamage;
 } ENTITY, *Entity;

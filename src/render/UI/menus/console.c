@@ -270,7 +270,7 @@ struct pattern {
     int cmd;
 };
 
-#define PATTERNS 13
+#define PATTERNS 14
 struct pattern shadow_patterns[PATTERNS];
 struct pattern patterns[PATTERNS];
 
@@ -323,6 +323,9 @@ void _makeProcessorPatterns() {
 
     patterns[12] = _makeProcessorPattern("^maxfov ?[01]*$", "maxfov", 13);
     shadow_patterns[12] = _makeProcessorPattern("^maxfov", "maxfov", 13);
+
+    patterns[13] = _makeProcessorPattern("^kill$", "kill", 14);
+    shadow_patterns[13] = _makeProcessorPattern("^kill", "kill", 14);
 
 }
 
@@ -385,7 +388,8 @@ void _executeCommand(int cmd, void* override, int overrideN) {
             addMessage("getwindows     | Gets the number of windows created.");
             addMessage("godmode        | (De)activates the GodMode.");
             addMessage("healPlayer     | Heals the player.");
-            addMessage("help           | Displays this message.");   
+            addMessage("help           | Displays this message.");  
+            addMessage("kill           | Kills the player.");   
             addMessage("reset          | [CHEAT] Resets the console.");  
             addMessage("maxfov         | [CHEAT] (De)activates the Max FOV.");    
             return;
@@ -488,6 +492,10 @@ void _executeCommand(int cmd, void* override, int overrideN) {
                 addMessage("");
                 addMessage("Arguments:");
                 addMessage("    FLAG: 1, 0");
+                return;
+            } else if (strcmp(command, "kill") == 0) {
+                addMessage("kill: kill");
+                addMessage("    kills the player.");
                 return;
             } else {
                 char out[MAX_CONSOLE_INPUT];
@@ -724,6 +732,11 @@ void _executeCommand(int cmd, void* override, int overrideN) {
                 addMessage("Invalid syntax. Type 'help maxfov' for more info.");
             }
         }
+    } else if (cmd == 14) {
+        g_gamestate->player->entity->armor = 0;
+        g_gamestate->player->entity->health = 0;
+        
+        addMessage("Killed player");
     }
 }
 

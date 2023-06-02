@@ -21,7 +21,7 @@ Gamestate g_gamestate;
 int** map_footprint;
 int find_map;
 
-#define TICK_DURATION_MS 60
+#define TICK_DURATION_MS 100
 clock_t tickStart, tickEnd;
 float tickDuration, taskDuration;
 

@@ -6,7 +6,7 @@
 
 extern FILE* dbgOut;
 
-static unsigned short SAVE_VERSION = 2;
+static unsigned short SAVE_VERSION = 4;
 
 int get_savepath(char *save_path, int num_save) {
     int res = snprintf(save_path, PATH_MAX, "%s/saves/save%d.dat", BIN_PATH, num_save);
@@ -99,7 +99,7 @@ void _save_write_player(FILE* save, Player player) {
     _save_write_int(save, player->kills);
     _save_write_int(save, player->xp);
     _save_write_int(save, player->last_direction);
-    _save_write_int(save, player->cheats);
+    // _save_write_int(save, player->cheats);
     _save_write_int(save, player->class);
     _save_write_int(save, player->radius);
 }
@@ -170,7 +170,16 @@ int create_Save(int num_save) {
     // _save_write_int(save, LARGURA_JOGO);
 
     // _save_write_matrix(save, map, ALTURA_JOGO, LARGURA_JOGO);
-    _save_write_matrix(save, map, g_renderstate->nrows - 1, LARGURA_JOGO);
+    // _save_write_matrix(save, map, g_renderstate->nrows - 1, LARGURA_JOGO);
+
+    debug_file(dbgOut, 1, "-- Saving map data.\n");
+    _save_write_matrix(save, map, ALTURA_JOGO, LARGURA_JOGO);
+    debug_file(dbgOut, 1, "-- Saved map data.\n");
+
+    debug_file(dbgOut, 1, "-- Saving lightmap data.\n");
+    _save_write_matrix(save, visible, ALTURA_JOGO, LARGURA_JOGO);
+    debug_file(dbgOut, 1, "-- Saved lightmap data.\n");
+
     debug_file(dbgOut, 1, "- Saved map.\n");
 
     fclose(save);
@@ -192,13 +201,13 @@ void _save_read_int(FILE* save, int* data) {
 int _save_read_matrix(FILE* save, int* rows, int* cols, int*** matrix) {
     if (fread(rows, sizeof(int), 1, save) != 1 || fread(cols, sizeof(int), 1, save) != 1) {
         debug_file(dbgOut, 1, "Failed to read matrix dimensions from the file.\n");
-        return -1;
+        return 1;
     }
 
     *matrix = malloc((*rows) * sizeof(int*));
     if (*matrix == NULL) {
         debug_file(dbgOut, 1, "Failed to allocate memory for matrix.\n");
-        return -1;
+        return 1;
     }
 
     for (int i = 0; i < *rows; i++) {
@@ -210,9 +219,11 @@ int _save_read_matrix(FILE* save, int* rows, int* cols, int*** matrix) {
                 free((*matrix)[j]);
             }
             free(*matrix);
-            return -1;
+            return 1;
         }
     }
+
+    debug_file(dbgOut, 1, "Attempting to load matrix with dimensions %dx%d.\n", *rows, *cols);
 
     for (int i = 0; i < *rows; i++) {
         if (fread((*matrix)[i], sizeof(int), *cols, save) != *cols) {
@@ -222,7 +233,7 @@ int _save_read_matrix(FILE* save, int* rows, int* cols, int*** matrix) {
                 free((*matrix)[j]);
             }
             free(*matrix);
-            return -1;
+            return 1;
         }
     }
 
@@ -250,7 +261,7 @@ void _save_read_player(FILE* save, Player player) {
     fread(&player->kills, sizeof(int), 1, save);
     fread(&player->xp, sizeof(int), 1, save);
     fread(&player->last_direction, sizeof(int), 1, save);
-    fread(&player->cheats, sizeof(int), 1, save);
+    // fread(&player->cheats, sizeof(int), 1, save);
     fread(&player->class, sizeof(int), 1, save);
     fread(&player->radius, sizeof(int), 1, save);
 }
@@ -330,6 +341,36 @@ int load_save(int num_save) {
 
     debug_file(dbgOut, 1, "- Loaded mobs.\n");
 
+    // debug_file(dbgOut, 2, "- Clearning old map data...\n");
+    // debug_file(dbgOut, 2, "-- Clearning old light map...\n");
+    // for (int i = 0; i < ALTURA_JOGO; i++) {
+    //     if (visible[i] == NULL) continue; // Blame Jorge for this
+    //     free(visible[i]);
+    // }
+    // free(visible);
+    // visible = NULL;
+
+    debug_file(dbgOut, 2, "- Cleaning old map data...\n");
+    
+    debug_file(dbgOut, 2, "-- Cleaning old light map...\n");
+    
+    // Did I mention I hate Jorge's map? I hate Jorge's map.
+    for (int i = 0; i < ALTURA_JOGO; i++) {
+        if (visible[i] == NULL) continue; // Blame Jorge for this
+        free(visible[i]);
+    }
+    free(visible);
+
+    visible = NULL;
+    debug_file(dbgOut, 2, "-- Cleaned old light map...\n");
+    
+    debug_file(dbgOut, 2, "-- Cleaning old map footprint...\n");
+    for (int i = 0; i < ALTURA_JOGO; i++) {
+        free(map_footprint[i]);
+    }
+    free(map_footprint);
+    debug_file(dbgOut, 2, "- Cleaned old map data.\n");
+
     debug_file(dbgOut, 1, "- Loading map.\n");
     int nfind_map = -1;
     fread(&nfind_map, sizeof(int), 1, save);
@@ -343,29 +384,57 @@ int load_save(int num_save) {
     }
 
     find_map = nfind_map;
-    ALTURA_JOGO = nrows - 1 - ALTURA_LOGO;
+    ALTURA_JOGO = nrows; // - 1 - ALTURA_LOGO;
     LARGURA_JOGO = ncols;
     map = nmap;
 
     debug_file(dbgOut, 1, "- Loaded map.\n");
 
-    debug_file(dbgOut, 0, " - Regenerating light map...\n");
-    debug_file(dbgOut, 2, "-- Clearning old light map...\n");
-    for (int i = 0; i < g_renderstate->nrows-1; i++) {
-        free(visible[i]);
-    }
-    free(visible);
-    visible = NULL;
+    // debug_file(dbgOut, 0, " - Regenerating light map...\n");
+    // debug_file(dbgOut, 2, "-- Clearning old light map...\n");
+    // for (int i = 0; i < g_renderstate->nrows-1; i++) {
+    //     free(visible[i]);
+    // }
+    // free(visible);
+    // visible = NULL;
 
-    debug_file(dbgOut, 0, "-- Generating new light map...\n");
-	init_light_map(g_renderstate->nrows-1, g_renderstate->ncols-2);
 
-    debug_file(dbgOut, 1, "- Regenerating map footprint...\n");
-    debug_file(dbgOut, 2, "-- Clearning old map footprint...\n");
-    for (int i = 0; i < ALTURA_JOGO; i++) {
-        free(map_footprint[i]);
+    debug_file(dbgOut, 0, "-- Clearing light map...\n");
+    if (visible != NULL) {
+        for (int i = 0; i < ALTURA_JOGO; i++) {
+            for (int j = 0; j < LARGURA_JOGO; j++) {
+                visible[i][j] = 0;
+            }
+        }
     }
-    free(map_footprint);
+    debug_file(dbgOut, 0, "-- Cleared light map.\n");
+
+    debug_file(dbgOut, 0, "-- Loading light map...\n");
+    int** lmap = NULL;
+    int lm_rows = 0, lm_cols = 0;
+
+    if (_save_read_matrix(save, &lm_rows, &lm_cols, &lmap)) {
+        debug_file(dbgOut, 0, "Error while loading save file %s: Cannot load light map.\n", save_path);
+        return 1;
+    }
+
+    visible = lmap;
+
+    debug_file(dbgOut, 0, "-- Loaded light map.\n");
+
+    // debug_file(dbgOut, 0, "-- Generating new light map...\n");
+    // init_light_map(ALTURA_JOGO, LARGURA_JOGO);
+
+	// init_light_map(g_renderstate->nrows-1, g_renderstate->ncols-2);
+
+
+
+    // debug_file(dbgOut, 1, "- Regenerating map footprint...\n");
+    // debug_file(dbgOut, 2, "-- Clearning old map footprint...\n");
+    // for (int i = 0; i < ALTURA_JOGO; i++) {
+    //     free(map_footprint[i]);
+    // }
+    // free(map_footprint);
 
     debug_file(dbgOut, 2, "-- Generating new map footprint...\n");
 	map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));
@@ -380,19 +449,21 @@ int load_save(int num_save) {
 		}
 	}
 
-    debug_file(
-        dbgOut, 
-        0, 
-        "Read save file %s with data\n - version=%d\n - Player X: %d Y: %d\n", 
-        save_path, 
-        sd->version, 
-        pl->entity->coords->x, pl->entity->coords->y
-    );
+    debug_file(dbgOut, 0, "Read save file %s, version=%d\n", save_path, sd->version);
 
-    debug_file(dbgOut, 1, " - Mobs:\n");
-    for (int i = 0; i < count; i++) {
-        debug_file(dbgOut, 0, " -- X: %d Y: %d.\n", mobs[i]->entity->coords->x, mobs[i]->entity->coords->y);
-    }
+    // debug_file(
+    //     dbgOut, 
+    //     0, 
+    //     "Read save file %s with data\n - version=%d\n - Player X: %d Y: %d\n", 
+    //     save_path, 
+    //     sd->version, 
+    //     pl->entity->coords->x, pl->entity->coords->y
+    // );
+
+    // debug_file(dbgOut, 1, " - Mobs:\n");
+    // for (int i = 0; i < count; i++) {
+    //     debug_file(dbgOut, 0, " -- X: %d Y: %d.\n", mobs[i]->entity->coords->x, mobs[i]->entity->coords->y);
+    // }
 
 
 }

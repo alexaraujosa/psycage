@@ -58,7 +58,8 @@ void _sm_ensure_cache() {
         }
 
         cached_translations[0] = _sm_make_cache(
-            TRUE, get_args_localized_string(g_renderstate->language, "menu.save.slot", botao_selecionado_principal)
+            // TRUE, get_args_localized_string(g_renderstate->language, "menu.save.slot", botao_selecionado_principal)
+            TRUE, get_localized_string(g_renderstate->language, "menu.save.slot")
         );
         cached_translations[1] = _sm_make_cache(
             FALSE, get_localized_string(g_renderstate->language, "menu.save.infos.not_available")
@@ -186,7 +187,11 @@ void draw_SaveInfo(Menu menu) {
     _sm_ensure_cache();
 
     // char* title_transl = get_args_localized_string(g_renderstate->language, "menu.save.slot", botao_selecionado_principal);
-    char* title_transl = cached_translations[0].value;
+    char* _title_transl = cached_translations[0].value;
+    int transl_size = strlen(_title_transl) + 1;
+
+    char* title_transl = (char*)malloc(transl_size);
+    snprintf(title_transl, transl_size, _title_transl, botao_selecionado_principal);
 
     mvwprintw(menu->wnd, 
         //getmaxy(menu->wnd)/4 + 1,
@@ -313,6 +318,8 @@ int hsmk_delete(int key) {
 
             g_dialog_control[2] = page_count;
             g_dialog_page_data = _page_data;
+
+            hmrMenuCache(MENU_DIALOG);
             displayMenu(MENU_DIALOG);
 
             // free(dtext);
@@ -347,6 +354,8 @@ int hsmk_delete(int key) {
             g_dialog_page_data = _page_data;
 
             botao_selecionado_infos = 0;
+
+            hmrMenuCache(MENU_DIALOG);
 
             return 0;
             break;
@@ -519,6 +528,8 @@ void handle_SaveMenu_keybinds(int key) {
                         page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
                         g_dialog_control[2] = page_count;
                     	g_dialog_page_data = _page_data;
+
+                        hmrMenuCache(MENU_DIALOG);
                         
                         break;
                     }
@@ -620,6 +631,8 @@ void handle_SaveMenu_keybinds(int key) {
                             page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
                             g_dialog_control[2] = page_count;
                             g_dialog_page_data = _page_data;
+
+                            hmrMenuCache(MENU_DIALOG);
                         }
 
                         break; //dar load
@@ -675,10 +688,15 @@ void handle_SaveMenu_keybinds(int key) {
                                 &gsw
                             );
 
+                            // debug_file(dbgOut, 0, "GSL: %d | GSW: %d\n", gsl, gsw);
+
                             g_ui_size[0] = gsl + 4;
                             g_ui_size[1] = gsw + 5;
                             g_dialog_control[0] = gsw + 3;
                             g_dialog_control[1] = gsl;
+
+                            // debug_file(dbgOut, 0, "GUS_X: %d | GUS_Y: %d\n", g_ui_size[0], g_ui_size[1]);
+                            // debug_file(dbgOut, 0, "GDC_0: %d | GDC_1: %d\n", g_dialog_control[0], g_dialog_control[1]);
 
                             // g_ui_size[0] = 6;
                             // g_ui_size[1] = 50;
@@ -692,6 +710,9 @@ void handle_SaveMenu_keybinds(int key) {
 
                             g_dialog_control[2] = page_count;
                             g_dialog_page_data = _page_data;
+
+                            // debug_file(dbgOut, 0, "GDPD: '%s'\n", *g_dialog_page_data[0][0]);
+
                             displayMenu(MENU_DIALOG);
                         }
                         break; //dar dielete

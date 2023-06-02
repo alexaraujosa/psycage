@@ -33,6 +33,7 @@ clean:
 	-rm $(BIN)/*
 	-rm -r $(BIN)/assets
 	-rm -r $(BIN)/logs
+	-rm -r $(BIN)/saves
 
 copyassets: 
 	mkdir -p $(BIN)/assets

@@ -467,11 +467,12 @@ Room create_room(int HEIGHT, int WIDTH) {
 }
 
 // Carve out the specified room in the "map" array by setting all cells inside the room to 0.
-void carve_room(Room room) {
+void carve_room(Room room, int HEIGHT) {
     
     for (int y = room.y; y < room.y + room.height; y++) {
         
         for (int x = room.x; x < room.x + room.width; x++) {
+            if (y >= HEIGHT) break;
             map[y][x] = 0;
         }
     }
@@ -587,7 +588,7 @@ void create_asylum(int HEIGHT, int WIDTH, int beginY, int beginX){
     for (int i = 0; i < num_rooms; i++) {
         
         rooms[i] = create_room(HEIGHT, WIDTH);
-        carve_room(rooms[i]);
+        carve_room(rooms[i], HEIGHT);
     }
 
     carve_corridors(rooms, num_rooms);

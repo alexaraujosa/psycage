@@ -204,17 +204,37 @@ void _removeMenu(MenuId menu) {
         if (g_renderstate->menus[i]->id == menu) {
             for (int j = i; j < MENU_STACK_MAX - 1; j++) {
                 if (g_renderstate->menus[j] != NULL) {
-                    debug_file(dbgOut, 1, "-- Clearing menu %s.\n", stringify_menu_id(g_renderstate->menus[j]->id));
+                    debug_file(dbgOut, 1, "-- Cleaning menu %s.\n", stringify_menu_id(g_renderstate->menus[j]->id));
                     cleanup_menu(g_renderstate->menus[j]);
 
-                    // del_panel(g_renderstate->menus[j]->panel);
-                    // delwin(g_renderstate->menus[j]->wnd);
-                    wclear(g_renderstate->menus[j]->wnd);
-                    hide_panel(g_renderstate->menus[j]->panel);
-                    g_renderstate->menus[j]->active = 0;
+                    if (g_renderstate->menus[j]->valid == 0) {
+                        debug_file(
+                            dbgOut, 1, "-- Menu %s is marked for destruction. Destroying.\n", 
+                            stringify_menu_id(g_renderstate->menus[j]->id)
+                        );
+
+                        // del_panel(g_renderstate->menus[j]->panel);
+                        // delwin(g_renderstate->menus[j]->wnd);
+                        // free(g_renderstate->menus[j]);
+
+                        deleteMenuCache(g_renderstate->menus[j]->id);
+
+                        debug_file(dbgOut, 1, "-- Successfully destroyed menu.\n");
+                    } else {
+                        // debug_file(dbgOut, 1, "-- Clearing menu %s.\n", stringify_menu_id(g_renderstate->menus[j]->id));
+                        // cleanup_menu(g_renderstate->menus[j]);
+
+                        // del_panel(g_renderstate->menus[j]->panel);
+                        // delwin(g_renderstate->menus[j]->wnd);
+                        wclear(g_renderstate->menus[j]->wnd);
+                        hide_panel(g_renderstate->menus[j]->panel);
+                        g_renderstate->menus[j]->active = 0;
+                    }
 
                     g_renderstate->menus[j] = NULL;
                     g_renderstate->activeMenus--;
+
+                    debug_file(dbgOut, 1, "-- Successfully cleaned up menu.\n");
                 }
             }
 

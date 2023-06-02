@@ -18,8 +18,10 @@ void draw_Dialog(Menu menu) {
         mvwprintw(menu->wnd, 1 + i, 1, "%s", page_data[page_control[0]][i]);
     }
 
-    if (page_control[0] + 1 >= g_dialog_control[2]) mvwprintw(menu->wnd, g_ui_size[0] - 2, g_ui_size[1] - 3, "%s", "X");
-    else mvwprintw(menu->wnd, g_ui_size[0] - 2, g_ui_size[1] - 5, "%s", ">>>");
+    // if (page_control[0] + 1 >= g_dialog_control[2]) mvwprintw(menu->wnd, g_ui_size[0] - 2, g_ui_size[1] - 3, "%s", "X");
+    // else mvwprintw(menu->wnd, g_ui_size[0] - 2, g_ui_size[1] - 5, "%s", ">>>");
+    if (page_control[0] + 1 >= g_dialog_control[2]) mvwprintw(menu->wnd, g_ui_size[0] - 2, g_dialog_control[0] - 1, "%s", "X");
+    else mvwprintw(menu->wnd, g_ui_size[0] - 2, g_dialog_control[0] - 3, "%s", ">>>");
 
     // int diag_len = strlen(g_dialog_text);
     // int diag_lines = diag_len / g_dialog_control[0];
@@ -65,19 +67,20 @@ void handle_Dialog_keybinds(int key) {
 }
 
 void cleanup_Dialog() {
-    g_dialog_text = NULL;
-    g_dialog_page_data;
+    char*** page_data = *g_dialog_page_data;
 
     for (int i = 0; i < g_dialog_control[2]; i++) {
         for (int j = 0; j < g_dialog_control[1]; j++) {
-            free(g_dialog_page_data[i][j]);
+            free(page_data[i][j]);
         }
 
-        free(g_dialog_page_data[i]);
+        free(page_data[i]);
     }
 
+    free(page_data);
     free(g_dialog_page_data);
     g_dialog_page_data = NULL;
+    g_dialog_text = NULL;
 
 
     g_dialog_control[0] = 0;
@@ -87,6 +90,8 @@ void cleanup_Dialog() {
 
     g_dialog_keybinds = NULL;
     page_control[0] = 0;
+
+    removeMenuCache(MENU_DIALOG);
 }
 
 // void rectangle(WINDOW* win, int y1, int x1, int y2, int x2) {

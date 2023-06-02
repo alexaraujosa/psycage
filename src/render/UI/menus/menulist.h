@@ -64,6 +64,7 @@ typedef struct menu {
     WINDOW* wnd;
     PANEL* panel;
     int active;
+    int valid;
     MenuId id;
 } MENU, *Menu;
 

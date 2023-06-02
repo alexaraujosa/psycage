@@ -32,6 +32,7 @@ Menu getMenuCacheOrCreate(MenuId id) {
         menu->wnd = NULL;
         menu->id = id;
         menu->active = 1;
+        menu->valid = 1;
 
         menu_wins++;
 
@@ -131,109 +132,53 @@ Menu getMenuCacheOrCreate(MenuId id) {
     }
 }
 
-// void drawMenu(Menu menu) {
-//     switch (menu->id) {
-//         case MENU_NONE: break;
-//         case MENU_MAIN_MENU: {
-//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-//             PANEL* panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+void removeMenuCache(MenuId id) {
+    debug_file(dbgOut, 1, "Attempting to destroy menu cache entry %s.\n", stringify_menu_id(id));
+    if (menuCache[id] != NULL) {
+        debug_file(dbgOut, 1, "- Menu Cache hit. Marking for destruction.\n");
 
-//             draw_MainMenu(menu);
-//             break;
-//         }
-//         case MENU_DIALOG: {
-//             WINDOW* win = newwin( 
-//                 g_ui_size[0],
-//                 g_ui_size[1],
-//                 (g_renderstate->nrows / 2) - (g_ui_size[0] / 2), 
-//                 (g_renderstate->ncols / 2) - (g_ui_size[1] / 2)
-//             );
-//             PANEL* panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+        menuCache[id]->valid = 0;
 
-//             draw_Dialog(menu);
-//             break;
-//         }
-//         case MENU_OPTIONS: {
-//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-//             PANEL * panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+        debug_file(dbgOut, 1, "- Menu marked for destruction.\n");
+    } else {
+        debug_file(dbgOut, 1, "- Menu Cache miss. Skipping.\n");
+    }
+}
 
-//             draw_OptionsMenu(menu);
-//             break;
-//         }
-//         case MENU_PAUSE: {
-//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-//             PANEL * panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+void deleteMenuCache(MenuId id) {
+    debug_file(dbgOut, 1, "Attempting to delete menu cache entry %s.\n", stringify_menu_id(id));
 
-//             draw_PauseMenu(menu);
-//             break;
-//         }
-//         case MENU_DEAD: {
-//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-//             PANEL * panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+    if (menuCache[id] == NULL) {
+        debug_file(dbgOut, 1, "Menu cache entry not present. Skipping.\n");
+        return;
+    }
 
-//             draw_DeadMenu(menu);
-//             break; 
-//         }
-//         case MENU_CHARACTERS: {
-//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-//             PANEL * panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+    del_panel(menuCache[id]->panel);
+    delwin(menuCache[id]->wnd);
+    free(menuCache[id]);
 
-//             draw_CharactersMenu(menu);
-//             break;
-//         }
-//         case MENU_CHARACTERS_INFO: {
-//             WINDOW* win = newwin(yMAX/3, xMAX/2, ALTURA_CHARACTERS_INFO, LARGURA_CHARACTERS_INFO);
-//             PANEL * panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+    menuCache[id] = NULL;
+    debug_file(dbgOut, 1, "Menu cache entry deleted. Skipping.\n");
+}
 
-//             draw_CharactersInfo(menu);
-//             break;
-//         }
-//         case MENU_SAVE: {
-//             WINDOW* win = newwin(g_renderstate->nrows, g_renderstate->ncols, 0, 0);
-//             PANEL * panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+void hmrMenuCache(MenuId id) {
+    debug_file(dbgOut, 1, "Reloading menu cache entry %s.\n", stringify_menu_id(id));
 
-//             draw_SaveMenu(menu);
-//             break;
-//         }
-//         case MENU_SAVE_SLOT: {
-//             WINDOW* win = newwin(g_renderstate->nrows/3, g_renderstate->ncols/4, g_renderstate->nrows/2, 3*g_renderstate->ncols/8);
-//             PANEL * panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+    
+    deleteMenuCache(id);
+    Menu new_menu = getMenuCacheOrCreate(id);
 
-//             draw_SaveInfo(menu);
-//             break;
-//         }
-//         case MENU_CONSOLE: {
-//             WINDOW* win = newwin(g_renderstate->nrows - 6, g_renderstate->ncols - 6, 3, 3);
-//             // WINDOW* win = newwin(10, 10, 3, 3);
-//             PANEL* panel = new_panel(win);
-//             menu->wnd = win;
-//             menu->panel = panel;
+    if (new_menu != NULL) {
+        for (int i = 0; i < MENU_STACK_MAX; i++) {
+            if (g_renderstate->menus[i] == NULL) break;
 
-//             draw_ConsoleMenu(menu);
-//             break;
-//         }
-//         default:
-//             break;
-//     }
-// }
+            if (g_renderstate->menus[i]->id == id) {
+                g_renderstate->menus[i] = new_menu;
+                break;
+            }
+        }
+    }
+}
 
 void drawMenu(Menu menu) {
     if (menu == NULL) return;

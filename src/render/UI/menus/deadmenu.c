@@ -182,20 +182,19 @@ void handle_DeadMenu_keybinds(int key) {
 
 
         case 10 : case 13 : switch(botao_selecionado_principal) {
+            case 0 : 
+                displayMenu(MENU_CHARACTERS);
+                break;
 
-                            case 0 : 
-                                displayMenu(MENU_CHARACTERS);
-                                break;
+            case 1 :
+                displayMenu(MENU_OPTIONS);
+                break;
 
-                            case 1 :
-                                displayMenu(MENU_OPTIONS);
-                                break;
-
-                            case 2 :
-                                end_game(LARGURA_JOGO);
-                                displayMenu(MENU_MAIN_MENU);
-                                break;
-                        }
+            case 2 :
+                end_game(ALTURA_JOGO);
+                displayMenu(MENU_MAIN_MENU);
+                break;
+        }
 
     }
 

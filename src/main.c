@@ -71,6 +71,10 @@ int main(int argc, char *argv[]) {
     }
 
     dbgOut = fopen(new_dbgout_path, "a");
+    if (dbgOut == NULL) {
+        printf("Unable to initialize game: Unable to open log file.\n");
+        exit(1);
+    }
 
     debug_file(dbgOut, 0, "Logger initialized.\n");
     

@@ -303,12 +303,13 @@ void game_keybinds(int key) {
 	if(key == '5')
 		displayMenu(MENU_MAIN_MENU);
 
-	if(key == 'g')
+	if(key == 'g') {
 	    if(g_gamestate->player->class == Priest) {
              g_gamestate->player->entity->health += imin((g_gamestate->player->entity->health)/4, g_gamestate->player->entity->maxHealth - g_gamestate->player->entity->health);
 		 	}
+	}
 
-	if(key == 'h')
+	if(key == 'h') {
 	    //  if (g_gamestate->player->entity->coords->x == g_gamestate->chests->coords->x && g_gamestate->player->entity->coords->y == g_gamestate->chests->coords->y ) {
 		    g_gamestate->player->item = get_random_item();
 		//  }
@@ -323,7 +324,7 @@ void game_keybinds(int key) {
 			if (g_gamestate->player->entity->maxHealth < g_gamestate->player->entity->health) {
 				g_gamestate->player->entity->health = g_gamestate->player->entity->maxHealth;
 			}
-
+	}
 
 }
 

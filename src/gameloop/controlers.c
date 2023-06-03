@@ -25,7 +25,7 @@ void start_game(int HEIGHT, int WIDTH) {
 	g_gamestate->chest_count = 1;
 	g_gamestate->projectile_count = 2;
 
-	defaultValues();
+	default_values();
 
 	for (int i = 0; i < g_gamestate->mob_count ; i++) {
 		addRandomItemToMob(g_gamestate->mobs[i]);
@@ -44,7 +44,7 @@ void start_game(int HEIGHT, int WIDTH) {
 
 
 
-void defaultValues() {
+void default_values() {
 
 	// Default player values
 		// Player Entity

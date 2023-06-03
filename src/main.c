@@ -6,6 +6,7 @@
 #include "util/string.h"
 #include "gameloop/gameloop.h"
 #include "render/render.h"
+#include "gameloop/controlers.h"
 
 int EXIT = FALSE;
 
@@ -105,7 +106,8 @@ int main(int argc, char *argv[]) {
         render(gs);
     }
 
-    endwin();
-    
+    end_game();
+    free(new_dbgout_path);
+
     return 0;
 }

@@ -75,8 +75,6 @@ void killXp(Player player) {
 }
 
 void destroyPlayer(Player player) {
-    // for(int i = 1 ; i <= 3 ; i++)
-    //     delete_Save(i);
     destroyCheats(player->cheats);
     destroyEntity(player->entity);
     free(player);

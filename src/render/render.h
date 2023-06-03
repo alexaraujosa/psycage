@@ -90,6 +90,7 @@ enum colors{
     GREEN_BG,
     RED_BG,
     YELLOW_BG,
+    SMOKE,
     MATRIX_BG,
     MATRIX_FG
 };

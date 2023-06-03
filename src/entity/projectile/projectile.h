@@ -17,5 +17,9 @@ typedef struct projectile {
 
 Projectile defaultProjectile();
 void destroyProjectile(Projectile projectile);
+void moveSmoke(int dx, int dy);
+void deploySmoke();
+void smokeChecker();
+void removeSmoke();
 
 #endif

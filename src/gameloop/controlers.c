@@ -42,6 +42,80 @@ void start_game(int HEIGHT, int WIDTH) {
 }
 
 
+void end_game() {
+
+	// -- Gamestate
+
+	// Free map
+	for(int i = 0 ; i < ALTURA_JOGO ; i++) {
+
+		if(map[i] == NULL)
+			break;
+		
+		free(map[i]);
+	}
+	free(map);
+
+	// Free map_footprint
+	for(int i = 0 ; i < ALTURA_JOGO ; i++) {
+
+		if(map_footprint[i] == NULL)
+			break;
+		
+		free(map_footprint[i]);
+	}
+	free(map_footprint);
+
+	// Free light_map
+	for(int i = 0 ; i < ALTURA_JOGO ; i++) {
+
+		if(visible[i] == NULL)
+			break;
+	
+		free(visible[i]);
+	}
+	free(visible);
+
+	// Free player
+	destroyPlayer(g_gamestate->player);
+	
+	// Free projectiles
+	for(int i = 0 ; i < g_gamestate->projectile_count ; i++)
+		destroyProjectile(g_gamestate->projectiles[i]);
+	
+	// Free mobs
+	for(int i = 0 ; i < g_gamestate->mob_count ; i++)
+		destroyMob(g_gamestate->mobs[i]);
+	
+	// Free chests
+	for(int i = 0 ; i < g_gamestate->chest_count ; i++)
+		destroyChest(g_gamestate->chests[i]);
+	
+	// Free gamestate
+	free(g_gamestate);
+
+
+	// -- Renderstate
+
+	// Free menus
+	closeMenu(g_renderstate->menus[0]->id);
+
+	// Free locales
+	// Por adicionar !!!!!!!!!!!!!!
+
+	// Free window
+	endwin();
+
+	// Free renderstate
+	free(g_renderstate);
+
+
+	// -- General
+
+	// Free items
+	// Por adicionar !!!!!!!!!!
+
+}
 
 
 void default_values() {

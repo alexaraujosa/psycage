@@ -38,9 +38,15 @@ Gamestate init_gameloop() {
 	Player player = defaultPlayer();
 	gs->player = player;
 
-    debug_file(dbgOut, 0, " - Initializing projectile...\n");
-	Projectile projectile = defaultProjectile();
-	gs->projectile = projectile;
+    debug_file(dbgOut, 0, " - Initializing projectiles...\n");
+    int projectile_count = 2;
+    Projectile* projectiles = (Projectile*)malloc(sizeof(Projectile) * projectile_count);
+    for(int i = 0 ; i < projectile_count ; i++) {
+            Projectile projectile = defaultProjectile();
+            projectiles[i] = projectile;
+    }
+    gs->projectiles = projectiles;
+    gs->projectile_count = projectile_count;
 
     debug_file(dbgOut, 0, " - Initializing clock-related variables...\n");
 	gs->input_initialized = 1;
@@ -118,12 +124,6 @@ Gamestate init_gameloop() {
 
 	gs->paused = FALSE;
 
-	//escolhe um dos 3s
-	// create_dungeon();
-    // create_asylum();
-    // create_sewers();
-	// create_ai_test_map();
-	
 	g_gamestate = gs;
 
 	return gs;
@@ -158,8 +158,11 @@ void tick() {
 			);
 		}
 
-		if(g_gamestate->projectile->entity->coords->x != 0 && g_gamestate->projectile->entity->coords->y != 0)
-			move_projectile(g_gamestate->projectile->dx, g_gamestate->projectile->dy);	
+		if(g_gamestate->projectiles[0]->entity->coords->x != 0 && g_gamestate->projectiles[0]->entity->coords->y != 0)
+			move_projectile(g_gamestate->projectiles[0]->dx, g_gamestate->projectiles[0]->dy);	
+
+		if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0)
+            moveSmoke(g_gamestate->projectiles[1]->dx, g_gamestate->projectiles[1]->dy); 	
 
 		// RTX_ON
 		calculate_visibility(
@@ -236,12 +239,43 @@ void game_keybinds(int key) {
 	godmode_code_checker(key);
 	vision_code_checker(key);
 
+
+    if(key == 'j')
+            if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0)        // se o player nao tiver colocado a smoke
+                    removeSmoke();                                                                        // vai dar crash, ja que ao repor o map com o map_footprint vai ler map_footprint[-3][0], o que nao existe
+            // Movement Controls
+
+    // Movement Controls
+    if(key == 'i') {
+            if(g_gamestate->projectiles[1]->entity->coords->x == 0 && g_gamestate->projectiles[1]->entity->coords->y == 0){
+                g_gamestate->projectiles[1]->entity->coords->x = g_gamestate->player->entity->coords->x;
+                g_gamestate->projectiles[1]->entity->coords->y = g_gamestate->player->entity->coords->y;
+            }
+            if (g_gamestate->player->last_direction == 0) {
+                    g_gamestate->projectiles[1]->dx = 0;
+                    g_gamestate->projectiles[1]->dy = -1;
+            }
+            if (g_gamestate->player->last_direction == 1) {
+                    g_gamestate->projectiles[1]->dx = 0;
+                    g_gamestate->projectiles[1]->dy = 1;
+            }
+            if (g_gamestate->player->last_direction == 2) {
+                    g_gamestate->projectiles[1]->dx = -1;
+                    g_gamestate->projectiles[1]->dy = 0;
+            }
+               if (g_gamestate->player->last_direction == 3) {
+                    g_gamestate->projectiles[1]->dx = 1;
+                    g_gamestate->projectiles[1]->dy = 0;
+            }
+    }
+
 		// Movement Controls
 	if(key == keybinds[0]) {
 
 		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y-1)){
 			move_player(0, -1);
 			g_gamestate->player->last_direction = 0;  
+			smokeChecker();
 		}
 
 	} else if (key == keybinds[1]) {	
@@ -249,6 +283,7 @@ void game_keybinds(int key) {
 		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y+1)){
 			move_player(0, 1);
 			g_gamestate->player->last_direction = 1;  
+			smokeChecker();
 		}
 
 	} else if (key == keybinds[2]) {
@@ -256,6 +291,7 @@ void game_keybinds(int key) {
 			if(is_passable(g_gamestate->player->entity->coords->x-1, g_gamestate->player->entity->coords->y)){
 				move_player(-1, 0);
 				g_gamestate->player->last_direction = 2;
+				smokeChecker();
 			}  
 	
 	} else if (key == keybinds[3]) {
@@ -263,28 +299,29 @@ void game_keybinds(int key) {
 			if(is_passable(g_gamestate->player->entity->coords->x+1, g_gamestate->player->entity->coords->y)){
 				move_player(1, 0);
 				g_gamestate->player->last_direction = 3;
+				smokeChecker();
 			}
 
 	} else if (key == keybinds[4] || key == toupper(keybinds[4]) ) {
 
-			g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x;
-			g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y;
+			g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->player->entity->coords->x;
+			g_gamestate->projectiles[0]->entity->coords->y = g_gamestate->player->entity->coords->y;
 
 		    if (g_gamestate->player->last_direction == 0) {
-				g_gamestate->projectile->dx = 0;
-				g_gamestate->projectile->dy = -1;
+				g_gamestate->projectiles[0]->dx = 0;
+				g_gamestate->projectiles[0]->dy = -1;
 			}
 			if (g_gamestate->player->last_direction == 1) {
-				g_gamestate->projectile->dx = 0;
-				g_gamestate->projectile->dy = 1;
+				g_gamestate->projectiles[0]->dx = 0;
+				g_gamestate->projectiles[0]->dy = 1;
 			}
 			if (g_gamestate->player->last_direction == 2) {
-				g_gamestate->projectile->dx = -1;
-				g_gamestate->projectile->dy = 0;
+				g_gamestate->projectiles[0]->dx = -1;
+				g_gamestate->projectiles[0]->dy = 0;
 			}
 			if (g_gamestate->player->last_direction == 3) {
-				g_gamestate->projectile->dx = 1;
-				g_gamestate->projectile->dy = 0;
+				g_gamestate->projectiles[0]->dx = 1;
+				g_gamestate->projectiles[0]->dy = 0;
 			}
 
 	} else if (key == keybinds[5] || key == toupper(keybinds[5])) {
@@ -371,48 +408,48 @@ void move_projectile(int dx, int dy) {
 	static int moveCount = 0;
 
 	if (g_gamestate->player->class == Priest) {
-	    g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x + dx;
-	    g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y + dy;
+	    g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->player->entity->coords->x + dx;
+	    g_gamestate->projectiles[0]->entity->coords->y = g_gamestate->player->entity->coords->y + dy;
 
 	} else if (g_gamestate->player->class == Mercenary) {
 		if (moveCount < 5) {
-			if (is_passable(g_gamestate->projectile->entity->coords->x + dx, g_gamestate->projectile->entity->coords->y + dy)) {
-				g_gamestate->projectile->entity->coords->x += dx;
-				g_gamestate->projectile->entity->coords->y += dy;
+			if (is_passable(g_gamestate->projectiles[0]->entity->coords->x + dx, g_gamestate->projectiles[0]->entity->coords->y + dy)) {
+				g_gamestate->projectiles[0]->entity->coords->x += dx;
+				g_gamestate->projectiles[0]->entity->coords->y += dy;
 				moveCount++;
 				if (moveCount > 10) {
-					g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+					g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->projectiles[0]->entity->coords->y = 0;
 				    moveCount = 0;
 				}
 			} else {
-				g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+				g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->projectiles[0]->entity->coords->y = 0;
 				moveCount = 0;
 			}
 		} else {
-			if (is_passable(g_gamestate->projectile->entity->coords->x - dx, g_gamestate->projectile->entity->coords->y - dy)) {
-				g_gamestate->projectile->entity->coords->x -= dx;
-				g_gamestate->projectile->entity->coords->y -= dy;
+			if (is_passable(g_gamestate->projectiles[0]->entity->coords->x - dx, g_gamestate->projectiles[0]->entity->coords->y - dy)) {
+				g_gamestate->projectiles[0]->entity->coords->x -= dx;
+				g_gamestate->projectiles[0]->entity->coords->y -= dy;
 				moveCount++;
 				if (moveCount > 10) {
-					g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+					g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->projectiles[0]->entity->coords->y = 0;
 				    moveCount = 0;
 				}
 			} else {
-				g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+				g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->projectiles[0]->entity->coords->y = 0;
 				moveCount = 0;
 			}
 		}
 	} else if (g_gamestate->player->class == Detective) {
-		if (is_passable(g_gamestate->projectile->entity->coords->x + dx, g_gamestate->projectile->entity->coords->y + dy)) {
-			g_gamestate->projectile->entity->coords->x += dx;
-			g_gamestate->projectile->entity->coords->y += dy;
+		if (is_passable(g_gamestate->projectiles[0]->entity->coords->x + dx, g_gamestate->projectiles[0]->entity->coords->y + dy)) {
+			g_gamestate->projectiles[0]->entity->coords->x += dx;
+			g_gamestate->projectiles[0]->entity->coords->y += dy;
 			moveCount++;
 			if (moveCount > 10) {
-					g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+					g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->projectiles[0]->entity->coords->y = 0;
 				    moveCount = 0;
 				}
 		} else {
-			g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+			g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->projectiles[0]->entity->coords->y = 0;
 		}
 	}
 }
@@ -423,51 +460,11 @@ int is_passable(int x, int y){
         return 0;
     }
 
-	if (map[y][x] == 5){
+	if (map[y][x] == 5){	// mob ou chest
 		return 0;
 	}
 	
     return 1;
-}
-
-void end_game(int HEIGHT) {
-	for (int i = 0; i < g_gamestate->mob_count; i++){
-
-	if (g_gamestate->mobs[i] == NULL) break;
-		
-		destroyMob(g_gamestate->mobs[i]);
-	}
-
-	for(int i = 0; i < g_gamestate->chest_count; i++){
-		
-		if (g_gamestate->chests== NULL) break;
-
-		destroyChest(g_gamestate->chests[i]);
-	}	
-	
-	for(int y = 0; y < ALTURA_JOGO; y++){
-
-		if (map_footprint == NULL) break;
-				
-		free(map_footprint[y]);
-	}
-	free(map_footprint);	
-	destroyProjectile(g_gamestate->projectile);	//necessario?
-	destroyPlayer(g_gamestate->player);			//necessario?
-	for(int i = 0 ; i < HEIGHT ; i++) {
-		if(visible == NULL)	break;
-	
-		free(visible[i]);
-	}
-	free(visible);
-
-	for(int y = 0; y < HEIGHT; y++){
-			
-		if (map == NULL) break;
-        		
-		free(map[y]);
-	}
-	free(map);
 }
 
 void continue_game(int HEIGHT, int WIDTH){
@@ -572,6 +569,17 @@ void continue_game(int HEIGHT, int WIDTH){
 
 	g_gamestate->chests = chests;
 	g_gamestate->chest_count = chest_count;
+
+	int projectile_count = 2;
+    Projectile* projectiles = (Projectile*)malloc(sizeof(Projectile) * projectile_count);
+    for (int i = 0; i < projectile_count; i++) {
+        Projectile projectile = defaultProjectile();
+
+        projectiles[i] = projectile;
+    }
+
+    g_gamestate->projectiles = projectiles;
+    g_gamestate->projectile_count = projectile_count;
 }
 
 void print_loading_screen(WINDOW* win, int HEIGHT, int WIDTH){

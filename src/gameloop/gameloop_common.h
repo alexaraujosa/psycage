@@ -13,13 +13,14 @@ typedef struct mob MOB, *Mob;
 
 typedef struct gamestate {
     Player player;         // Player structure
-    Projectile projectile;
+    Projectile* projectiles;
     int input_initialized; // Block user input
     int clock;             // General tick clock
     int block_clock;       // Stop clock execution
     Mob* mobs;
     Chest* chests;
     int mob_count;
+    int projectile_count;
     int chest_count;
     int last_res;
     int paused;

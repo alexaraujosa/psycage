@@ -1,6 +1,6 @@
 #include "items.h"
 
-#define ITEMS 9
+#define ITEMS 19
 
 extern int EXIT;
 extern char ASSET_DIR[PATH_MAX];
@@ -142,7 +142,7 @@ DataItemNode get_item_by_name(char* name) {
 
 DataItemNode get_random_item() {
 
-    char *itens[] = {"Gloves", "Helmet", "Belt", "Vest", "ExpressAmmo", "SoldierGloves", "SoldierHelmet", "SoldierBelt", "SoldierVest"};
+    char *itens[] = {"GlovesTier1", "GlovesTier2", "GlovesTier3", "HelmetTier1", "HelmetTier2", "HelmetTier3", "BeltTier1", "BeltTier2", "BeltTier3", "Broken_Sword", "VestTier1", "VestTier2", "VestTier3", "SoldierGloves", "SoldierHelmet", "SoldierBelt", "SoldierVest", "PactOfInsanity", "PacifismPact"};
 
     int index = rand()%ITEMS;
 

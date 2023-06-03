@@ -47,8 +47,16 @@ void levelUp(Player player, Entity entity) {
             player->entity->health = player->entity->maxHealth;
 
             if (player->level <= 25) {
+                entity->maxHealth += 4;
+                entity->basedamage += 2;
+             }
+            if (player->level > 25 && player->level<= 50) {
                 entity->maxHealth += 8;
                 entity->basedamage += 4;
+             }
+            if (player->level > 50 && player->level<= 75) {
+                entity->maxHealth += 12;
+                entity->basedamage += 6;
              }
         }
     }

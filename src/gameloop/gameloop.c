@@ -303,6 +303,27 @@ void game_keybinds(int key) {
 	if(key == '5')
 		displayMenu(MENU_MAIN_MENU);
 
+	if(key == 'g')
+	    if(g_gamestate->player->class == Priest) {
+             g_gamestate->player->entity->health += imin((g_gamestate->player->entity->health)/4, g_gamestate->player->entity->maxHealth - g_gamestate->player->entity->health);
+		 	}
+
+	if(key == 'h')
+	    //  if (g_gamestate->player->entity->coords->x == g_gamestate->chests->coords->x && g_gamestate->player->entity->coords->y == g_gamestate->chests->coords->y ) {
+		    g_gamestate->player->item = get_random_item();
+		//  }
+		    if(strcmp(g_gamestate->player->item->id, "0018") == 0) {
+			   g_gamestate->player->entity->maxHealth = (g_gamestate->player->entity->maxHealth)/1.5;
+			   g_gamestate->player->entity->basedamage = (g_gamestate->player->entity->basedamage)*1.5;
+			}
+			if(strcmp(g_gamestate->player->item->id, "0019") == 0) {
+			   g_gamestate->player->entity->basedamage = (g_gamestate->player->entity->basedamage)/1.5;
+			   g_gamestate->player->entity->maxHealth = (g_gamestate->player->entity->maxHealth)*1.5;
+			}
+			if (g_gamestate->player->entity->maxHealth < g_gamestate->player->entity->health) {
+				g_gamestate->player->entity->health = g_gamestate->player->entity->maxHealth;
+			}
+
 
 }
 
@@ -333,16 +354,66 @@ void move_player(int dx, int dy) {
 	g_gamestate->player->entity->coords->y += dy;
 }
 
+// void move_projectile(int dx, int dy) {
+
+// 	if(is_passable(g_gamestate->projectile->entity->coords->x + dx, g_gamestate->projectile->entity->coords->y + dy)) {
+// 		g_gamestate->projectile->entity->coords->x += dx;
+// 		g_gamestate->projectile->entity->coords->y += dy;
+// 	}
+// 	else {
+// 		g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+// 	}
+
+// }
+
 void move_projectile(int dx, int dy) {
+	static int moveCount = 0;
 
-	if(is_passable(g_gamestate->projectile->entity->coords->x + dx, g_gamestate->projectile->entity->coords->y + dy)) {
-		g_gamestate->projectile->entity->coords->x += dx;
-		g_gamestate->projectile->entity->coords->y += dy;
-	}
-	else {
-		g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
-	}
+	if (g_gamestate->player->class == Priest) {
+	    g_gamestate->projectile->entity->coords->x = g_gamestate->player->entity->coords->x + dx;
+	    g_gamestate->projectile->entity->coords->y = g_gamestate->player->entity->coords->y + dy;
 
+	} else if (g_gamestate->player->class == Mercenary) {
+		if (moveCount < 5) {
+			if (is_passable(g_gamestate->projectile->entity->coords->x + dx, g_gamestate->projectile->entity->coords->y + dy)) {
+				g_gamestate->projectile->entity->coords->x += dx;
+				g_gamestate->projectile->entity->coords->y += dy;
+				moveCount++;
+				if (moveCount > 10) {
+					g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+				    moveCount = 0;
+				}
+			} else {
+				g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+				moveCount = 0;
+			}
+		} else {
+			if (is_passable(g_gamestate->projectile->entity->coords->x - dx, g_gamestate->projectile->entity->coords->y - dy)) {
+				g_gamestate->projectile->entity->coords->x -= dx;
+				g_gamestate->projectile->entity->coords->y -= dy;
+				moveCount++;
+				if (moveCount > 10) {
+					g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+				    moveCount = 0;
+				}
+			} else {
+				g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+				moveCount = 0;
+			}
+		}
+	} else if (g_gamestate->player->class == Detective) {
+		if (is_passable(g_gamestate->projectile->entity->coords->x + dx, g_gamestate->projectile->entity->coords->y + dy)) {
+			g_gamestate->projectile->entity->coords->x += dx;
+			g_gamestate->projectile->entity->coords->y += dy;
+			moveCount++;
+			if (moveCount > 10) {
+					g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+				    moveCount = 0;
+				}
+		} else {
+			g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
+		}
+	}
 }
 
 int is_passable(int x, int y){

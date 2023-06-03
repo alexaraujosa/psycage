@@ -24,7 +24,7 @@
 #include "util/hashmap.h"
 #include "debug.h"
 
-#define MAX_ITEM_ID_SIZE 10
+#define MAX_ITEM_ID_SIZE 20
 #define ITEM_VERSION 1
 
 typedef struct ditem_node {

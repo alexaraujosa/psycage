@@ -294,7 +294,7 @@ void render_game(Gamestate gs) {
         wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     }
 
-    if(map[playerCoords->y, playerCoords->x] != 8)
+    if(map[playerCoords->y][playerCoords->x] != 8)
 	    mvwaddch(g_renderstate->wnd, playerCoords->y + OFFSET_Y, playerCoords->x + OFFSET_X, '@');
     
     if(visible[projectileCoords->y][projectileCoords->x] == 1)

@@ -489,7 +489,7 @@ void drawGameInterface() {
         mvwprintw(g_renderstate->wnd,
                 ALTURA_LOGO/3 + 1, 
                 LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
-                "%lld/%lld     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
+                "%lld/%d     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
                 );
 
     } else {

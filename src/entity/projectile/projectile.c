@@ -43,29 +43,29 @@ void moveSmoke(int dx, int dy) {
 
 void deploySmoke() {
 
-    for(int y = RAIO_SMOKE ; y >= -RAIO_SMOKE ; y--)
-        for(int x = -RAIO_SMOKE ; x <= RAIO_SMOKE; x++)
+    for(int y = RAIO_SMOKE ; y >= -RAIO_SMOKE ; y--){
+        for(int x = -RAIO_SMOKE ; x <= RAIO_SMOKE; x++) {
             if(x*x + y*y <= RAIO_SMOKE*RAIO_SMOKE && map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] != 1 && map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] != 3) 
-
                 map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] = 8;
+        }   
+    }
+    map[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] = 8;
 
-        map[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] = 8;
-
-    for(int i = 0 ; i < g_gamestate->mob_count ; i++)
+    for(int i = 0 ; i < g_gamestate->mob_count ; i++){
         if(map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] == 8)
             g_gamestate->mobs[i]->hasAI = FALSE;
-
+    }
 }
 
 void removeSmoke() {
 
-    for(int y = RAIO_SMOKE ; y >= -RAIO_SMOKE ; y--)
-        for(int x = -RAIO_SMOKE ; x <= RAIO_SMOKE; x++)
+    for(int y = RAIO_SMOKE ; y >= -RAIO_SMOKE ; y--){
+        for(int x = -RAIO_SMOKE ; x <= RAIO_SMOKE; x++){
             if(x*x + y*y <= RAIO_SMOKE*RAIO_SMOKE) 
-
                 map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] = map_footprint[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x];
-
-        map[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] = map_footprint[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x];
+        }
+    }
+    map[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] = map_footprint[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x];
 
     for(int i = 0 ; i < g_gamestate->mob_count ; i++) {
         map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;

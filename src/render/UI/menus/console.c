@@ -265,9 +265,10 @@ void createSessionFile() {
 	time_t now = time(NULL);
     struct tm* tmInfo = localtime(&now);
     size_t dateFormatSize = 20;
-    size_t new_out_len = BIN_PATH_LEN + sizeof("/logs/console-") - 1 + dateFormatSize;
+    // size_t new_out_len = BIN_PATH_LEN + sizeof("/logs/console-") - 1 + dateFormatSize;
+    size_t new_out_len = BIN_PATH_LEN + strlen("/logs/console-") - 1 + dateFormatSize;
 
-    char* new_out_path = malloc(new_out_len);
+    char* new_out_path = malloc(new_out_len * sizeof(char));
     if (new_out_path == NULL) {
         debug_file(dbgOut, 1, "Unable to initialize console: Failed to generate log path.\n");
         closeMenu(MENU_CONSOLE);
@@ -878,9 +879,9 @@ void _executeCommand(int cmd, void* override) {
             snprintf(
                 out, MAX_CONSOLE_INPUT, 
                 "Player { entity=<Entity>; item=<Item>; cheats=<Cheats>; level=%d; kills=%d; xp=%d; last_direction=%d; "
-                    "class=%s; radius=%d; }",
+                    "class=%s; radius=%d; sanity=%d; candle_light=%d }",
                 player->level, player->kills, player->xp, player->last_direction, 
-                    stringify_class(player->class), player->radius
+                    stringify_class(player->class), player->radius, player->sanity, player->candle_fuel
             );
 
             addMessage(out);       
@@ -1041,6 +1042,18 @@ void _executeCommand(int cmd, void* override) {
                 out, MAX_CONSOLE_INPUT, 
                 "%d",
                 player->radius
+            );
+        } else if (equal_strings(param, "sanity")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->sanity
+            );
+        } else if (equal_strings(param, "candle_fuel")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->candle_fuel
             );
         }
 

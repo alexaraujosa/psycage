@@ -39,6 +39,9 @@ static inline void replace_substring(char* str, const char* oldSubstr, const cha
         int remainingLen = str + strLen - (pos + oldSubstrLen);
         memmove(pos + newSubstrLen, pos + oldSubstrLen, remainingLen + 1);
         memcpy(pos, newSubstr, newSubstrLen);
+
+        if (pos + newSubstrLen >= str + strLen) break;
+
         pos = strstr(pos + newSubstrLen, oldSubstr);
         strLen += newSubstrLen - oldSubstrLen;
     }
@@ -108,6 +111,23 @@ static inline void trim(char* str) {
     if (start != str) {
         memmove(str, start, end - start + 2);
     }
+}
+
+static inline void truncateString(char* str, size_t maxLength) {
+    size_t length = strlen(str);
+    if (length > maxLength) {
+        if (maxLength > 5) {
+            str[maxLength - 4] = '.';
+            str[maxLength - 3] = '.';
+            str[maxLength - 2] = '.';
+        }
+        
+        str[maxLength - 1] = '\0';
+    }
+}
+
+static inline int equal_strings(const char* str1, const char* str2) {
+    return strcmp(str1, str2) == 0;
 }
 
 

@@ -22,6 +22,7 @@
 #include "common.h"
 #include "util/string.h"
 #include "util/hashmap.h"
+#include "util/math.h"
 #include "debug.h"
 
 #define MAX_ITEM_ID_SIZE 20

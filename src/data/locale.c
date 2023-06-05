@@ -97,10 +97,10 @@ void load_locales() {
                 DataLocaleLine localeLine = parse_locale_line(line, read - 1);
                 if (localeLine == NULL) {
                     debug_file(
-                        dbgOut, 
+                        dbgOut, 0, 
                         "Cannot load locales: Invalid translation at line %d on locale %s.\n", 
                         lineCount, 
-                        locale->id
+                        locale_meta[locale->id].location
                     );
                     // exit(1);
                     EXIT = TRUE;
@@ -110,11 +110,12 @@ void load_locales() {
                 if (hm_has(locale->translations, localeLine->key)) {
                     debug_file(
                         dbgOut, 
+                        0,
                         "Cannot load locales: Unable to add translation '%s' (at line %d): "
                         "Translation with same key already registered on locale %s.\n", 
                         localeLine->key, 
                         lineCount,
-                        locale->id
+                        locale_meta[locale->id].location
                     );
                     // exit(1);
                     EXIT = TRUE;
@@ -184,7 +185,8 @@ char* get_localized_string(DataLocale loc, char* key) {
 
     if (transl == NULL) return key;
 
-    char* ntransl = (char*)malloc(strlen(transl) * sizeof(char));
+    volatile int transl_len = strlen(transl);
+    char* ntransl = (char*)malloc(transl_len * sizeof(char));
     strcpy(ntransl, transl);
     replace_substring(ntransl, "{__NL}", "\n");
     return ntransl;
@@ -215,8 +217,13 @@ char* format_localized_string(char* format, ...) {
 }
 
 void change_locale() {
-
-    g_renderstate->language = (g_renderstate->language == en_US) ? pt_PT : en_US;
+    debug_file(
+        dbgOut, 1, 
+        "Attempting to change locale from %s to %s.\n", 
+        locale_meta[g_renderstate->language].location,
+        locale_meta[(g_renderstate->language == EN_US) ? PT_PT : EN_US].location
+    );
+    g_renderstate->language = (g_renderstate->language == EN_US) ? PT_PT : EN_US;
     
     return;
 }

@@ -33,9 +33,6 @@
 #include "util/hashmap.h"
 #include "debug.h"
 
-#define MAX_ITEM_ID_SIZE 10
-#define ITEM_VERSION 1
-
 typedef enum {
     EN_US,
     PT_PT

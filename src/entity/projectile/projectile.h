@@ -17,6 +17,7 @@ typedef struct projectile {
 
 Projectile defaultProjectile();
 void destroyProjectile(Projectile projectile);
+void init_grenades_clock();
 void move_trap(int dx, int dy);
 void deploy_trap();
 void trap_checker();

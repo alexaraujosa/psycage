@@ -171,6 +171,7 @@ Gamestate init_gameloop() {
 	g_gamestate = gs;
 
 	init_potions_clock();
+	init_grenades_clock();
 
 	return gs;
 }
@@ -323,7 +324,7 @@ void handle_keybinds() {
 }
 
 void game_keybinds(int key) {
-	// mvaddch(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, ' ');
+
 
 	godmode_code_checker(key);
 	vision_code_checker(key);
@@ -353,11 +354,6 @@ void game_keybinds(int key) {
 
 	if(key == 'z')
 		g_gamestate->mob_count = 0; //continue_game();
-
-    if(key == 'j')
-            if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0)        // se o player nao tiver colocado a smoke
-                    remove_trap();                                                                        // vai dar crash, ja que ao repor o map com o map_footprint vai ler map_footprint[-3][0], o que nao existe
-            // Movement Controls
 
     // Movement Controls
     if(key == 'i') {

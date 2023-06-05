@@ -52,6 +52,7 @@ void remove_potion_strength_effect() {
     g_gamestate->player->entity->basedamage /= 2;
     g_gamestate->potion_strength = 0;
     clock_strength->blocked = 1;
+    clock_strength->ticks = 0;
 
     return;
 }

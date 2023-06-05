@@ -9,8 +9,11 @@
 #define TEMPO_TRAP 10
 #define TEMPO_MOLOTOV 15
 
+Clock clock_trap = NULL;
+Clock clock_molotov = NULL;
+
 static int raioAnterior = 0;
-static int contagem = 0;
+static int contagem_molotov = 0, contagem_trap = 0;
 
 Projectile defaultProjectile() {
     Projectile projectile = (Projectile)malloc(sizeof(PROJECTILE));
@@ -31,18 +34,30 @@ void destroyProjectile(Projectile projectile) {
     free(projectile);
 }
 
+void init_grenades_clock() {
+    clock_trap = clock_molotov = defaultClock();
+    clock_trap->maxTicks *= TEMPO_TRAP;
+    clock_trap->blocked = 1;
+    addClock(clock_trap);
+    clock_molotov->maxTicks *= TEMPO_MOLOTOV;
+    clock_molotov->blocked = 1;
+    addClock(clock_molotov);
+
+    return;
+}
+
 void move_trap(int dx, int dy) {
 
 
-        if(is_passable(g_gamestate->projectiles[1]->entity->coords->x + dx, g_gamestate->projectiles[1]->entity->coords->y + dy) && contagem < DISTANCIA_ATIRAR_TRAP) {
+        if(is_passable(g_gamestate->projectiles[1]->entity->coords->x + dx, g_gamestate->projectiles[1]->entity->coords->y + dy) && contagem_trap < DISTANCIA_ATIRAR_TRAP) {
 		    g_gamestate->projectiles[1]->entity->coords->x += dx;
 		    g_gamestate->projectiles[1]->entity->coords->y += dy;
-            contagem++;
+            contagem_trap++;
         }
         else
             deploy_trap();
 
-
+    return;
 }
 
 void deploy_trap() {
@@ -76,6 +91,9 @@ void deploy_trap() {
         if(map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] == 8)
             map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
     
+    clock_trap->blocked = 0;
+
+    return;
 }
 
 void remove_trap() {
@@ -103,17 +121,18 @@ void remove_trap() {
     for(int i = 0 ; i < g_gamestate->chest_count ; i++)
         map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
 
-    // contagem = g_gamestate->clock_trap = 0;
+    contagem_trap = 0;
     g_gamestate->projectiles[1]->entity->coords->y = g_gamestate->projectiles[1]->entity->coords->x = 0;
+    clock_trap->blocked = 1;
+    clock_trap->ticks = 0;
 
+    return;
 }
 
 void trap_checker() {
 
-    // if(g_gamestate->clock_trap > TEMPO_TRAP)
-    //     remove_trap();
-    // else
-        // g_gamestate->clock_trap += 0.1;
+    if(clock_trap->ticks == TICKS_PER_SECOND*TEMPO_TRAP - 1)
+        remove_trap();
 
     return;
 }
@@ -123,16 +142,17 @@ void trap_checker() {
 
 void move_molotov(int dx, int dy) {
 
-
-        if(is_passable(g_gamestate->projectiles[2]->entity->coords->x + dx, g_gamestate->projectiles[2]->entity->coords->y + dy) && contagem < DISTANCIA_ATIRAR_MOLOTOV) {
+        if(is_passable(g_gamestate->projectiles[2]->entity->coords->x + dx, g_gamestate->projectiles[2]->entity->coords->y + dy) &&
+         contagem_molotov < DISTANCIA_ATIRAR_MOLOTOV) 
+        {
 		    g_gamestate->projectiles[2]->entity->coords->x += dx;
 		    g_gamestate->projectiles[2]->entity->coords->y += dy;
-            contagem++;
+            contagem_molotov++;
         }
         else
             deploy_molotov();
 
-
+    return;
 }
 
 void deploy_molotov() {
@@ -164,6 +184,9 @@ void deploy_molotov() {
         if(map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] == 9)
             map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
     
+    clock_molotov->blocked = 0;
+
+    return;
 }
 
 void remove_molotov() {
@@ -189,17 +212,18 @@ void remove_molotov() {
     for(int i = 0 ; i < g_gamestate->chest_count ; i++)
         map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
 
-    // contagem = g_gamestate->clock_molotov = 0;
+    contagem_molotov = 0;
     g_gamestate->projectiles[2]->entity->coords->y = g_gamestate->projectiles[2]->entity->coords->x = 0;
-
+    clock_molotov->blocked = 1;
+    clock_molotov->ticks = 0;
+    
+    return;
 }
 
 void molotov_checker() {
 
-    // if(g_gamestate->clock_molotov > TEMPO_MOLOTOV)
-    //     remove_molotov();
-    // else
-    //     g_gamestate->clock_molotov += 0.1;
+    if(clock_trap->ticks == TICKS_PER_SECOND*TEMPO_TRAP - 1)
+        remove_molotov();
 
     return;
 }

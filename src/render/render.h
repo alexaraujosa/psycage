@@ -93,7 +93,10 @@ enum colors{
     GREEN_BG,
     RED_BG,
     YELLOW_BG,
-    SMOKE,
+    TRAP,
+    TRAP_VISITED,
+    MOLOTOV,
+    MOLOTOV_VISITED,
     POTION,
     MATRIX_BG,
     MATRIX_FG

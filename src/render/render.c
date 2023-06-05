@@ -98,7 +98,10 @@ Renderstate init_render() {
     init_pair(RED_BG, COLOR_WHITE, COLOR_RED);
     init_pair(GREEN_BG, COLOR_WHITE, COLOR_GREEN);
     init_pair(YELLOW_BG, COLOR_WHITE, COLOR_YELLOW);
-    init_pair(SMOKE, DARK_GREY, DARK_DARK_GREY);
+    init_pair(TRAP, GREEN, DARK_GREEN);
+    init_pair(TRAP_VISITED, DARK_GREEN, DARK_DARK_GREEN);
+    init_pair(MOLOTOV, ORANGE, DARK_RED);
+    init_pair(MOLOTOV_VISITED, DARK_ORANGE, DARK_DARK_RED);
     init_pair(POTION, COLOR_WHITE, PURPLE);
 
     init_pair(MATRIX_BG, GREEN, DARK_GREEN);
@@ -296,21 +299,23 @@ void render_game(Gamestate gs) {
     wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
 
-// Print da Smoke
+
     for(int y = 0 ; y < ALTURA_JOGO ; y++){
         for(int x = 0 ; x < LARGURA_JOGO ; x++){
             if(map[y][x] == 8)
-                mvaddch(y+OFFSET_Y, x+OFFSET_X, 'S' | COLOR_PAIR(SMOKE));
+                mvaddch(y+OFFSET_Y, x+OFFSET_X, 'T' | COLOR_PAIR(TRAP));
+            if(visible[y][x] == 2 && map[y][x] == 8)
+                mvaddch(y+OFFSET_Y, x+OFFSET_X, 'T' | COLOR_PAIR(TRAP_VISITED));
         }
     }
 
-    // Print da Molotov
+
     for(int y = 0 ; y < ALTURA_JOGO ; y++)
         for(int x = 0 ; x < LARGURA_JOGO ; x++)
-            if(map[y][x] == 9)  mvaddch(y+OFFSET_Y, x+OFFSET_X, 'X' | COLOR_RED);
+            if(map[y][x] == 9)  mvaddch(y+OFFSET_Y, x+OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
         
     if(visible[projectileCoords->y][projectileCoords->x] == 1)
-        mvwaddch(g_renderstate->wnd, projectileCoords->y + OFFSET_Y, projectileCoords->x + OFFSET_X, 'T' | COLOR_PAIR(WHITE_PLAYER));
+        mvwaddch(g_renderstate->wnd, projectileCoords->y + OFFSET_Y, projectileCoords->x + OFFSET_X, 'O' | COLOR_PAIR(WHITE_PLAYER));
 
 	mvwaddch(g_renderstate->wnd, playerCoords->y + OFFSET_Y, playerCoords->x + OFFSET_X, '@');
 

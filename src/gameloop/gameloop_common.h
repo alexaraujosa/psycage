@@ -33,5 +33,6 @@ typedef struct gamestate {
 extern Gamestate g_gamestate;
 extern int** map_footprint;
 extern int TICK_DURATION_MS;
+extern int TICKS_PER_SECOND;
 
 #endif

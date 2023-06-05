@@ -23,10 +23,13 @@ int find_map;
 
 // #define TICK_DURATION_MS 100
 int TICK_DURATION_MS = 100;
+int TICKS_PER_SECOND;
 clock_t tickStart, tickEnd;
 float tickDuration, taskDuration;
 
 Gamestate init_gameloop() {
+	TICKS_PER_SECOND = (1000 / TICK_DURATION_MS);
+
 	debug_file(dbgOut, 0, " - Generating dimensions...\n");
 	ALTURA_JOGO = g_renderstate->nrows - ALTURA_LOGO - 2;
 	LARGURA_JOGO = g_renderstate->ncols - 2;

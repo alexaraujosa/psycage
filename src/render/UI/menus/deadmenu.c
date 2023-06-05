@@ -191,7 +191,6 @@ void handle_DeadMenu_keybinds(int key) {
                 break;
 
             case 2 :
-                end_game(ALTURA_JOGO);
                 displayMenu(MENU_MAIN_MENU);
                 break;
         }

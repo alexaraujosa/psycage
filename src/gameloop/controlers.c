@@ -3,19 +3,18 @@
 
 void start_game() {
 
-	if (g_renderstate->activeMenus > 0)
-		closeMenu(g_renderstate->menus[0]->id);
+	if (g_renderstate->activeMenus > 0) closeMenu(g_renderstate->menus[0]->id);
 	
-	g_gamestate->input_initialized = 1;
-	g_gamestate->clock = 0;
-	g_gamestate->block_clock = 1;
-	g_gamestate->last_res = -1;
+	// g_gamestate->input_initialized = 1;
+	// g_gamestate->clock = 0;
+	// g_gamestate->block_clock = 1;
+	// g_gamestate->last_res = -1;
 	g_gamestate->paused = FALSE;
 
+	// init_light_map(ALTURA_JOGO, LARGURA_JOGO);
 	for(int i = 0 ; i < ALTURA_JOGO ; i++)
-		for(int j = 0 ; j < LARGURA_JOGO ; j++)
-			visible[i][j] = 0;
-		
+        for(int j = 0 ; j < LARGURA_JOGO ; j++)
+            visible[i][j] = 0;
 	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X);
 
 	for(int i = 0 ; i < ALTURA_JOGO ; i++)
@@ -119,6 +118,25 @@ void end_game() {
 	}
 	free(map);
 
+	// // Free map_footprint
+	// for(int i = 0 ; i < ALTURA_JOGO ; i++) {
+
+	// 	if(map_footprint[i] == NULL)
+	// 		break;
+		
+	// 	free(map_footprint[i]);
+	// }
+	// free(map_footprint);
+
+	// // Free light_map
+	// for(int i = 0 ; i < ALTURA_JOGO ; i++) {
+
+	// 	if(visible[i] == NULL)
+	// 		break;
+	
+	// 	free(visible[i]);
+	// }
+	// free(visible);
 
 	// Free player
 	destroyPlayer(g_gamestate->player);
@@ -142,8 +160,7 @@ void end_game() {
 	// -- Renderstate
 
 	// Free menus
-	if (g_renderstate->activeMenus > 0)
-		closeMenu(g_renderstate->menus[0]->id);
+	if (g_renderstate->activeMenus > 0) closeMenu(g_renderstate->menus[0]->id);
 
 	// Free locales
 	// Por adicionar !!!!!!!!!!!!!!
@@ -190,8 +207,8 @@ void reset_projectiles_values() {
     	g_gamestate->projectiles[i]->entity->armor = 0;
     	g_gamestate->projectiles[i]->entity->basedamage = 4;
 		// Projectile Values
-    	g_gamestate->projectiles[i]->dx = 0;
-    	g_gamestate->projectiles[i]->dy = 0;
+    g_gamestate->projectiles[i]->dx = 0;
+    g_gamestate->projectiles[i]->dy = 0;
 	}
 
 	return;

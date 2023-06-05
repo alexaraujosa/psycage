@@ -20,6 +20,7 @@
 #include "../map/light.h"
 #include "../entity/cheats/cheats.h"
 #include "controlers.h"
+#include "clock.h"
 
 #ifndef useconds_t
 typedef unsigned int useconds_t;

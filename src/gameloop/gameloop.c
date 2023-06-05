@@ -21,7 +21,8 @@ Gamestate g_gamestate;
 int** map_footprint;
 int find_map;
 
-#define TICK_DURATION_MS 100
+// #define TICK_DURATION_MS 100
+int TICK_DURATION_MS = 100;
 clock_t tickStart, tickEnd;
 float tickDuration, taskDuration;
 
@@ -53,25 +54,25 @@ Gamestate init_gameloop() {
 	gs->clock = 0;
 	gs->block_clock = 1;
 
+	gs->clocks = init_clocks();
+
 	// gs->pointA = defaultCoords();
 	// gs->pointB = defaultCoords();
 	// gs->recalculate = 0;
 	// gs->path_cell_count = 0;
 	// gs->path_cells = NULL;
 
+
+
+
+
+
+
     debug_file(dbgOut, 0, " -- Generating light map...\n");
 	init_light_map(ALTURA_JOGO, LARGURA_JOGO);
 
-    debug_file(dbgOut, 0, " - Generating initial map...\n");
-	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); // map
-	// (g_renderstate->nrows - ALTURA_LOGO - 2) + (OFFSET_Y)
-	// g_renderstate->nrows - ALTURA_LOGO - 2 + OFFSET_Y
-	// g_renderstate->nrows - ALTURA_LOGO + ALTURA_LOGO - 2 + 1
-	// g_renderstate->nrows - 0 - 1
-	// g_renderstate->nrows - 1, LARGURA_JOGO
-
-
-
+    // debug_file(dbgOut, 0, " - Generating initial map...\n");
+	// find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); // map
 
     debug_file(dbgOut, 0, " - Generating map footprint...\n");
 	map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));
@@ -79,15 +80,56 @@ Gamestate init_gameloop() {
         map_footprint[i] = (int *)malloc((LARGURA_JOGO) * sizeof(int));
     }
 
-	for (int i = 0; i < ALTURA_JOGO; i++) {
-		for (int j = 0; j < LARGURA_JOGO; j++) {
-			map_footprint[i][j] = map[i][j];
-		}
-	}
+	// for (int i = 0; i < ALTURA_JOGO; i++) {
+	// 	for (int j = 0; j < (LARGURA_JOGO); j++) {
+	// 		map_footprint[i][j] = map[i][j];
+	// 	}
+	// }
 
-	// gs->pointB = mob->entity->coords;
+    // debug_file(dbgOut, 0, " - Generating mobs...\n");
+	// int mob_count = 3;
+	// Mob* mobs = (Mob*)malloc(sizeof(Mob) * mob_count);
 
-    debug_file(dbgOut, 0, " - Generating mobs...\n");
+	// for (int i = 0; i < mob_count; i++) {
+	// 	Mob mob = defaultMob();
+	// 	addRandomItemToMob(mob);
+
+	// 	addMobToMap(mob, map, LARGURA_JOGO, ALTURA_JOGO);
+
+	// 	mobs[i] = mob;
+	// 	map[mob->entity->coords->y][mob->entity->coords->x] = 5;
+	// }
+
+	// gs->mobs = mobs;
+	// gs->mob_count = mob_count;
+
+	// debug_file(dbgOut, 0 , " - Generating chests...\n");
+    // int chest_count = 1;
+	// Chest* chests = (Chest*)malloc(sizeof(Chest) * chest_count);
+
+	// for (int i = 0; i < chest_count; i++) {
+	//     Chest chest = defaultChest();
+
+	//     addChestToMap(chest, map, LARGURA_JOGO, ALTURA_JOGO);
+
+	//     chests[i] = chest;
+	//     map[chest->entity->coords->y][chest->entity->coords->x] = 5;
+	// }
+
+	// gs->chests = chests;
+	// gs->chest_count = chest_count;
+
+	find_map = -1;
+	map = NULL;
+	// map_footprint = NULL;
+
+	// gs->mob_count = 0;
+	// gs->mobs = NULL;
+
+	// gs->chests = NULL;
+	// gs->chest_count = 0;
+
+	debug_file(dbgOut, 0, " - Generating mobs...\n");
 	int mob_count = 3;
 	Mob* mobs = (Mob*)malloc(sizeof(Mob) * mob_count);
 
@@ -95,10 +137,8 @@ Gamestate init_gameloop() {
 		Mob mob = defaultMob();
 		addRandomItemToMob(mob);
 
-		addMobToMap(mob, map, LARGURA_JOGO, ALTURA_JOGO);
-
 		mobs[i] = mob;
-		map[mob->entity->coords->y][mob->entity->coords->x] = 5;
+		// map[mob->entity->coords->y][mob->entity->coords->x] = 5;
 	}
 
 	gs->mobs = mobs;
@@ -111,14 +151,14 @@ Gamestate init_gameloop() {
 	for (int i = 0; i < chest_count; i++) {
 	    Chest chest = defaultChest();
 
-	    addChestToMap(chest, map, LARGURA_JOGO, ALTURA_JOGO);
-
 	    chests[i] = chest;
-	    map[chest->entity->coords->y][chest->entity->coords->x] = 5;
+	    // map[chest->entity->coords->y][chest->entity->coords->x] = 5;
 	}
 
 	gs->chests = chests;
 	gs->chest_count = chest_count;
+
+
 
 	gs->last_res = -1;
 
@@ -131,6 +171,29 @@ Gamestate init_gameloop() {
 
 void tick() {
 	tickStart = clock();
+
+	// ListNode clk = g_gamestate->clocks;
+	// while (clk != NULL) {
+	// 	Clock node_clock = (Clock)clk->data;
+	// 	if (!node_clock->blocked) {
+	// 		tickClock(node_clock);
+	// 	}
+
+	// 	clk = clk->next;
+	// }
+	LinkedList ll = g_gamestate->clocks;
+	if (ll == NULL) return;
+
+    ListNode current = ll->head;
+    while (current != NULL) {
+        Clock data = (Clock)current->data;
+
+        if (!data->blocked) {
+			tickClock(data);
+		}
+        
+        current = current->next;
+    }
 
 	if (!g_gamestate->block_clock) g_gamestate->clock++;
 
@@ -182,7 +245,7 @@ void tick() {
 				d--;
 			}
 
-			if(map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
+			if(map != NULL && map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
 				continue_game(ALTURA_JOGO, LARGURA_JOGO);
 			}
 		}

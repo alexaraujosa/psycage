@@ -280,44 +280,52 @@ void render_game(Gamestate gs) {
 
 
 
-    if(g_gamestate->player->cheats->godmode == 1) {	
-        wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
-     } else {	
-        wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
-    }
-
     
 	
-    if(visible[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] == 1)
+    if(visible[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] == 1 && 
+       g_gamestate->projectiles[1]->entity->coords->y != 0 &&
+       g_gamestate->projectiles[1]->entity->coords->x != 0
+    )
         mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[1]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[1]->entity->coords->x + OFFSET_X, 'S' | COLOR_PAIR(WHITE_PLAYER));
 
-    if(visible[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x] == 1)
+    if(visible[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x] == 1 &&
+       g_gamestate->projectiles[2]->entity->coords->y != 0 &&
+       g_gamestate->projectiles[2]->entity->coords->x != 0
+    )
         mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[2]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[2]->entity->coords->x + OFFSET_X, 'X' | COLOR_PAIR(WHITE_PLAYER));
 
 
-	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
-    wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
 
 
     for(int y = 0 ; y < ALTURA_JOGO ; y++){
         for(int x = 0 ; x < LARGURA_JOGO ; x++){
             if(map[y][x] == 8)
-                mvaddch(y+OFFSET_Y, x+OFFSET_X, 'T' | COLOR_PAIR(TRAP));
+                mvaddch(y + OFFSET_Y, x + OFFSET_X, 'T' | COLOR_PAIR(TRAP));
             if(visible[y][x] == 2 && map[y][x] == 8)
-                mvaddch(y+OFFSET_Y, x+OFFSET_X, 'T' | COLOR_PAIR(TRAP_VISITED));
+                mvaddch(y + OFFSET_Y, x + OFFSET_X, 'T' | COLOR_PAIR(TRAP_VISITED));
         }
     }
 
 
     for(int y = 0 ; y < ALTURA_JOGO ; y++)
         for(int x = 0 ; x < LARGURA_JOGO ; x++)
-            if(map[y][x] == 9)  mvaddch(y+OFFSET_Y, x+OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
+            if(map[y][x] == 9)  mvaddch(y + OFFSET_Y, x + OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
         
     if(visible[projectileCoords->y][projectileCoords->x] == 1)
         mvwaddch(g_renderstate->wnd, projectileCoords->y + OFFSET_Y, projectileCoords->x + OFFSET_X, 'O' | COLOR_PAIR(WHITE_PLAYER));
 
+
+
+    if(g_gamestate->player->cheats->godmode == 1)	
+        wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
+    else	
+        wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
+    
 	mvwaddch(g_renderstate->wnd, playerCoords->y + OFFSET_Y, playerCoords->x + OFFSET_X, '@');
+
+	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
+    wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
 
 

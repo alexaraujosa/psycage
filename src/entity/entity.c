@@ -13,12 +13,10 @@ Entity defaultEntity() {
     return entity;
 }
 
-
 void destroyEntity(Entity entity) {
     destroyCoords(entity->coords);
     free(entity);
 }
-
 
 void damageEntity(Entity entity, int hp) {
     if (entity->armor >= hp) {
@@ -26,7 +24,7 @@ void damageEntity(Entity entity, int hp) {
     } else {
         // entity->armor = 0;
 
-        if (entity->health >= hp) {
+        if (entity->health >= (unsigned long long)hp) {
             hp -= entity->armor;
 
             entity->armor = 0;

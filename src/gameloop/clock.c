@@ -6,7 +6,7 @@ Clock defaultClock() {
 
     clock->ticks = 0;
     clock->maxTicks = 1000 / TICK_DURATION_MS;
-    clock->blocked = 0;
+    clock->blocked = TRUE;
 
     return clock;
 }
@@ -69,7 +69,36 @@ void removeClock(Clock clock) {
 
 void resetClock(Clock clock) {
     clock->ticks = 0;
-    clock->blocked = 0;
+    clock->blocked = TRUE;
+}
+
+void resetAllClocks(Clock clock) {
+    LinkedList ll = g_gamestate->clocks;
+	if (ll == NULL) return;
+
+    ListNode current = ll->head;
+    while (current != NULL) {
+        void* data = current->data;
+
+        clock->ticks = 0;
+        clock->blocked = TRUE;
+        
+        current = current->next;
+    }
+}
+
+void resetAllClockTicks(Clock clock) {
+    LinkedList ll = g_gamestate->clocks;
+	if (ll == NULL) return;
+
+    ListNode current = ll->head;
+    while (current != NULL) {
+        void* data = current->data;
+
+        clock->ticks = 0;
+        
+        current = current->next;
+    }
 }
 
 void stopClock(Clock clock) {

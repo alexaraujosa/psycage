@@ -19,6 +19,8 @@ void destroy_clocks();
 ListNode addClock(Clock clock);
 void removeClock(Clock clock);
 void resetClock(Clock clock);
+void resetAllClocks(Clock clock);
+void resetAllClockTicks(Clock clock);
 void stopClock(Clock clock);
 void resumeClock(Clock clock);
 void tickClock(Clock clock);

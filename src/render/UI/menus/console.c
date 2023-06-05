@@ -8,10 +8,15 @@ static int SETUP = 0;
 static char console_input[255];
 static int console_input_ind = 0;
 static int console_input_cursor = 0;
+static int console_input_skip_tick = FALSE;
 
 static char** console_output;
 static int console_output_ind = 0;
 static int console_output_control[4] = { 0, 0, 0, 0 }; // max lines, max line length, latest line, scroll offset
+
+#define MAX_HISTORY_COMMANDS 11
+char* history[MAX_HISTORY_COMMANDS];
+int history_len = 0;
 
 #define MAX_BLINK_TICKS 10
 static int blink_ticks = 0;
@@ -22,9 +27,13 @@ static int console_win[2] = { 0, 0 }; // mrows, mcols
 static FILE* consoleOut;
 
 void setupConsole();
+void addMessage(const char* msg);
+void addCommandToHistory(const char* command);
+void removeCommandFromHistory(int index);
 void _processCommand();
 void _makeProcessorPatterns();
 
+#pragma region Menu functions
 void draw_ConsoleMenu(Menu menu) {
     int mrows = g_renderstate->nrows - 7;
     int mcols = g_renderstate->ncols - 7;
@@ -52,7 +61,8 @@ void draw_ConsoleMenu(Menu menu) {
     // Print messages
     int curLine = mrows - 3;
     for (int i = console_output_control[3]; i < mrows - 1 + console_output_control[3]; i++) {
-        mvwprintw(menu->wnd, curLine--, 2, console_output[i]);
+        // mvwprintw(menu->wnd, curLine--, 2, console_output[i]);
+        mvwaddstr(menu->wnd, curLine--, 2, console_output[i]);
     }
 
     // mvwprintw(menu->wnd, mrows - 3, mcols - 20, "%d | %d %d", curLine, mrows, mcols);
@@ -89,7 +99,7 @@ void tick_ConsoleMenu() {
         blink = !blink;
         blink_ticks = 0;
     }
-};
+}
 
 void handle_ConsoleMenu_keybinds(int key) {
     switch(key) {
@@ -115,16 +125,25 @@ void handle_ConsoleMenu_keybinds(int key) {
                 console_input_cursor++;
             }
             break;
-        case 10: case 13:
+        case 10: case 13: {
             char inp[MAX_CONSOLE_INPUT + 3] = { 0 };
             strcpy(inp, "> \0");
             strcat(inp, console_input);
             addMessage(inp);
+
+            if (!equal_strings(inp, history[0])) addCommandToHistory(console_input);
             
             _processCommand();
-            memset(console_input, 0, MAX_CONSOLE_INPUT * sizeof(char));
-            console_input_ind = 0;
-            console_input_cursor = 0;
+
+            if (console_input_skip_tick) {
+                console_input_skip_tick = FALSE;
+            } else {
+                memset(console_input, 0, MAX_CONSOLE_INPUT * sizeof(char));
+                console_input_ind = 0;
+                console_input_cursor = 0;
+            }
+            break;
+        }
         case KEY_BACKSPACE:
         case 127:
             // if (console_input_ind != 0) {
@@ -161,6 +180,7 @@ void cleanup_ConsoleMenu() {
     console_input_ind = 0;
     console_output_control[3] = 0;
 }
+#pragma endregion
 
 #pragma region CONSOLE HELPERS
 void logMessage(const char* format, ...) {
@@ -190,6 +210,53 @@ void addMessage(const char* msg) {
 
     logMessage(logMsg);
 }
+
+// void addCommandToHistory(const char* command) {
+//     if (strlen(command) == 0) return;
+
+//     for (int i = MAX_HISTORY_COMMANDS - 1; i > 0; i--) {
+//         strcpy(history[i], history[i - 1]);
+//     }
+
+//     strcpy(history[0], command);
+
+//     if (history_len <= MAX_HISTORY_COMMANDS) history_len++;
+// }
+
+void addCommandToHistory(const char* command) {
+    if (strlen(command) == 0) return;
+
+    if (history_len >= MAX_HISTORY_COMMANDS) free(history[history_len]);
+    else history_len++;
+    
+    for (int i = MAX_HISTORY_COMMANDS - 1; i > 0; i--) {
+        if (history[i] == NULL) break;
+        strcpy(history[i], history[i - 1]);
+    }
+
+    strcpy(history[0], command);
+}
+
+
+void removeCommandFromHistory(int index) {
+    if (index < 0 || index >= history_len) return;
+
+    // free(history[index]);
+
+    for (int i = index; i < history_len - 1; i++) {
+        // history[i] = history[i + 1];
+        strcpy(history[i], history[i + 1]);
+    }
+
+    memset(history[history_len - 1], 0, MAX_CONSOLE_INPUT * sizeof(char));
+
+    // history[history_len - 1] = "";
+    // history[history_len - 1] = malloc(MAX_CONSOLE_INPUT * sizeof(char));
+    // strcpy(history[history_len - 1], "");
+
+    history_len--;
+}
+
 
 void createSessionFile() {
     char out_path[PATH_MAX];
@@ -224,6 +291,13 @@ void createSessionFile() {
     }
 }
 
+void setupCommandHistory() {
+    for (int i = 0; i < MAX_HISTORY_COMMANDS; i++) {
+        history[i] = malloc(MAX_CONSOLE_INPUT * sizeof(char));
+        strcpy(history[i], "");
+    }
+}
+
 void setupConsole() {
     console_output_control[0] = 2 * g_renderstate->nrows;
     console_output_control[1] = g_renderstate->ncols - 8;
@@ -234,9 +308,9 @@ void setupConsole() {
         console_output[i][0] = '\0';
     }
 
-    createSessionFile();
+    setupCommandHistory();
 
-    // addMessage("Hello world");
+    createSessionFile();
 }
 
 void flushOutput() {
@@ -270,15 +344,15 @@ struct pattern {
     int cmd;
 };
 
-#define PATTERNS 14
+#define PATTERNS 19
 struct pattern shadow_patterns[PATTERNS];
 struct pattern patterns[PATTERNS];
 
 struct pattern _makeProcessorPattern(char* regex, char* name, int cmd) {
     struct pattern node = {
-        regex: regex,
-        cmdName: name,
-        cmd: cmd
+        regex,
+        name,
+        cmd
     };
 
     return node;
@@ -309,13 +383,13 @@ void _makeProcessorPatterns() {
     patterns[7] = _makeProcessorPattern("^reset$", "reset", 8);
     shadow_patterns[7] = _makeProcessorPattern("^reset", "reset", 8);
 
-    patterns[8] = _makeProcessorPattern("^getitembyname [a-zA-Z]+$", "getitembyname", 9);
+    patterns[8] = _makeProcessorPattern("^getitembyname [a-zA-Z_]+$", "getitembyname", 9);
     shadow_patterns[8] = _makeProcessorPattern("^getitembyname", "getitembyname", 9);
 
     patterns[9] = _makeProcessorPattern("^getitembyid [0-9]+$", "getitembyid", 10);
     shadow_patterns[9] = _makeProcessorPattern("^getitembyid", "getitembyid", 10);
 
-    patterns[10] = _makeProcessorPattern("^gettranslation [a-zA-Z_]+ [a-zA-Z0-9_.]+$", "gettranslation", 11);
+    patterns[10] = _makeProcessorPattern("^gettranslation [a-zA-Z_]+ [a-zA-Z0-9_\\.]+$", "gettranslation", 11);
     shadow_patterns[10] = _makeProcessorPattern("^gettranslation", "gettranslation", 11);
 
     patterns[11] = _makeProcessorPattern("^getwindows$", "getwindows", 12);
@@ -327,9 +401,24 @@ void _makeProcessorPatterns() {
     patterns[13] = _makeProcessorPattern("^kill$", "kill", 14);
     shadow_patterns[13] = _makeProcessorPattern("^kill", "kill", 14);
 
+    patterns[14] = _makeProcessorPattern("^getplayerprop ?[a-zA-Z0-9_\\.]*$", "getplayerprop", 15);
+    shadow_patterns[14] = _makeProcessorPattern("^getplayerprop", "getplayerprop", 15);
+
+    patterns[15] = _makeProcessorPattern("^history ?[0-9]?$", "history", 16);
+    shadow_patterns[15] = _makeProcessorPattern("^history", "history", 16);
+
+    patterns[16] = _makeProcessorPattern("^addclock [0-9]+$", "addclock", 17);
+    shadow_patterns[16] = _makeProcessorPattern("^addclock", "addclock", 17);
+
+    patterns[17] = _makeProcessorPattern("^removeclock 0x[0-9a-zA-Z]+$", "removeclock", 18);
+    shadow_patterns[17] = _makeProcessorPattern("^removeclock", "removeclock", 18);
+
+    patterns[18] = _makeProcessorPattern("^viewclock 0x[0-9a-zA-Z]+$", "viewclock", 19);
+    shadow_patterns[18] = _makeProcessorPattern("^viewclock", "viewclock", 19);
+
 }
 
-void _executeCommand(int cmd, void* override, int overrideN) {
+void _executeCommand(int cmd, void* override) {
     int len;
     re_t regex;
 
@@ -379,19 +468,24 @@ void _executeCommand(int cmd, void* override, int overrideN) {
             addMessage("Type 'help' [command] to see more info about a command.");
             addMessage("Arguments in the form [arg] are required and arguments in the form <arg> are optional.");
             addMessage("");
+            addMessage("addclock       | Adds a new clock and returns it's address.");
             addMessage("clear          | Clears the console output.");
             addMessage("damagePlayer   | Damages the player.");
             addMessage("exit           | Closes the console terminal.");
-            addMessage("getitembyid    | Gets an item through it's ID.");
-            addMessage("getitembyname  | Gets an item through it's name.");
-            addMessage("gettranslation | Gets a translation through it's translation key.");
-            addMessage("getwindows     | Gets the number of windows created.");
+            addMessage("getitembyid    | Fetches an item through it's ID.");
+            addMessage("getitembyname  | Fetches an item through it's name.");
+            addMessage("getplayerprop  | Fetches a property stored on the player.");
+            addMessage("gettranslation | Fetches a translation through it's translation key.");
+            addMessage("getwindows     | Fetches the number of windows created.");
             addMessage("godmode        | (De)activates the GodMode.");
             addMessage("healPlayer     | Heals the player.");
+            addMessage("history        | Views or restores a previous command.");  
             addMessage("help           | Displays this message.");  
-            addMessage("kill           | Kills the player.");   
-            addMessage("reset          | [CHEAT] Resets the console.");  
-            addMessage("maxfov         | [CHEAT] (De)activates the Max FOV.");    
+            addMessage("kill           | Kills the player.");
+            addMessage("removeclock    | Removes a clock by it's address.");
+            addMessage("reset          | [CHEAT] Resets the console.");
+            addMessage("maxfov         | [CHEAT] (De)activates the Max FOV.");
+            addMessage("viewclock      | Fetches the data of a clock by it's address.");  
             return;
         } else {
             debug_file(dbgOut, 1, "-- With arguments\n");
@@ -455,7 +549,8 @@ void _executeCommand(int cmd, void* override, int overrideN) {
                 addMessage("    COMMAND: exit, godmode, help");
                 return;
             } else if (strcmp(command, "q") == 0) {
-                _executeCommand(2, "exit", 4);
+                // _executeCommand(2, "exit", 4);
+                _executeCommand(2, "exit");
                 return;
             } else if (strcmp(command, "reset") == 0) {
                 addMessage("reset: reset");
@@ -474,6 +569,13 @@ void _executeCommand(int cmd, void* override, int overrideN) {
                 addMessage("");
                 addMessage("Arguments:");
                 addMessage("    NAME: an alphanumeric sequence representing an item name.");
+                return;
+            } else if (strcmp(command, "getplayerprop") == 0) {
+                addMessage("getitembyid: getplayerprop [PROP]");
+                addMessage("    fetches the value of a PROPerty stored on the player.");
+                addMessage("");
+                addMessage("Arguments:");
+                addMessage("    PROP: an alphanumeric sequence representing an existing property on the player.");
                 return;
             } else if (strcmp(command, "gettranslation") == 0) {
                 addMessage("gettranslation: gettranslation [KEY]");
@@ -496,6 +598,30 @@ void _executeCommand(int cmd, void* override, int overrideN) {
             } else if (strcmp(command, "kill") == 0) {
                 addMessage("kill: kill");
                 addMessage("    kills the player.");
+                return;
+            } else if (strcmp(command, "history") == 0) {
+                addMessage("history: history <CMD>");
+                addMessage("    views the command history or restores a command if the argument CMD is present.");
+                addMessage("Arguments:");
+                addMessage("    CMD: A number between 0 to 9 (inclusive).");
+                return;
+            } else if (strcmp(command, "addclock") == 0) {
+                addMessage("addclock: addclock [MAX]");
+                addMessage("    adds a clock with maxTicks set to MAX, and returns it's address.");
+                addMessage("Arguments:");
+                addMessage("    MAX: an integer.");
+                return;
+            } else if (strcmp(command, "removeclock") == 0) {
+                addMessage("removeclock: removeclock [ADDR]");
+                addMessage("    removes a clock through it's address.");
+                addMessage("Arguments:");
+                addMessage("    ADDR: a clock address.");
+                return;
+            } else if (strcmp(command, "viewclock") == 0) {
+                addMessage("viewclock: viewclock [ADDR]");
+                addMessage("    fetches the data of a clock through it's address.");
+                addMessage("Arguments:");
+                addMessage("    ADDR: a clock address.");
                 return;
             } else {
                 char out[MAX_CONSOLE_INPUT];
@@ -560,7 +686,7 @@ void _executeCommand(int cmd, void* override, int overrideN) {
         char out[MAX_CONSOLE_INPUT];
         snprintf(
             out, MAX_CONSOLE_INPUT, 
-            "Healed player with %d HP (%d effective).", 
+            "Healed player with %d HP (%llu effective).", 
             param, g_gamestate->player->entity->health - prevHp
         );
 
@@ -580,19 +706,20 @@ void _executeCommand(int cmd, void* override, int overrideN) {
         char out[MAX_CONSOLE_INPUT];
         snprintf(
             out, MAX_CONSOLE_INPUT, 
-            "Damaged player with %d HP (%d effective).", 
+            "Damaged player with %d HP (%llu effective).", 
             param, prevHp - g_gamestate->player->entity->health
         );
 
         addMessage(out);
     } else if (cmd == 7) {
-        _executeCommand(1, NULL, 0);
+        // _executeCommand(1, NULL, 0);
+        _executeCommand(1, NULL);
     } else if (cmd == 8) {
         nukeConsoleMenu();
         addMessage("Terminal nuked");
     } else if (cmd == 9) {
         char param[50];
-        if (!sscanf(console_input, "getitembyname %s", &param)) {
+        if (!sscanf(console_input, "getitembyname %s", param)) {
             addMessage("Invalid value.");
             return;
         }
@@ -617,7 +744,7 @@ void _executeCommand(int cmd, void* override, int overrideN) {
         addMessage(out);
     } else if (cmd == 10) {
         char param[50];
-        if (!sscanf(console_input, "getitembyid %s", &param)) {
+        if (!sscanf(console_input, "getitembyid %s", param)) {
             addMessage("Invalid value.");
             return;
         }
@@ -641,9 +768,10 @@ void _executeCommand(int cmd, void* override, int overrideN) {
 
         addMessage(out);
     } else if (cmd == 11) {
-        char param[MAX_CONSOLE_INPUT];
+        int param_len = MAX_CONSOLE_INPUT - 5;
+        char param[param_len];
         char locale[6];
-        if (!sscanf(console_input, "gettranslation %5s %s", &locale, &param)) {
+        if (!sscanf(console_input, "gettranslation %5s %s", locale, param)) {
             addMessage("Invalid value.");
             return;
         }
@@ -737,6 +865,280 @@ void _executeCommand(int cmd, void* override, int overrideN) {
         g_gamestate->player->entity->health = 0;
         
         addMessage("Killed player");
+    } else if (cmd == 15) {
+        char out[MAX_CONSOLE_INPUT] = { 0 };
+        Player player = g_gamestate->player;
+
+        regex = re_compile("^getplayerprop$");
+
+        debug_file(dbgOut, 1, "- Parsing 'prop' argument\n");
+        if (re_matchp(regex, console_input, &len) != -1) {
+            debug_file(dbgOut, 1, "-- No arguments\n");
+
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "Player { entity=<Entity>; item=<Item>; cheats=<Cheats>; level=%d; kills=%d; xp=%d; last_direction=%d; "
+                    "class=%s; radius=%d; }",
+                player->level, player->kills, player->xp, player->last_direction, 
+                    stringify_class(player->class), player->radius
+            );
+
+            addMessage(out);       
+            return;
+        }
+
+        debug_file(dbgOut, 1, "-- With arguments\n");
+
+        int param_len = 100;
+        char param[param_len];
+        if (!sscanf(console_input, "getplayerprop %s", param)) {
+            addMessage("Invalid value.");
+            return;
+        }
+
+        #pragma region Entity
+        if (equal_strings(param, "entity")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "Entity { coords=<Coords>; maxHealth=%u; health=%llu; armor=%d; basedamage=%d }",
+                player->entity->maxHealth, player->entity->health, player->entity->armor, player->entity->basedamage
+            );
+        } else if (equal_strings(param, "entity.coords")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "Coords { x=%d; y=%d }",
+                player->entity->coords->x, player->entity->coords->y
+            );
+        } else if (equal_strings(param, "entity.coords.x")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->entity->coords->x
+            );
+        } else if (equal_strings(param, "entity.coords.y")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->entity->coords->y
+            );
+        } else if (equal_strings(param, "entity.maxHealth")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%u",
+                player->entity->maxHealth
+            );
+        } else if (equal_strings(param, "entity.health")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%llu",
+                player->entity->health
+            );
+        } else if (equal_strings(param, "entity.armor")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->entity->armor
+            );
+        } else if (equal_strings(param, "entity.basedamage")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->entity->basedamage
+            );
+        }
+        #pragma endregion
+
+        #pragma region Item
+        else if (equal_strings(param, "item")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "getitembyid %s",
+                player->item->id
+            );
+            _executeCommand(10, out);
+            return;
+        } else if (equal_strings(param, "item.id")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%s",
+                player->item->id
+            );
+        } else if (equal_strings(param, "item.name")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%s",
+                player->item->name
+            );
+        } else if (equal_strings(param, "item.damage")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->item->damage
+            );
+        } else if (equal_strings(param, "item.armor")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->item->armor
+            );
+        }
+        #pragma endregion
+
+        #pragma region Cheats
+        else if (equal_strings(param, "cheats")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "Cheats { godmode=%d; vision=%d }",
+                player->cheats->godmode, player->cheats->vision
+            );
+        } else if (equal_strings(param, "cheats.godmode")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->cheats->godmode
+            );
+        } else if (equal_strings(param, "cheats.vision")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->cheats->vision
+            );
+        }
+        #pragma endregion
+
+        else if (equal_strings(param, "level")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->level
+            );
+        } else if (equal_strings(param, "kills")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->kills
+            );
+        } else if (equal_strings(param, "xp")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->xp
+            );
+        } else if (equal_strings(param, "last_direction")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->last_direction
+            );
+        } else if (equal_strings(param, "class")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%s",
+                stringify_class(player->class)
+            ); 
+        } else if (equal_strings(param, "radius")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->radius
+            );
+        }
+
+        addMessage(out);
+    } else if (cmd == 16) {
+        regex = re_compile("^history$");
+
+        removeCommandFromHistory(0);
+
+        debug_file(dbgOut, 1, "- Parsing 'cmd' argument\n");
+        if (re_matchp(regex, console_input, &len) != -1) {
+            debug_file(dbgOut, 1, "-- No arguments\n");
+
+            char buffer[MAX_CONSOLE_INPUT] = { 0 };
+            addMessage("Command history:");
+            for (int i = 0; i < MAX_HISTORY_COMMANDS - 1; i++) {
+                snprintf(buffer, MAX_CONSOLE_INPUT, "%d: %s", i, history[i]);
+                addMessage(buffer);
+            }
+                    
+            return;
+        } else {
+            debug_file(dbgOut, 1, "-- With arguments\n");
+
+            int ind = -1;
+            if (!sscanf(console_input, "history %d", &ind)) {
+                debug_file(dbgOut, 1, "-- Failed to parse argument\n");
+                addMessage("Invalid index.");
+                return;
+            }
+
+            if (ind < 0 || ind > 9) {
+                addMessage("Invalid index.");
+                return; 
+            }
+
+            strcpy(console_input, history[ind]);
+            console_input_cursor = strlen(history[ind]);
+            console_input_ind = strlen(history[ind]);
+            console_input_skip_tick = TRUE;
+
+            addMessage("Restored command.");
+        }
+    } else if (cmd == 17) {
+        int max_ticks = 0;
+        if (!sscanf(console_input, "addclock %d", &max_ticks)) {
+            addMessage("Invalid value.");
+            return;
+        }
+
+        Clock clock = defaultClock();
+        clock->maxTicks = max_ticks;
+        addClock(clock);
+
+        char out[MAX_CONSOLE_INPUT] = { 0 };
+        snprintf(
+            out, MAX_CONSOLE_INPUT, 
+            "Added clock: %p",
+            clock
+        );
+
+        addMessage(out);
+    } else if (cmd == 18) {
+        Clock clock;
+        if (!sscanf(console_input, "removeclock %p", (void**)&clock)) {
+            addMessage("Invalid value.");
+            return;
+        }
+
+        if (clock != NULL) {
+            removeClock(clock);
+
+            addMessage("Removed clock.");
+            return;
+        }
+
+        addMessage("No clock found.");
+    } else if (cmd == 19) {
+        Clock clock;
+        if (!sscanf(console_input, "viewclock %p", (void**)&clock)) {
+            addMessage("Invalid value.");
+            return;
+        }
+
+        if (clock != NULL) {
+            char out[MAX_CONSOLE_INPUT];
+
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "Ticks: %d | MaxTicks: %d | Blocked: %d",
+                clock->ticks, clock->maxTicks, clock->blocked
+            );
+
+            addMessage(out);
+            return;
+        }
+
+        addMessage("No clock found.");
     }
 }
 
@@ -755,15 +1157,16 @@ void _processCommand() {
         int match_idx = re_matchp(regex, console_input, &len);
 
         if (match_idx != -1) {
-            debug_file(dbgOut, 1, "- Matched command: '%d'\n-- Asserting syntax", patterns[i].cmd);
+            debug_file(dbgOut, 1, "- Matched command: '%d'\n-- Asserting syntax\n", patterns[i].cmd);
 
             regex = re_compile(patterns[i].regex);
             match_idx = re_matchp(regex, console_input, &len);
 
             if (match_idx != -1) {
-                _executeCommand(patterns[i].cmd, NULL, 0);
+                // _executeCommand(patterns[i].cmd, NULL, 0);
+                _executeCommand(patterns[i].cmd, NULL);
             } else {
-                debug_file(dbgOut, 1, "-- Invalid syntax.");
+                debug_file(dbgOut, 1, "-- Invalid syntax.\n");
 
                 char out[MAX_CONSOLE_INPUT];
                 snprintf(out, MAX_CONSOLE_INPUT, "Invalid syntax. Type 'help %s' for more info.", patterns[i].cmdName);
@@ -775,8 +1178,8 @@ void _processCommand() {
     }
 
     debug_file(dbgOut, 1, "- No commands found.\n");
-
-    char cmd[MAX_CONSOLE_INPUT] = { 0 };
+    
+    char cmd[MAX_CONSOLE_INPUT - 25] = { 0 };
     char* spacePos = strchr(console_input, ' ');
     if (spacePos != NULL) {
         size_t length = spacePos - console_input;

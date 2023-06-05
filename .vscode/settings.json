@@ -45,7 +45,10 @@
         "unistd.h": "c",
         "memory": "c",
         "streambuf": "c",
-        "cheats.h": "c"
+        "cheats.h": "c",
+        "clock.h": "c",
+        "list.h": "c",
+        "controlers.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

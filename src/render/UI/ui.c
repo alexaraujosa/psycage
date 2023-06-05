@@ -489,7 +489,7 @@ void drawGameInterface() {
         mvwprintw(g_renderstate->wnd,
                 ALTURA_LOGO/3 + 1, 
                 LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
-                "%lld/%d     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
+                "%lld/%u     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
                 );
 
     } else {
@@ -527,7 +527,8 @@ void drawGameInterface() {
 
     //Print das mensagens da Consola
     for(int i = 0 ; i < MAX_MESSAGES ; i++) 
-        mvwprintw(g_renderstate->wnd, i + 1, g_renderstate->ncols/2 + LARGURA_LOGO*0.55, "aa", g_gamestate->messages[i]);
+        // mvwprintw(g_renderstate->wnd, i + 1, g_renderstate->ncols/2 + LARGURA_LOGO*0.55, "aa", g_gamestate->messages[i]);
+        mvwprintw(g_renderstate->wnd, i + 1, g_renderstate->ncols/2 + LARGURA_LOGO*0.55, "%s", g_gamestate->messages[i]);
 
     return;
 }

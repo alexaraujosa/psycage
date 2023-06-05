@@ -112,6 +112,7 @@ void continue_game(){
 
 
 void end_game() {
+	if (!g_gamestate->valid_state) return;
 
 	// -- Gamestate
 
@@ -158,6 +159,9 @@ void end_game() {
 	// Free renderstate
 	free(g_renderstate);
 
+	g_gamestate->valid_state = FALSE;
+	EXIT = TRUE;
+
 
 	// -- General
 
@@ -180,6 +184,8 @@ void reset_player_values() {
     g_gamestate->player->level = 0;
     g_gamestate->player->kills = 0;
     g_gamestate->player->xp = 0;
+	g_gamestate->player->sanity = 100;
+	g_gamestate->player->candle_fuel = 5;
 
 	return;
 }
@@ -216,7 +222,7 @@ void reset_mobs_values() {
     	g_gamestate->mobs[i]->moveCooldown = 10;
     	g_gamestate->mobs[i]->lastMove = 0;
     	g_gamestate->mobs[i]->hasAI = TRUE;
-    	g_gamestate->mobs[i]->hitChance = 3;
+    	// g_gamestate->mobs[i]->hitChance = 3;
     	g_gamestate->mobs[i]->hitCooldown = 1;
     	g_gamestate->mobs[i]->lastHit = 0;
 	}

@@ -1,7 +1,7 @@
 #include "ai.h"
 
-#define NUM_OBSTACLES 3
-static int obstacles[NUM_OBSTACLES] = { 1, 3, 5 };
+#define NUM_OBSTACLES 4
+static int obstacles[NUM_OBSTACLES] = { 1, 3, 5, 7};
 
 #define NUM_ITEMS 1
 static char *mob_itens[NUM_ITEMS] = {"Broken_Sword"};

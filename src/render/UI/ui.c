@@ -513,7 +513,7 @@ void drawGameInterface() {
     mvwprintw(g_renderstate->wnd,
               ALTURA_LOGO - 1,
               3 + strlen(get_localized_string(g_renderstate->language, stats[ESTATISTICAS])),
-              "%d",     g_gamestate->mob_count   
+              "%d ",     g_gamestate->mob_count   
             );
 
     //Print do Item atual

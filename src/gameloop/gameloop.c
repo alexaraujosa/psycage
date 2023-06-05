@@ -80,7 +80,7 @@ Gamestate init_gameloop() {
     }
 
 	for (int i = 0; i < ALTURA_JOGO; i++) {
-		for (int j = 0; j < (LARGURA_JOGO); j++) {
+		for (int j = 0; j < LARGURA_JOGO; j++) {
 			map_footprint[i][j] = map[i][j];
 		}
 	}
@@ -239,6 +239,8 @@ void game_keybinds(int key) {
 	godmode_code_checker(key);
 	vision_code_checker(key);
 
+	if(key == 'z')
+		continue_game();
 
     if(key == 'j')
             if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0)        // se o player nao tiver colocado a smoke
@@ -467,120 +469,6 @@ int is_passable(int x, int y){
     return 1;
 }
 
-void continue_game(int HEIGHT, int WIDTH){
-
-	closeMenu(g_renderstate->menus[0]->id);
-
-	// Free of the old map	
-	for (int i = 0; i < g_gamestate->mob_count; i++){
-
-		if (g_gamestate->mobs[i] == NULL) break;
-		
-		destroyMob(g_gamestate->mobs[i]);
-	}
-
-	for(int i = 0; i < g_gamestate->chest_count; i++){
-		
-		if (g_gamestate->chests== NULL) break;
-
-		destroyChest(g_gamestate->chests[i]);
-	}	
-	
-	for(int y = 0; y < ALTURA_JOGO; y++){
-
-		if (map_footprint == NULL) break;
-				
-		free(map_footprint[y]);
-	}
-	free(map_footprint);	
-
-	for(int y = 0; y < HEIGHT; y++){
-			
-		if (map == NULL) break;
-        		
-		free(map[y]);
-	}
-	free(map);
-
-	for(int y = 0 ; y < HEIGHT ; y++)
-		for(int x = 0 ; x < WIDTH ; x++)
-			visible[y][x] = 0;
-
-	// Creation of the new map
-	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); 
-	
-	// check if the map is valid
-	while(!valid_map(HEIGHT, WIDTH)){
-		
-		for(int y = 0; y < HEIGHT-1; y++){
-			
-			if (map == NULL) break;
-        		
-			free(map[y]);
-		}
-		free(map);
-
-		find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); 
-	}
-
-	// spawn
-	player_spawn(g_gamestate->player, map, ALTURA_JOGO, LARGURA_JOGO); 
-	
-	// footprint
-	map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));
-    for (int i = 0; i < ALTURA_JOGO; i++){
-        map_footprint[i] = (int *)malloc((LARGURA_JOGO) * sizeof(int));
-    }
-
-	for (int i = 0; i < ALTURA_JOGO; i++) {
-		for (int j = 0; j < (LARGURA_JOGO); j++) {
-			map_footprint[i][j] = map[i][j];
-		}
-	}
-
-	// mobs
-	int mob_count = 3;
-	Mob* mobs = (Mob*)malloc(sizeof(Mob) * mob_count);
-
-	for (int i = 0; i < mob_count; i++) {
-		Mob mob = defaultMob();
-
-		addMobToMap(mob, map, LARGURA_JOGO, ALTURA_JOGO);
-
-		mobs[i] = mob;
-		map[mob->entity->coords->y][mob->entity->coords->x] = 5;
-	}
-
-	g_gamestate->mobs = mobs;
-	g_gamestate->mob_count = mob_count;
-
-	// chests
-	int chest_count = 1;
-	Chest* chests = (Chest*)malloc(sizeof(Chest) * chest_count);
-
-	for (int i = 0; i < chest_count; i++) {
-	    Chest chest = defaultChest();
-
-	    addChestToMap(chest, map, LARGURA_JOGO, ALTURA_JOGO);
-
-	    chests[i] = chest;
-	    map[chest->entity->coords->y][chest->entity->coords->x] = 5;
-	}
-
-	g_gamestate->chests = chests;
-	g_gamestate->chest_count = chest_count;
-
-	int projectile_count = 2;
-    Projectile* projectiles = (Projectile*)malloc(sizeof(Projectile) * projectile_count);
-    for (int i = 0; i < projectile_count; i++) {
-        Projectile projectile = defaultProjectile();
-
-        projectiles[i] = projectile;
-    }
-
-    g_gamestate->projectiles = projectiles;
-    g_gamestate->projectile_count = projectile_count;
-}
 
 void print_loading_screen(WINDOW* win, int HEIGHT, int WIDTH){
 

@@ -166,7 +166,7 @@ void handle_CharactersMenu_keybinds(int key) {
                             }
 
                         }
-                start_game(ALTURA_JOGO, LARGURA_JOGO);
+                start_game();
 
     }
 

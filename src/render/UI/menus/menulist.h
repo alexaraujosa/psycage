@@ -57,6 +57,9 @@ static inline char* stringify_menu_id(MenuId id) {
         case MENU_CONSOLE:
             return "MENU_CONSOLE\0";
             break;
+        default:
+            return "<unknown>\0";
+            break;
     }
 }
 

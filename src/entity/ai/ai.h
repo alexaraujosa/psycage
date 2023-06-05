@@ -21,7 +21,7 @@ typedef struct mob {
     int moveCooldown;
     int lastMove;
     int hasAI;
-    int hitChance;
+    // int hitChance;
     int hitCooldown;
     int lastHit;
 } MOB, *Mob;

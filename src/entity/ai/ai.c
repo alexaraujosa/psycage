@@ -18,8 +18,8 @@ Mob defaultMob() {
 
     mob->hasAI = TRUE;
 
-    mob->hitChance = 3;
-    mob->hitCooldown = 1;
+    // mob->hitChance = 3;
+    mob->hitCooldown = 10;
     mob->lastHit = 0;
 
     return mob;
@@ -114,21 +114,27 @@ int attemptDamagePlayer(Mob mob) {
             return 1;
         }
 
-        int chance = rand() % mob->hitChance + 1;
+        int dmg = mob->entity->basedamage + mob->item->damage;
+        damageEntity(g_gamestate->player->entity, dmg);
+        mob->lastHit = 0;
 
-        if (chance == mob->hitChance / 2) {
-            int dmg = mob->entity->basedamage + mob->item->damage;
+        debug_file(dbgOut, 2, "- Damaged player with %d damage.\n", dmg);
 
-            debug_file(dbgOut, 2, "- Chance hit. Damaging player with %d damage points.\n", dmg);
-            debug_file(dbgOut, 2, "- Damage components: %d %d.\n", mob->entity->basedamage, mob->item->damage);
+        // int chance = rand() % mob->hitChance + 1;
 
-            damageEntity(g_gamestate->player->entity, dmg);
-            mob->lastHit = 0;
-            return 0;
-        } else {
-            debug_file(dbgOut, 2, "- Chance miss.\n");
-            return 1;
-        }
+        // if (chance == mob->hitChance / 2) {
+        //     int dmg = mob->entity->basedamage + mob->item->damage;
+
+        //     debug_file(dbgOut, 2, "- Chance hit. Damaging player with %d damage points.\n", dmg);
+        //     debug_file(dbgOut, 2, "- Damage components: %d %d.\n", mob->entity->basedamage, mob->item->damage);
+
+        //     damageEntity(g_gamestate->player->entity, dmg);
+        //     mob->lastHit = 0;
+        //     return 0;
+        // } else {
+        //     debug_file(dbgOut, 2, "- Chance miss.\n");
+        //     return 1;
+        // }
     }
 
     debug_file(dbgOut, 2, "- Player is too far away. No damage can be done.\n");

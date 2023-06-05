@@ -117,7 +117,7 @@ Renderstate init_render() {
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
     
-    if (map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
+    if (map != NULL && map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
         print_loading_screen(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
     }
     else{

@@ -550,8 +550,8 @@ void drawGameInterface() {
 
     if(g_gamestate->potion_strength == 1)
         mvwprintw(g_renderstate->wnd,
-                  ALTURA_LOGO/3 + 2,
-                  LARGURA_RETANGULO + LARGURA_LOGO + 4,
+                  ALTURA_LOGO/3 + 3,
+                  LARGURA_RETANGULO + LARGURA_LOGO + 2,
                   "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.potion.on")
                 );
     else

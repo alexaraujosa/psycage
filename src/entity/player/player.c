@@ -4,11 +4,16 @@
 #include "../../data/save.h"
 #include <string.h>
 
+#define MAX_CANDLE_FUEL 10
 #define MAX_RADIUS_PRIEST 6
+#define MAX_RADIUS_DETECTIVE 8
+#define MAX_RADIUS_MERCENARY 5
+
+#define MIN_RADIUS_PRIEST 2
 #define MIN_RADIUS_DETECTIVE 4
+#define MIN_RADIUS_MERCENARY 5
+
 #define KILLS_TO_CHANGE_RADIUS 15
-
-
 
 Player defaultPlayer() {
     Player player = (Player)malloc(sizeof(PLAYER));
@@ -32,6 +37,8 @@ Player defaultPlayer() {
     player->last_direction = 0;
     player->class = Priest;
     player->radius = 0;
+    player->sanity = 100;
+    player->candle_fuel = 5;
 
     player->item = get_random_item();
 
@@ -104,27 +111,16 @@ char* getClassInterface(int classe) {
 }
 
 void verifyPlayerRadius() {
-    if(g_gamestate->player->cheats->vision == 1)
-        return;
+    if(g_gamestate->player->cheats->vision == 1) return;
     
     switch(g_gamestate->player->class) {
-
         case Priest: {
-
-            if(g_gamestate->player->radius < MAX_RADIUS_PRIEST)
-                g_gamestate->player->radius++;
-
+            if(g_gamestate->player->radius < MAX_RADIUS_PRIEST) g_gamestate->player->radius++;
             break;
-
         }
-
         case Detective: {
-
-            if(g_gamestate->player->radius > MIN_RADIUS_DETECTIVE)
-                g_gamestate->player->radius--;
-
+            if(g_gamestate->player->radius > MIN_RADIUS_DETECTIVE) g_gamestate->player->radius--;
             break;
-
         }
     }
 
@@ -132,24 +128,19 @@ void verifyPlayerRadius() {
 }
 
 void player_spawn(Player player, int **map, int HEIGHT, int WIDTH) {
-
     // Spawn player in the closest position on the left
     int left_closest_x = 1000;
     int left_multi_closest_y[20] = {0};
     int left_i = 0;
     
-    for (int y = 0; y < HEIGHT-1; y++){
-        
-        for (int x = 0; x < WIDTH; x++){
-            
-            if (map[y][x] == 0){
-                
-                if(left_closest_x == x && left_i < 20){
-                    
+    for (int y = 0; y < HEIGHT-1; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            if (map[y][x] == 0) { 
+                if(left_closest_x == x && left_i < 20) {      
                     left_multi_closest_y[left_i++] = y;
                 }
-                if (left_closest_x > x){
 
+                if (left_closest_x > x) {
                     left_closest_x = x;
                     
                     for (int j = 0; j < left_i; j++){
@@ -167,21 +158,17 @@ void player_spawn(Player player, int **map, int HEIGHT, int WIDTH) {
 
     // Spawn player in the closest position on the right
     int right_closest_x = 0;
-    int right_multi_closest_y[20] = {0};
+    int right_multi_closest_y[20] = { 0 };
     int right_i = 0;
     
-    for (int y = 0; y < HEIGHT-1; y++){
-        
+    for (int y = 0; y < HEIGHT-1; y++) {
         for (int x = WIDTH-1; x >= 0 ; x--){
-            
             if (map[y][x] == 0){
-                
-                if(right_closest_x == x && right_i < 20){
-                    
+                if(right_closest_x == x && right_i < 20) {  
                     right_multi_closest_y[right_i++] = y;
                 }
-                if (right_closest_x < x){
 
+                if (right_closest_x < x) {
                     right_closest_x = x;
                     
                     for (int j = 0; j < right_i; j++){
@@ -192,7 +179,6 @@ void player_spawn(Player player, int **map, int HEIGHT, int WIDTH) {
                     right_multi_closest_y[0] = y;
                     right_i = 1;
                 }
-
                 break;
             }
         }
@@ -202,16 +188,13 @@ void player_spawn(Player player, int **map, int HEIGHT, int WIDTH) {
     int distance_right = right_closest_x; 
     int distance_left = WIDTH - left_closest_x;
 
-    if (distance_right > distance_left){
-
+    if (distance_right > distance_left) {
         int right_random_index = rand() % right_i;
         int closest_y = right_multi_closest_y[right_random_index];    
         
         player->entity->coords->x = right_closest_x;
         player->entity->coords->y = closest_y;  
-    }
-    else{
-
+    } else {
         int left_random_index = rand() % left_i;
         int closest_y = left_multi_closest_y[left_random_index];
 
@@ -234,4 +217,51 @@ char* stringify_class(int class) {
         default:
             return "<undefined>";
     }
+}
+
+int is_player_insane(Player player) {
+    return player->sanity <= 0;
+}
+
+void restore_sanity(Player player, int sanity) {
+    player->sanity += sanity;
+    if (player->sanity > 100) player->sanity = 100;
+}
+
+void reduce_sanity(Player player, int sanity) {
+    player->sanity -= sanity;
+    if (player->sanity < -100) player->sanity = -100;
+}
+
+int get_player_radius(Player player) {
+    return player->radius + get_candle_light(player);
+}
+
+int get_candle_light(Player player) {
+    if (player->candle_fuel == 0) return 0;
+
+    int max_class_radius;
+    switch (player->class) {
+        case Priest:
+            max_class_radius = MAX_RADIUS_PRIEST;
+            break;
+        case Detective:
+            max_class_radius = MAX_RADIUS_PRIEST;
+            break;
+        case Mercenary:
+            max_class_radius = MAX_RADIUS_MERCENARY;
+            break;
+    }
+
+    return (player->candle_fuel * max_class_radius) / MAX_CANDLE_FUEL;
+}
+
+void add_candle_fuel(Player player, int fuel) {
+    player->candle_fuel += fuel;
+    if (player->candle_fuel > MAX_CANDLE_FUEL) player->candle_fuel = MAX_CANDLE_FUEL;
+}
+
+void reduce_candle_fuel(Player player, int fuel) {
+    player->candle_fuel -= fuel;
+    if (player->candle_fuel < 0) player->candle_fuel = 0;
 }

@@ -23,6 +23,8 @@ typedef struct player {
     int last_direction;
     int class;
     int radius;
+    int sanity;
+    int candle_fuel;
 } PLAYER, *Player;
 
 enum Classes {
@@ -40,5 +42,12 @@ char* getClassInterface(int classe);
 void verifyPlayerRadius();
 void player_spawn(Player player, int **map, int HEIGHT, int WIDTH);
 char* stringify_class(int class);
+int is_player_insane(Player player);
+void restore_sanity(Player player, int sanity);
+void reduce_sanity(Player player, int sanity);
+int get_player_radius(Player player);
+int get_candle_light(Player player);
+void add_candle_fuel(Player player, int fuel);
+void reduce_candle_fuel(Player player, int fuel);
 
 #endif

@@ -31,9 +31,9 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
     // Initialize the next start slope to be equal to the current start slope
     double next_start_slope = start_slope;
     
-
-    for (int i = row; i <= g_gamestate->player->radius; i++) {
-        
+    int radius = get_player_radius(g_gamestate->player);
+    // for (int i = row; i <= g_gamestate->player->radius; i++) {
+    for (int i = row; i <= radius; i++) {    
         int blocked = 0;
         
         for (int dx = -i, dy = -i; dx <= 0; dx++) {
@@ -112,8 +112,8 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             double distance = sqrt(dx * dx + dy * dy);
 
             // If the distance is less than or equal to the radius, set the visibility of the current cell to 1
-            if (distance <= g_gamestate->player->radius){
-                
+            // if (distance <= g_gamestate->player->radius){
+            if (distance <= radius){    
                 for (int k = current_x1 - 1; k <= current_x1 + 1; k++) {
                     visible[current_y][k] = 1;
                 }

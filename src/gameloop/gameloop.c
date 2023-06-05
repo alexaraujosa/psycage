@@ -162,11 +162,10 @@ Gamestate init_gameloop() {
 	gs->chests = chests;
 	gs->chest_count = chest_count;
 
-
-
 	gs->last_res = -1;
 
 	gs->paused = FALSE;
+	gs->valid_state = TRUE;
 
 	g_gamestate = gs;
 
@@ -218,6 +217,71 @@ void tick() {
 			goto tick_end;
 		}
 
+		if (is_player_insane(g_gamestate->player)) {
+			static int iClockInitialized = FALSE;
+			static Clock iClock;
+
+			if (!iClockInitialized) {
+				debug_file(dbgOut, 2, "Initalized insanity clock.\n");
+
+				iClock = defaultClock();
+				iClock->blocked = FALSE;
+				iClock->maxTicks = TICKS_PER_SECOND;
+
+				addClock(iClock);
+
+				iClockInitialized = TRUE;
+			}
+
+			if (iClock->ticks == TICKS_PER_SECOND - 1) {
+				debug_file(dbgOut, 2, "Attempted to reduce one sanity.\n");
+
+				reduce_sanity(g_gamestate->player, 1);
+				if (g_gamestate->player->sanity == -100) {
+					debug_file(dbgOut, 2, "Minimum insanity. Time to die.\n");
+					g_gamestate->player->entity->health = 0;
+				}
+			}
+		}
+
+		// if (get_candle_light(g_gamestate->player) > 0) {
+		{
+			static int cClockInitialized = FALSE;
+			static Clock cClock;
+
+			if (!cClockInitialized) {
+				debug_file(dbgOut, 2, "Initalized candle light clock.\n");
+
+				cClock = defaultClock();
+				cClock->blocked = TRUE;
+				cClock->maxTicks = 10 * TICKS_PER_SECOND;
+
+				addClock(cClock);
+
+				cClockInitialized = TRUE;
+			} else {
+				cClock->blocked = FALSE;
+			}
+
+			if (g_gamestate->player->candle_fuel > 0) {
+				if (cClock->ticks == (5 * TICKS_PER_SECOND) - 1) {
+					debug_file(dbgOut, 2, "Attempted to reduce one candle fuel.\n");
+
+					reduce_candle_fuel(g_gamestate->player, 1);
+					if (g_gamestate->player->candle_fuel == 0) {
+						debug_file(dbgOut, 2, "No candle fuel. Starting to reduce sanity\n");
+						// cClock->blocked = TRUE;
+					}
+				}
+			} else {
+				if (cClock->ticks == (10 * TICKS_PER_SECOND) - 1) {
+					debug_file(dbgOut, 2, "Attempted to reduce one sanity.\n");
+
+					reduce_sanity(g_gamestate->player, 10);
+				}
+			}
+		}
+
 		for (int i = 0; i < g_gamestate->mob_count; i++) {
 			attemptMoveMob(
 				g_gamestate->player->entity->coords, 
@@ -258,7 +322,13 @@ void tick() {
 
 			static d = 1;
 			if(d > 0){
-				doors(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, g_gamestate->player->radius, ALTURA_JOGO, LARGURA_JOGO);
+				doors(
+					g_gamestate->player->entity->coords->x, 
+					g_gamestate->player->entity->coords->y, 
+					g_gamestate->player->radius, 
+					ALTURA_JOGO, 
+					LARGURA_JOGO
+				);
 				d--;
 			}
 
@@ -467,6 +537,11 @@ void game_keybinds(int key) {
 			if (g_gamestate->player->entity->maxHealth < g_gamestate->player->entity->health) {
 				g_gamestate->player->entity->health = g_gamestate->player->entity->maxHealth;
 			}
+	}
+
+	if (key == 'c') {
+		if (is_player_insane(g_gamestate->player)) g_gamestate->player->sanity = 99;
+		else g_gamestate->player->sanity = 0;
 	}
 
 }

@@ -13,7 +13,8 @@
 
 //#define LARGURA_RETANGULO 52
 #define LARGURA_RETANGULO g_renderstate->ncols/3
-#define ESTATISTICAS 6
+#define ESTATISTICAS_TOTAL 8
+#define ESTATISTICAS_ESQUERDA 6
 
 int g_ui_size[2] = { 0 };
 
@@ -388,8 +389,15 @@ void cleanup_menu(Menu menu) {
 
 void drawGameInterface() {
 
-    refresh();
-    static char *stats[ESTATISTICAS+2] = {"user.interface.stats.class", "user.interface.stats.level","user.interface.stats.kills", "user.interface.stats.armor", "user.interface.stats.hp", "user.interface.stats.xp", "user.interface.stats.monsters", "user.interface.stats.item"};
+    static char *stats[ESTATISTICAS_TOTAL] = {
+        "user.interface.stats.class", 
+        "user.interface.stats.level",
+        "user.interface.stats.monsters",
+        "user.interface.stats.hp",
+        "user.interface.stats.armor", 
+        "user.interface.stats.kills",
+        "user.interface.stats.item",
+        "user.interface.stats.item.damage"};
 
     //Desenha o retângulo à esquerda do Logo
     rectangle(g_renderstate->wnd, 0, 0, ALTURA_LOGO, g_renderstate->ncols/2 - LARGURA_LOGO/2 -1);
@@ -406,149 +414,153 @@ void drawGameInterface() {
     //Print do Logo
     printer(g_renderstate->wnd, 0, g_renderstate->ncols/2 - LARGURA_LOGO/2+1);
 
-    //Print do nome de cada estatística em Negrito
+
+/*************************************
+ *                                   *
+ *       Retângulo da Esquerda       *
+ *                                   *
+ ************************************/
+
 
     wattron(g_renderstate->wnd, A_BOLD);
 
 
-    //Print das estatísticas no lado esquerdo do retângulo da esquerda
-    for(int i = 0 ; i < ESTATISTICAS/2 ; i++)
+    for(int i = 0 ; i < ESTATISTICAS_ESQUERDA/2 ; i++)
         mvwprintw(
                   g_renderstate->wnd,   
                   ALTURA_LOGO/3 + i,
-                  LARGURA_RETANGULO/6,
+                  2,
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
     
-
-    //Print das estatísticas no lado direito do retângulo da esquerda
-    for(int i = ESTATISTICAS/2, j = 0 ; i < ESTATISTICAS ; i++, j++)
-        mvwprintw(g_renderstate->wnd,
+    for(int i = ESTATISTICAS_ESQUERDA/2, j = 0 ; i < ESTATISTICAS_ESQUERDA ; i++, j++)
+        mvwprintw(
+                  g_renderstate->wnd,   
                   ALTURA_LOGO/3 + j,
                   LARGURA_RETANGULO*0.6,
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
 
-    //Print da quantidade de Monstros Vivos no canto inferior esquerdo do retângulo da esquerda
-    mvwprintw(g_renderstate->wnd,
-              ALTURA_LOGO - 1,
-              2,
-              "%s",     get_localized_string(g_renderstate->language, stats[ESTATISTICAS])   
-            );
-
-    //Print do Item Atual no meio do retângulo da esquerda
-    mvwprintw(g_renderstate->wnd,
-              ALTURA_LOGO - 1,
-              LARGURA_RETANGULO*0.4,
-              "%s  ",     get_localized_string(g_renderstate->language, stats[ESTATISTICAS+1])   
-            );
 
     wattroff(g_renderstate->wnd, A_BOLD);
 
 
-    //Print dos valores de cada estatística
+/******************************************************
+ *                                                    *
+ *       Estatisticas no Retângulo da Esquerda        *
+ *                                                    *
+ *****************************************************/
 
-
-/*      Lado esquerdo do Retângulo da esquerda   */
-
-
-    //Print da Classe
     mvwprintw(g_renderstate->wnd, 
-              ALTURA_LOGO/3,    
-              LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.class")),
-              "%s   " , getClassInterface(g_gamestate->player->class)
+              ALTURA_LOGO/3 + 0,    
+              4 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.class")),
+              "%s      " , getClassInterface(g_gamestate->player->class)
             );
 
-    //Print do Level
+
     mvwprintw(g_renderstate->wnd, 
             ALTURA_LOGO/3 + 1,    
-            LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.level")),
-            "%d", g_gamestate->player->level
+            4 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.level")),
+            "%d      ", g_gamestate->player->level
         );
 
-    //Print das Kills
-    mvwprintw(g_renderstate->wnd, 
-            ALTURA_LOGO/3 + 2,    
-            LARGURA_RETANGULO/6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.kills")),
-            "%d", g_gamestate->player->kills
-        );
 
-/*      Lado direito do Retângulo da esquerda   */
+    mvwprintw(g_renderstate->wnd,
+              ALTURA_LOGO/3 + 2,
+              4 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.monsters")),
+              "%d      ",     g_gamestate->mob_count   
+            );
 
 
-    //Print da Armor
-    mvwprintw(g_renderstate->wnd, 
-            ALTURA_LOGO/3,    
-            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.armor")),
-            "%d", g_gamestate->player->entity->armor
-        );
-
-    //Print do Health e Max Health
     if(g_gamestate->player->cheats->godmode == 0) {
 
         mvwprintw(g_renderstate->wnd,
-                ALTURA_LOGO/3 + 1, 
+                ALTURA_LOGO/3 + 0, 
                 LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
-                "%lld/%u     ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
+                "%lld/%u    ", g_gamestate->player->entity->health, g_gamestate->player->entity->maxHealth
                 );
 
     } else {
 
         mvwprintw(g_renderstate->wnd,
-                ALTURA_LOGO/3 + 1, 
+                ALTURA_LOGO/3 + 0, 
                 LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.hp")),
                 "%s", get_localized_string(g_renderstate->language, "user.interface.stats.god")
                 );
-
     }
 
-    //Print do XP
+
     mvwprintw(g_renderstate->wnd, 
-            ALTURA_LOGO/3 + 2,    
-            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.xp")),
-            "%d", g_gamestate->player->xp
+            ALTURA_LOGO/3 + 1,    
+            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.armor")),
+            "%d    ", g_gamestate->player->entity->armor
         );
 
-    //Print da quantidade de Monstros Vivos
-    mvwprintw(g_renderstate->wnd,
-              ALTURA_LOGO - 1,
-              3 + strlen(get_localized_string(g_renderstate->language, stats[ESTATISTICAS])),
-              "%d ",     g_gamestate->mob_count   
-            );
 
-    //Print do Item atual
+    mvwprintw(g_renderstate->wnd, 
+            ALTURA_LOGO/3 + 2,    
+            LARGURA_RETANGULO*0.6 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.kills")),
+            "%d    ", g_gamestate->player->kills
+        );
+
+
+/*************************************
+ *                                   *
+ *       Retângulo da Direita        *
+ *                                   *
+ ************************************/
+
+
+    wattron(g_renderstate->wnd, A_BOLD);
+
+
+    for(int i = ESTATISTICAS_ESQUERDA, j = 0 ; i < ESTATISTICAS_TOTAL ; i++, j++)
+        mvwprintw(
+                  g_renderstate->wnd,   
+                  ALTURA_LOGO/3 + j,
+                  LARGURA_RETANGULO + LARGURA_LOGO + 2,
+                  "%s",    get_localized_string(g_renderstate->language, stats[i])
+                );
+    
+
+    wattroff(g_renderstate->wnd, A_BOLD);
+
+
+/******************************************************
+ *                                                    *
+ *       Estatisticas no Retângulo da Direita         *
+ *                                                    *
+ *****************************************************/
+
+
     mvwprintw(g_renderstate->wnd,
-              ALTURA_LOGO - 1,
-              LARGURA_RETANGULO*0.4 + 1 + strlen(get_localized_string(g_renderstate->language, stats[ESTATISTICAS+1])),
+              ALTURA_LOGO/3 + 0,
+              LARGURA_RETANGULO + LARGURA_LOGO + 4 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.item")),
               "%s  ",     g_gamestate->player->item->name
             );
 
-// CONSOLA
 
-    //Print das mensagens da Consola
-    for(int i = 0 ; i < MAX_MESSAGES ; i++) 
-        // mvwprintw(g_renderstate->wnd, i + 1, g_renderstate->ncols/2 + LARGURA_LOGO*0.55, "aa", g_gamestate->messages[i]);
-        mvwprintw(g_renderstate->wnd, i + 1, g_renderstate->ncols/2 + LARGURA_LOGO*0.55, "%s", g_gamestate->messages[i]);
+    mvwprintw(g_renderstate->wnd,
+              ALTURA_LOGO/3 + 1,
+              LARGURA_RETANGULO + LARGURA_LOGO + 4 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.item.damage")),
+              "%d  ",     g_gamestate->player->item->damage
+            );
+
+
+
+    if(g_gamestate->potion_strength == 1)
+        mvwprintw(g_renderstate->wnd,
+                  ALTURA_LOGO/3 + 2,
+                  LARGURA_RETANGULO + LARGURA_LOGO + 4,
+                  "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.potion.on")
+                );
+    else
+        mvwprintw(g_renderstate->wnd,
+                  ALTURA_LOGO/3 + 3,
+                  LARGURA_RETANGULO + LARGURA_LOGO + 2,
+                  "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.potion.off")
+                );
+
 
     return;
-}
-
-void addConsoleMessage(int value, char* key) {
-
-    /*
-    O que vai aparecer:
-    (XP) - Quando um player ganha XP(e.g. mata um mob) vai aparecer que recebeu X xp
-    (HP) - Quando um player ataca um MOB, mostra quanto HP tirou e, quando um player é atacado, quanto de HP perdeu
-    (ITEM) - Quando um player abre um Chest vai aparecer que trocou de ITEM (e.g. You got a Sword) [o Sword seria o ITEM]
-    */
-
-    for(int i = MAX_MESSAGES - 1 ; i > 0 ; i--)
-        strcpy(g_gamestate->messages[i], g_gamestate->messages[i-1]);
-
-    char mensagem[MAX_MESSAGES_LENGTH];
-    strcpy(mensagem, get_localized_string(g_renderstate->language, key));
-
-    sprintf(mensagem, mensagem, value);
-    strcpy(g_gamestate->messages[0], mensagem);
-
 }

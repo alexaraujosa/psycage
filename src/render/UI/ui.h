@@ -15,6 +15,5 @@ void handle_menu_keybinds(Menu menu, int key);
 void cleanup_menu(Menu menu);
 
 void drawGameInterface();
-void addConsoleMessage(int value, char* key);
 
 #endif

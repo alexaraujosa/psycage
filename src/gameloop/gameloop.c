@@ -236,7 +236,7 @@ void tick() {
 			LARGURA_JOGO
 		); 
 
-// Doors
+		// Doors
 		if(g_gamestate->mob_count == 0){
 
 			static d = 1;
@@ -245,8 +245,9 @@ void tick() {
 				d--;
 			}
 
-			if(map != NULL && map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
-				continue_game(ALTURA_JOGO, LARGURA_JOGO);
+			if(map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
+				d = 1;
+				continue_game();
 			}
 		}
 	}
@@ -312,7 +313,7 @@ void game_keybinds(int key) {
 	vision_code_checker(key);
 
 	if(key == 'z')
-		continue_game();
+		g_gamestate->mob_count = 0; //continue_game();
 
     if(key == 'j')
             if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0)        // se o player nao tiver colocado a smoke

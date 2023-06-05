@@ -60,7 +60,7 @@ void generate_dungeon(int HEIGHT, int WIDTH) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (rand() % 100 < 64) { // % of the floor
+            if (rand() % 100 < 65) { // % of the floor
                 
                 map[y][x] = 0;
             } 
@@ -657,16 +657,12 @@ void doors(int x, int y, int radius, int HEIGHT, int WIDTH){
     door.x = min_x + rand() % (max_x - min_x + 1);
     door.y = min_y + rand() % (max_y - min_y + 1);
 
-    while (door.x < 0 || door.x >= WIDTH || door.y < 0 || door.y >= HEIGHT){
+    while (door.x < 0 || door.x >= WIDTH || door.y < 0 || door.y >= HEIGHT || door.x == x || door.y == y ||
+           map[door.y][door.x] == 1 || map[door.y][door.x] == 3 || map[door.y][door.x] == 5){
         
         door.x = min_x + rand() % (max_x - min_x + 1);
         door.y = min_y + rand() % (max_y - min_y + 1);
     }
-    while (map[door.y][door.x] == 1 || map[door.y][door.x] == 3){
-        
-        door.x = min_x + rand() % (max_x - min_x + 1);
-        door.y = min_y + rand() % (max_y - min_y + 1);
-    } 
 
     map[door.y][door.x] = 4;
 }

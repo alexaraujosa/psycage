@@ -104,7 +104,7 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             
 
             // If the current coordinates are outside the bounds of the map, skip this cell and move to the next one
-            if (current_x1 <= 0 || current_y <= 0 || current_x1 >= WIDTH || current_x2 >= WIDTH || current_y >= HEIGHT){
+            if (current_x1 < 0 || current_y < 0 || current_x1 >= WIDTH || current_x2 >= WIDTH || current_y >= HEIGHT){
                 continue;
             }
 
@@ -122,7 +122,7 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             // If blocked is true, check if the current cell is a wall, if it is update the next_start_slope variable and continue to the next cell
             if (blocked){
                 
-                if (map[current_y][current_x1] == 1 || map[current_y][current_x2] == 1 || (map[current_y][current_x1] == 3 || map[current_y][current_x2] == 3)) {
+                if (map[current_y][current_x1] == 1 || map[current_y][current_x2] == 1 || map[current_y][current_x1] == 3 || map[current_y][current_x2] == 3) {
                     
                     next_start_slope = r_slope;
                     continue;

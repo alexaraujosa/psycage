@@ -230,8 +230,15 @@ void tick() {
 		if(g_gamestate->projectiles[0]->entity->coords->x != 0 && g_gamestate->projectiles[0]->entity->coords->y != 0)
 			move_projectile(g_gamestate->projectiles[0]->dx, g_gamestate->projectiles[0]->dy);	
 
-		if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0)
+		if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0) {
             move_trap(g_gamestate->projectiles[1]->dx, g_gamestate->projectiles[1]->dy); 	
+			trap_checker();
+		}
+
+		if(g_gamestate->projectiles[2]->entity->coords->x != 0 && g_gamestate->projectiles[2]->entity->coords->y != 0) {
+            move_molotov(g_gamestate->projectiles[2]->dx, g_gamestate->projectiles[2]->dy);
+            molotov_checker();        
+        }
 
 		if(map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 7)
 			use_random_potion();
@@ -320,6 +327,29 @@ void game_keybinds(int key) {
 
 	godmode_code_checker(key);
 	vision_code_checker(key);
+
+	if(key == 'x') {
+            if(g_gamestate->projectiles[2]->entity->coords->x == 0 && g_gamestate->projectiles[2]->entity->coords->y == 0){
+                g_gamestate->projectiles[2]->entity->coords->x = g_gamestate->player->entity->coords->x;
+                g_gamestate->projectiles[2]->entity->coords->y = g_gamestate->player->entity->coords->y;
+            }
+            if (g_gamestate->player->last_direction == 0) {
+                    g_gamestate->projectiles[2]->dx = 0;
+                    g_gamestate->projectiles[2]->dy = -1;
+            }
+            if (g_gamestate->player->last_direction == 1) {
+                    g_gamestate->projectiles[2]->dx = 0;
+                    g_gamestate->projectiles[2]->dy = 1;
+            }
+            if (g_gamestate->player->last_direction == 2) {
+                    g_gamestate->projectiles[2]->dx = -1;
+                    g_gamestate->projectiles[2]->dy = 0;
+            }
+               if (g_gamestate->player->last_direction == 3) {
+                    g_gamestate->projectiles[2]->dx = 1;
+                    g_gamestate->projectiles[2]->dy = 0;
+            }
+    }
 
 	if(key == 'z')
 		g_gamestate->mob_count = 0; //continue_game();

@@ -47,6 +47,9 @@ void start_game() {
 
 void continue_game(){
 
+	if(g_gamestate->projectiles[1]->entity->coords->y != 0)	remove_trap();
+    if(g_gamestate->projectiles[2]->entity->coords->y != 0)	remove_molotov();
+
 	for(int y = 0; y < ALTURA_JOGO; y++){	
 		if (map == NULL) break;	
 		free(map[y]);
@@ -121,26 +124,6 @@ void end_game() {
 		free(map[i]);
 	}
 	free(map);
-
-	// // Free map_footprint
-	// for(int i = 0 ; i < ALTURA_JOGO ; i++) {
-
-	// 	if(map_footprint[i] == NULL)
-	// 		break;
-		
-	// 	free(map_footprint[i]);
-	// }
-	// free(map_footprint);
-
-	// // Free light_map
-	// for(int i = 0 ; i < ALTURA_JOGO ; i++) {
-
-	// 	if(visible[i] == NULL)
-	// 		break;
-	
-	// 	free(visible[i]);
-	// }
-	// free(visible);
 
 	// Free player
 	destroyPlayer(g_gamestate->player);

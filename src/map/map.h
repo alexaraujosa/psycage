@@ -43,6 +43,8 @@ void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX);
 
 int create_random_map(int HEIGHT, int WIDTH, int beginY, int beginX);
 int valid_map(int HEIGHT, int WIDTH);
+void doors(int x, int y, int radius, int HEIGHT, int WIDTH);
+void destroy_mob(int x);
 
 
 #endif

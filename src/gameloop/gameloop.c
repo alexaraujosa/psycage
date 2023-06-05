@@ -173,10 +173,19 @@ void tick() {
 			LARGURA_JOGO
 		); 
 
+// Doors
+		if(g_gamestate->mob_count == 0){
 
+			static d = 1;
+			if(d > 0){
+				doors(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y, g_gamestate->player->radius, ALTURA_JOGO, LARGURA_JOGO);
+				d--;
+			}
 
-
-		if(g_gamestate->mob_count == 0) continue_game(ALTURA_JOGO, LARGURA_JOGO);
+			if(map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
+				continue_game(ALTURA_JOGO, LARGURA_JOGO);
+			}
+		}
 	}
 
 	tick_end: {
@@ -479,4 +488,17 @@ void print_loading_screen(WINDOW* win, int HEIGHT, int WIDTH){
 			mvwaddch(win, y, x, ' ' | COLOR_BLACK);
 		}
 	}
+}
+
+void destroy_mob(int x){
+
+	for (int i = 0, j = 0; i < g_gamestate->mobs; i++,j++){
+		
+		if(i == x){
+			i++;
+		}
+		g_gamestate->mobs[j] = g_gamestate->mobs[i];
+	}
+	
+	g_gamestate->mob_count--;
 }

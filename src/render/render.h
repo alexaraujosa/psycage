@@ -54,6 +54,8 @@ enum colors{
     LIGHTPLUS_GREY,
     YELLOW_ORANGE,
     DARKPLUS_GREY,
+    // Doors
+    DOOR,
     // Dungeon
     DUNGEON_BLOOD,
     DUNGEON_WALLS,

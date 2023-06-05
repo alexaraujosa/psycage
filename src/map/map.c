@@ -60,14 +60,10 @@ void generate_dungeon(int HEIGHT, int WIDTH) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (rand() % 100 < 60) { // % of the floor
+            if (rand() % 100 < 64) { // % of the floor
                 
                 map[y][x] = 0;
             } 
-            else {
-                
-                map[y][x] = 1;
-            }
         }
     }
 
@@ -117,14 +113,14 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (map[y][x] == 0 && rand() % 100 < 5){ // % of blood
+            if (map[y][x] == 0 && rand() % 100 < 10){ // % of blood
                 map[y][x] = 2;
             }
         }
     }
 
     // Run a cellular automaton to smooth out the stains
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         
         int new_dungeon[HEIGHT][WIDTH];
         
@@ -138,18 +134,18 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
                     
                     for (int dx = -1; dx <= 1; dx++) {
                         
-                        if (map[y+dy][x+dx] == 0) {
+                        if (map[y+dy][x+dx] == 2) {
                             
                             count++;
                         }
                     }
                 }
                 
-                if (count >= 5) {
-                    new_dungeon[y][x] = 0;
+                if (count >= 3) {
+                    new_dungeon[y][x] = 2;
                 } 
                 else {
-                    new_dungeon[y][x] = 1;
+                    new_dungeon[y][x] = 0;
                 }
             }
         }
@@ -158,27 +154,17 @@ void blood_stains_dungeon(int HEIGHT, int WIDTH) {
             
             for (int x = 1; x < WIDTH - 1; x++) {
                 
-                map[y][x] = new_dungeon[y][x];
-            }
-        }
-    }
-
-    // Redraw the stains with updated positions
-    for (int y = 1; y < HEIGHT - 1; y++) {
-        
-        for (int x = 1; x < WIDTH - 1; x++) {
-            
-            if (map[y][x] == 0) {
-                
-                if (rand() % 100 < 5){ // % of blood
-                    map[y][x] = 2;
+                if (map[y][x] == 0 || map[y][x] == 2){
+                    
+                    map[y][x] = new_dungeon[y][x];
                 }
             }
         }
     }
+
 }
 
-void create_dungeon( int HEIGHT, int WIDTH, int beginY, int beginX){
+void create_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
     
     init_dungeon(HEIGHT, WIDTH);
     generate_dungeon(HEIGHT, WIDTH);
@@ -259,7 +245,7 @@ void create_corridor(Room* room1, Room* room2, int corridor_width, int HEIGHT, i
             
             for (int y = source_y - corridor_width / 2; y <= source_y + corridor_width / 2; y++) {
                 
-                if (y > 0 && y < HEIGHT-1) {
+                if (y > 0 && y < HEIGHT-1 && map[y][x] != 2) {
                     if (y == source_y) {
                         map[y][x] = 2; 
                     } 
@@ -272,10 +258,12 @@ void create_corridor(Room* room1, Room* room2, int corridor_width, int HEIGHT, i
 
         prev_x = target_x;
         prev_y = source_y;
+        source_x = target_x;
     }
     
-    // Vertical
+    // Vertical        
     if (dy != 0) {
+        
         int step = (dy > 0) ? 1 : -1;
     
         for (int y = source_y; y != target_y + step; y += step) {
@@ -293,11 +281,15 @@ void create_corridor(Room* room1, Room* room2, int corridor_width, int HEIGHT, i
                 }
             }
         }
-    
-        prev_x = source_x;
-        prev_y = target_y;
-    }
 
+        if(dx != 0){
+            prev_y = target_y;
+        }
+        else{
+            prev_x = source_x;
+            prev_y = target_y;
+        }
+    }
 }
 
 
@@ -324,10 +316,10 @@ Room* create_room_sewers(int x, int y, int width, int height) {
 void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
     
     int split_horizontal = rand() % 2; // Split either horizontally or vertically
-    int max_size = (split_horizontal ? room->height : room->width); // Leave 1 cell border
+    int max_size = (split_horizontal ? room->height : room->width);
     
     if (max_size < ROOM_MIN_WIDTH * 2 || max_size < ROOM_MIN_HEIGHT * 2) {
-        // Room is too small to split, so return
+        // Room is too small to split
         return;
     }
     
@@ -348,7 +340,8 @@ void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
             left_room = create_room_sewers(room->x, room->y, split_position - room->x, room->height);
             right_room = create_room_sewers(split_position + 1, room->y, room->width - (split_position - room->x) - 1, room->height);
         }
-    } else {
+    } 
+    else {
         if (split_horizontal) {
             right_room = create_room_sewers(room->x, split_position + 1, room->width, room->height - (split_position - room->y) - 1);
             left_room = create_room_sewers(room->x, room->y, room->width, split_position - room->y);
@@ -387,7 +380,6 @@ void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
     split_room_sewers(root_room, HEIGHT, WIDTH);
 
     Room* rooms = (Room*)malloc(NUM_ROOMS * sizeof(Room));
-    Room* prev_room = NULL;
     
     for (int i = 0; i < NUM_ROOMS; i++) {
         
@@ -397,18 +389,13 @@ void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
         int room_y = rand() % (HEIGHT - room_height);
         
         rooms[i] = *create_room_sewers(room_x, room_y, room_width, room_height);
-
-        if (prev_room != NULL) {
-            create_corridor(prev_room, &rooms[i], CORRIDOR_WIDTH, HEIGHT, WIDTH);
-        }
-        
-        prev_room = &rooms[i];
+    }
+    
+    // Connect all rooms using corridors
+    for (int i = 0; i < NUM_ROOMS - 1; i++) {
+        create_corridor(&rooms[i], &rooms[i+1], CORRIDOR_WIDTH, HEIGHT, WIDTH);
     }
 
-    free(rooms->left);
-    free(rooms->right);
-    free(rooms);
-    
     for (int i = 0; i < HEIGHT; i++) {
         map[i][0] = 1;
         map[i][WIDTH-1] = 1;
@@ -421,7 +408,12 @@ void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
 
     make_borders(map, HEIGHT, WIDTH);
     print_sewers(HEIGHT, WIDTH, beginY, beginX);
+
+    free(rooms->left);
+    free(rooms->right);
+    free(rooms);
 }
+
 #pragma endregion
 
 
@@ -430,7 +422,7 @@ void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
 //==========================
 #pragma region Asylum
 
-#define MAX_ROOMS 10
+#define MAX_ROOMS 20
 #define MIN_SIZE 13
 #define MAX_SIZE 15
 
@@ -467,12 +459,11 @@ Room create_room(int HEIGHT, int WIDTH) {
 }
 
 // Carve out the specified room in the "map" array by setting all cells inside the room to 0.
-void carve_room(Room room, int HEIGHT) {
+void carve_room(Room room) {
     
     for (int y = room.y; y < room.y + room.height; y++) {
         
         for (int x = room.x; x < room.x + room.width; x++) {
-            if (y >= HEIGHT) break;
             map[y][x] = 0;
         }
     }
@@ -517,14 +508,14 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
         
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (map[y][x] == 0 && rand() % 100 < 10){ // % of blood
-                map[y][x] = 4;
+            if (map[y][x] == 0 && rand() % 100 < 12){ // % of blood
+                map[y][x] = 2;
             }
         }
     }
 
     // Run a cellular automaton to smooth out the stains
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         
         int new_asylum[HEIGHT][WIDTH];
         
@@ -538,18 +529,18 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
                     
                     for (int dx = -1; dx <= 1; dx++) {
                         
-                        if (map[y+dy][x+dx] == 0) {
+                        if (map[y+dy][x+dx] == 2) {
                             
                             count++;
                         }
                     }
                 }
                 
-                if (count >= 5) {
-                    new_asylum[y][x] = 0;
+                if (count >= 3) {
+                    new_asylum[y][x] = 2;
                 } 
                 else {
-                    new_asylum[y][x] = 1;
+                    new_asylum[y][x] = 0;
                 }
             }
         }
@@ -558,20 +549,9 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
             
             for (int x = 1; x < WIDTH - 1; x++) {
                 
-                map[y][x] = new_asylum[y][x];
-            }
-        }
-    }
-
-    // Redraw the stains with updated positions
-    for (int y = 1; y < HEIGHT - 1; y++) {
-        
-        for (int x = 1; x < WIDTH - 1; x++) {
-            
-            if (map[y][x] == 0) {
-                
-                if (rand() % 100 < 10){ // % of blood
-                    map[y][x] = 4;
+                if (map[y][x] == 0 || map[y][x] == 2){
+                    
+                    map[y][x] = new_asylum[y][x];
                 }
             }
         }
@@ -583,12 +563,12 @@ void create_asylum(int HEIGHT, int WIDTH, int beginY, int beginX){
     init_asylum(HEIGHT, WIDTH);
 
     Room rooms[MAX_ROOMS];
-    int num_rooms = rand() % (MAX_ROOMS - 1) + 2;
+    int num_rooms = rand() % (MAX_ROOMS - 9) + 10;
 
     for (int i = 0; i < num_rooms; i++) {
         
         rooms[i] = create_room(HEIGHT, WIDTH);
-        carve_room(rooms[i], HEIGHT);
+        carve_room(rooms[i]);
     }
 
     carve_corridors(rooms, num_rooms);
@@ -658,4 +638,35 @@ int valid_map(int HEIGHT, int WIDTH){
 	}
     
     return 0;
+}
+
+//====================================
+// Doors
+//====================================
+
+void doors(int x, int y, int radius, int HEIGHT, int WIDTH){
+
+    COORDS door;
+
+    int max_x = x + 2*radius;
+    int min_x = x - 2*radius;
+    
+    int max_y = y + radius;
+    int min_y = y - radius;
+
+    door.x = min_x + rand() % (max_x - min_x + 1);
+    door.y = min_y + rand() % (max_y - min_y + 1);
+
+    while (door.x < 0 || door.x >= WIDTH || door.y < 0 || door.y >= HEIGHT){
+        
+        door.x = min_x + rand() % (max_x - min_x + 1);
+        door.y = min_y + rand() % (max_y - min_y + 1);
+    }
+    while (map[door.y][door.x] == 1 || map[door.y][door.x] == 3){
+        
+        door.x = min_x + rand() % (max_x - min_x + 1);
+        door.y = min_y + rand() % (max_y - min_y + 1);
+    } 
+
+    map[door.y][door.x] = 4;
 }

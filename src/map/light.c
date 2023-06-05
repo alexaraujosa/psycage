@@ -4,8 +4,6 @@
 // Light
 //====================================
 
-#define PI 3.14159265
-
 int **visible = NULL;
 
 void init_light_map(int HEIGHT, int WIDTH) {
@@ -44,7 +42,7 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
             double l_slope = (dx - 0.5) / (dy + 0.5);
             double r_slope = (dx + 0.5) / (dy - 0.5);
             
-            // If the start slope is less than the right slope, skip this cell and move to the next one
+            // If the start slope is less than the right slope, skip this cell and move to the next one, current cell is outside the visible area
             if (start_slope < r_slope) {
                 continue;
             }
@@ -54,81 +52,92 @@ void cast_light(int x, int y, int row, double start_slope, double end_slope, int
                 break;
             }
             
-            int current_x, current_y;
+            int current_x1, current_x2, current_y;
 
             // Calculate the current x and y coordinates based on the octant being checked and the current dx and dy values
             switch (octant) {
                 case 0:
-                    current_x = x + 2*dx;
+                    current_x1 = x + 2*dx;
+                    current_x2 = x + dx;
                     current_y = y - dy;
                     break;
                 case 1:
-                    current_x = x + 2*dy;
+                    current_x1 = x + 2*dy;
+                    current_x2 = x + dy;
                     current_y = y - dx;
                     break;
                 case 2:
-                    current_x = x + 2*dy;
+                    current_x1 = x + 2*dy;
+                    current_x2 = x + dy;
                     current_y = y + dx;
                     break;
                 case 3:
-                    current_x = x + 2*dx;
+                    current_x1 = x + 2*dx;
+                    current_x2 = x + dx;
                     current_y = y + dy;
                     break;
                 case 4:
-                    current_x = x - 2*dx;
+                    current_x1 = x - 2*dx;
+                    current_x2 = x - dx;
                     current_y = y + dy;
                     break;
                 case 5:
-                    current_x = x - 2*dy;
+                    current_x1 = x - 2*dy;
+                    current_x2 = x - dy;
                     current_y = y + dx;
                     break;
                 case 6:
-                    current_x = x - 2*dy;
+                    current_x1 = x - 2*dy;
+                    current_x2 = x - dy;
                     current_y = y - dx;
                     break;
                 case 7:
-                    current_x = x - 2*dx;
+                    current_x1 = x - 2*dx;
+                    current_x2 = x - dx;
                     current_y = y - dy;
                     break;
                 default:
-                    current_x = 0;
+                    current_x1 = 0;
+                    current_x2 = 0;
                     current_y = 0;
             }
             
+
             // If the current coordinates are outside the bounds of the map, skip this cell and move to the next one
-            if (current_x < 0 || current_y < 0 || current_x >= WIDTH|| current_y >= HEIGHT) {
+            if (current_x1 <= 0 || current_y <= 0 || current_x1 >= WIDTH || current_x2 >= WIDTH || current_y >= HEIGHT){
                 continue;
             }
-            
+
             // Calculate the distance from the starting point to the current cell
             double distance = sqrt(dx * dx + dy * dy);
 
             // If the distance is less than or equal to the radius, set the visibility of the current cell to 1
-            if (distance <= g_gamestate->player->radius) {
+            if (distance <= g_gamestate->player->radius){
                 
-                visible[current_y][current_x-1] = 1;
-                visible[current_y][current_x] = 1;
-                visible[current_y][current_x+1] = 1;
-            }
-            
+                for (int k = current_x1 - 1; k <= current_x1 + 1; k++) {
+                    visible[current_y][k] = 1;
+                }
+            }            
+
             // If blocked is true, check if the current cell is a wall, if it is update the next_start_slope variable and continue to the next cell
-            // If it is not, update blocked to false and reset the start slope to the next_start_slope value
-            if (blocked) {
+            if (blocked){
                 
-                if (current_x < WIDTH && (map[current_y][current_x] == 1 || map[current_y][current_x-1] == 1 || map[current_y][current_x+1] == 1 || map[current_y][current_x+1] == 3 || map[current_y][current_x-1] == 3 || map[current_y][current_x] == 3)) {
+                if (map[current_y][current_x1] == 1 || map[current_y][current_x2] == 1 || (map[current_y][current_x1] == 3 || map[current_y][current_x2] == 3)) {
                     
                     next_start_slope = r_slope;
                     continue;
                 }
+                // If it is not, update blocked to false and reset the start slope to the next_start_slope value
                 else {
                     blocked = 0;
                     start_slope = next_start_slope;
                 }
             }
             // If blocked is false, check if the current cell is a wall or obstacle and if the current row is less than the radius
-            // If it is, set blocked to true, recursively call the cast_light function with the updated row and slope values, and update next_start_slope
             else {
-                if (current_x < WIDTH && (map[current_y][current_x] == 1 || map[current_y][current_x] == 3) && i < g_gamestate->player->radius) {
+                // If it is, set blocked to true, recursively call the cast_light function with the updated row and slope values, and update next_start_slope
+                if (map[current_y][current_x1] == 1 || map[current_y][current_x2] == 1 || map[current_y][current_x1] == 3  || map[current_y][current_x2] == 3) {
+                    
                     blocked = 1;
                     cast_light(x, y, i + 1, start_slope, l_slope, map, octant, HEIGHT, WIDTH);
                     next_start_slope = r_slope;

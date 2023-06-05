@@ -59,6 +59,8 @@ Renderstate init_render() {
     init_color(LIGHTPLUS_GREY, 768, 768, 768);
     init_color(YELLOW_ORANGE, 870, 580, 0);
     init_color(DARKPLUS_GREY, 420, 420, 420);
+    //DOORS
+    init_pair(DOOR, COLOR_YELLOW, COLOR_BLUE);
     // PLAYER
 	init_pair(WHITE_PLAYER, COLOR_WHITE, COLOR_BLACK);
     init_pair(YELLOW_PLAYER, COLOR_YELLOW, COLOR_BLACK);
@@ -115,7 +117,7 @@ Renderstate init_render() {
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
     
-    if (g_gamestate->mob_count == 0){
+    if (map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
         print_loading_screen(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
     }
     else{

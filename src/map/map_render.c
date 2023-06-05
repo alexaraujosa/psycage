@@ -34,6 +34,9 @@ void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
                 
                 mvaddch(y + beginY, x + beginX, 'D' | COLOR_PAIR(DOOR));
             }
+
+            if(map[y][x] == 7)
+                mvaddch(y + beginY, x + beginX, 'P' | COLOR_PAIR(POTION));
         }
         
         wprintw(g_renderstate->wnd, "\n");
@@ -77,6 +80,8 @@ void print_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
             if (map[j][i] == 4){
                 mvaddch(j + beginY, i + beginX, 'D' | COLOR_PAIR(DOOR));
             }
+            if(map[j][i] == 7)
+                mvaddch(j + beginY, i + beginX, 'P' | COLOR_PAIR(POTION));
         }
     
         wprintw(g_renderstate->wnd, "\n");
@@ -119,6 +124,8 @@ void print_asylum(int HEIGHT, int WIDTH, int beginY, int beginX) {
             if(map[y][x] == 4){
                 mvaddch(y + beginY, x + beginX, 'D' | COLOR_PAIR(DOOR));
             }
+            if(map[y][x] == 7)
+                mvaddch(y + beginY, x + beginX, 'P' | COLOR_PAIR(POTION));
         }
         
         wprintw(g_renderstate->wnd, "\n");

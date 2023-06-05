@@ -21,6 +21,7 @@
 #include "../entity/cheats/cheats.h"
 #include "controlers.h"
 #include "clock.h"
+#include "../data/potions.h"
 
 #ifndef useconds_t
 typedef unsigned int useconds_t;

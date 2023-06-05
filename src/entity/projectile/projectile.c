@@ -2,8 +2,12 @@
 #include "../../gameloop/gameloop.h"
 #include <string.h>
 
-#define RAIO_SMOKE 3
-#define DISTANCIA_ATIRAR_SMOKE 4
+#define RAIO_TRAP 3
+#define RAIO_MOLOTOV 5
+#define DISTANCIA_ATIRAR_TRAP 4
+#define DISTANCIA_ATIRAR_MOLOTOV 7
+#define TEMPO_TRAP 10
+#define TEMPO_MOLOTOV 15
 
 static int raioAnterior = 0;
 static int contagem = 0;
@@ -27,41 +31,65 @@ void destroyProjectile(Projectile projectile) {
     free(projectile);
 }
 
-void moveSmoke(int dx, int dy) {
+void move_trap(int dx, int dy) {
 
 
-        if(is_passable(g_gamestate->projectiles[1]->entity->coords->x + dx, g_gamestate->projectiles[1]->entity->coords->y + dy) && contagem < DISTANCIA_ATIRAR_SMOKE) {
+        if(is_passable(g_gamestate->projectiles[1]->entity->coords->x + dx, g_gamestate->projectiles[1]->entity->coords->y + dy) && contagem < DISTANCIA_ATIRAR_TRAP) {
 		    g_gamestate->projectiles[1]->entity->coords->x += dx;
 		    g_gamestate->projectiles[1]->entity->coords->y += dy;
             contagem++;
         }
         else
-            deploySmoke();
+            deploy_trap();
 
 
 }
 
-void deploySmoke() {
+void deploy_trap() {
 
-    for(int y = RAIO_SMOKE ; y >= -RAIO_SMOKE ; y--){
-        for(int x = -RAIO_SMOKE ; x <= RAIO_SMOKE; x++) {
-            if(x*x + y*y <= RAIO_SMOKE*RAIO_SMOKE && map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] != 1 && map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] != 3) 
-                map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] = 8;
-        }   
-    }
+    for(int y = RAIO_TRAP ; y >= -RAIO_TRAP ; y--)
+        for(int x = -RAIO_TRAP ; x <= RAIO_TRAP; x++) {
+            if(g_gamestate->projectiles[1]->entity->coords->y + y >= ALTURA_JOGO ||
+               g_gamestate->projectiles[1]->entity->coords->y + y <= 0 ||
+               g_gamestate->projectiles[1]->entity->coords->x + x >= LARGURA_JOGO ||
+               g_gamestate->projectiles[1]->entity->coords->x + x <= 0
+            )
+            continue;
+
+            if(x*x + y*y <= RAIO_TRAP*RAIO_TRAP && 
+               map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] != 1 && 
+               map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] != 3
+            ) 
+            map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] = 8;
+        }
+
     map[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] = 8;
 
     for(int i = 0 ; i < g_gamestate->mob_count ; i++){
-        if(map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] == 8)
+        if(map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] == 8) {
             g_gamestate->mobs[i]->hasAI = FALSE;
+            map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
+        }
     }
+
+    for(int i = 0 ; i < g_gamestate->chest_count ; i++)
+        if(map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] == 8)
+            map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
+    
 }
 
-void removeSmoke() {
+void remove_trap() {
 
-    for(int y = RAIO_SMOKE ; y >= -RAIO_SMOKE ; y--){
-        for(int x = -RAIO_SMOKE ; x <= RAIO_SMOKE; x++){
-            if(x*x + y*y <= RAIO_SMOKE*RAIO_SMOKE) 
+    for(int y = RAIO_TRAP ; y >= -RAIO_TRAP ; y--){
+        for(int x = -RAIO_TRAP ; x <= RAIO_TRAP; x++){
+            if(g_gamestate->projectiles[1]->entity->coords->y + y >= ALTURA_JOGO ||
+               g_gamestate->projectiles[1]->entity->coords->y + y <= 0 ||
+               g_gamestate->projectiles[1]->entity->coords->x + x >= LARGURA_JOGO ||
+               g_gamestate->projectiles[1]->entity->coords->x + x <= 0
+            )
+            continue;
+
+            if(x*x + y*y <= RAIO_TRAP*RAIO_TRAP) 
                 map[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x] = map_footprint[g_gamestate->projectiles[1]->entity->coords->y + y][g_gamestate->projectiles[1]->entity->coords->x + x];
         }
     }
@@ -72,22 +100,106 @@ void removeSmoke() {
         g_gamestate->mobs[i]->hasAI = TRUE;
     }
 
-    contagem = 0;
+    for(int i = 0 ; i < g_gamestate->chest_count ; i++)
+        map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
+
+    // contagem = g_gamestate->clock_trap = 0;
     g_gamestate->projectiles[1]->entity->coords->y = g_gamestate->projectiles[1]->entity->coords->x = 0;
 
 }
 
-void smokeChecker() {
+void trap_checker() {
+
+    // if(g_gamestate->clock_trap > TEMPO_TRAP)
+    //     remove_trap();
+    // else
+        // g_gamestate->clock_trap += 0.1;
+
+    return;
+}
 
 
-    if( // se a volta do player nao for smoke, damos backup do raio de visao. isto evita o problema de ele sair da smoke e o backup ficar a 0.
-        map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x+1] != 8 && 
-        map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x-1] != 8 &&
-        map[g_gamestate->player->entity->coords->y+1][g_gamestate->player->entity->coords->x] != 8 &&
-        map[g_gamestate->player->entity->coords->y-1][g_gamestate->player->entity->coords->x] != 8
-    )
-        raioAnterior = g_gamestate->player->radius;
 
-    g_gamestate->player->radius = (map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 8) ? 0 : raioAnterior;
 
+void move_molotov(int dx, int dy) {
+
+
+        if(is_passable(g_gamestate->projectiles[2]->entity->coords->x + dx, g_gamestate->projectiles[2]->entity->coords->y + dy) && contagem < DISTANCIA_ATIRAR_MOLOTOV) {
+		    g_gamestate->projectiles[2]->entity->coords->x += dx;
+		    g_gamestate->projectiles[2]->entity->coords->y += dy;
+            contagem++;
+        }
+        else
+            deploy_molotov();
+
+
+}
+
+void deploy_molotov() {
+
+    for(int y = RAIO_MOLOTOV ; y >= -RAIO_MOLOTOV ; y--)
+        for(int x = -RAIO_MOLOTOV ; x <= RAIO_MOLOTOV; x++) {
+            if(g_gamestate->projectiles[2]->entity->coords->y + y >= ALTURA_JOGO ||
+               g_gamestate->projectiles[2]->entity->coords->y + y <= 0 ||
+               g_gamestate->projectiles[2]->entity->coords->x + x >= LARGURA_JOGO ||
+               g_gamestate->projectiles[2]->entity->coords->x + x <= 0
+            )
+            continue;
+
+            if(x*x + y*y <= RAIO_MOLOTOV*RAIO_MOLOTOV && 
+               map[g_gamestate->projectiles[2]->entity->coords->y + y][g_gamestate->projectiles[2]->entity->coords->x + x] != 1 && 
+               map[g_gamestate->projectiles[2]->entity->coords->y + y][g_gamestate->projectiles[2]->entity->coords->x + x] != 3
+            ) 
+            map[g_gamestate->projectiles[2]->entity->coords->y + y][g_gamestate->projectiles[2]->entity->coords->x + x] = 9;
+        }
+
+    map[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x] = 9;
+
+    for(int i = 0 ; i < g_gamestate->mob_count ; i++)
+        if(map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] == 9)
+            map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
+        
+
+    for(int i = 0 ; i < g_gamestate->chest_count ; i++)
+        if(map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] == 9)
+            map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
+    
+}
+
+void remove_molotov() {
+
+    for(int y = RAIO_MOLOTOV ; y >= -RAIO_MOLOTOV ; y--){
+        for(int x = -RAIO_MOLOTOV ; x <= RAIO_MOLOTOV; x++){
+            if(g_gamestate->projectiles[2]->entity->coords->y + y >= ALTURA_JOGO ||
+               g_gamestate->projectiles[2]->entity->coords->y + y <= 0 ||
+               g_gamestate->projectiles[2]->entity->coords->x + x >= LARGURA_JOGO ||
+               g_gamestate->projectiles[2]->entity->coords->x + x <= 0
+            )
+            continue;
+
+            if(x*x + y*y <= RAIO_MOLOTOV*RAIO_MOLOTOV) 
+                map[g_gamestate->projectiles[2]->entity->coords->y + y][g_gamestate->projectiles[2]->entity->coords->x + x] = map_footprint[g_gamestate->projectiles[2]->entity->coords->y + y][g_gamestate->projectiles[2]->entity->coords->x + x];
+        }
+    }
+    map[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x] = map_footprint[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x];
+
+    for(int i = 0 ; i < g_gamestate->mob_count ; i++)
+        map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
+
+    for(int i = 0 ; i < g_gamestate->chest_count ; i++)
+        map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
+
+    // contagem = g_gamestate->clock_molotov = 0;
+    g_gamestate->projectiles[2]->entity->coords->y = g_gamestate->projectiles[2]->entity->coords->x = 0;
+
+}
+
+void molotov_checker() {
+
+    // if(g_gamestate->clock_molotov > TEMPO_MOLOTOV)
+    //     remove_molotov();
+    // else
+    //     g_gamestate->clock_molotov += 0.1;
+
+    return;
 }

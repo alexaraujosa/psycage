@@ -54,6 +54,7 @@ enum colors{
     LIGHTPLUS_GREY,
     YELLOW_ORANGE,
     DARKPLUS_GREY,
+    PURPLE,
     // Doors
     DOOR,
     // Dungeon
@@ -93,6 +94,7 @@ enum colors{
     RED_BG,
     YELLOW_BG,
     SMOKE,
+    POTION,
     MATRIX_BG,
     MATRIX_FG
 };

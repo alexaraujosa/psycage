@@ -27,6 +27,7 @@ typedef struct gamestate {
     int chest_count;
     int last_res;
     int paused;
+    int potion_strength;
     char messages[MAX_MESSAGES][MAX_MESSAGES_LENGTH];
 } GAMESTATE, *Gamestate;
 

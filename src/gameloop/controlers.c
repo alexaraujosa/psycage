@@ -23,7 +23,8 @@ void start_game() {
 
 	g_gamestate->mob_count = 3;
 	g_gamestate->chest_count = 1;
-	g_gamestate->projectile_count = 2;
+	g_gamestate->projectile_count = 3;
+	g_gamestate->potion_strength = 0;
 
 	default_values();
 
@@ -38,6 +39,7 @@ void start_game() {
 	    addChestToMap(g_gamestate->chests[i], map, LARGURA_JOGO, ALTURA_JOGO);
 
 	player_spawn(g_gamestate->player, map, ALTURA_JOGO, LARGURA_JOGO); 
+	create_potion();
 
 	return;
 }
@@ -93,12 +95,14 @@ void continue_game(){
 	player_spawn(g_gamestate->player, map, ALTURA_JOGO, LARGURA_JOGO); 
 	
 
-
 	g_gamestate->chest_count = 1;
 	for (int i = 0; i < g_gamestate->chest_count; i++) {
 	    addChestToMap(g_gamestate->chests[i], map, LARGURA_JOGO, ALTURA_JOGO);
 	    map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
 	}
+
+	g_gamestate->potion_strength = 0;
+	create_potion();
 
 	return;
 }

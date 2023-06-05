@@ -43,7 +43,7 @@ Gamestate init_gameloop() {
 	gs->player = player;
 
     debug_file(dbgOut, 0, " - Initializing projectiles...\n");
-    int projectile_count = 2;
+    int projectile_count = 3;
     Projectile* projectiles = (Projectile*)malloc(sizeof(Projectile) * projectile_count);
     for(int i = 0 ; i < projectile_count ; i++) {
             Projectile projectile = defaultProjectile();
@@ -56,6 +56,7 @@ Gamestate init_gameloop() {
 	gs->input_initialized = 1;
 	gs->clock = 0;
 	gs->block_clock = 1;
+	gs->potion_strength = 0;
 
 	gs->clocks = init_clocks();
 
@@ -169,6 +170,8 @@ Gamestate init_gameloop() {
 
 	g_gamestate = gs;
 
+	init_potions_clock();
+
 	return gs;
 }
 
@@ -228,7 +231,10 @@ void tick() {
 			move_projectile(g_gamestate->projectiles[0]->dx, g_gamestate->projectiles[0]->dy);	
 
 		if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0)
-            moveSmoke(g_gamestate->projectiles[1]->dx, g_gamestate->projectiles[1]->dy); 	
+            move_trap(g_gamestate->projectiles[1]->dx, g_gamestate->projectiles[1]->dy); 	
+
+		if(map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 7)
+			use_random_potion();
 
 		// RTX_ON
 		calculate_visibility(
@@ -320,7 +326,7 @@ void game_keybinds(int key) {
 
     if(key == 'j')
             if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0)        // se o player nao tiver colocado a smoke
-                    removeSmoke();                                                                        // vai dar crash, ja que ao repor o map com o map_footprint vai ler map_footprint[-3][0], o que nao existe
+                    remove_trap();                                                                        // vai dar crash, ja que ao repor o map com o map_footprint vai ler map_footprint[-3][0], o que nao existe
             // Movement Controls
 
     // Movement Controls
@@ -352,16 +358,14 @@ void game_keybinds(int key) {
 
 		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y-1)){
 			move_player(0, -1);
-			g_gamestate->player->last_direction = 0;  
-			smokeChecker();
+			g_gamestate->player->last_direction = 0; 
 		}
 
 	} else if (key == keybinds[1]) {	
 
 		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y+1)){
 			move_player(0, 1);
-			g_gamestate->player->last_direction = 1;  
-			smokeChecker();
+			g_gamestate->player->last_direction = 1; 
 		}
 
 	} else if (key == keybinds[2]) {
@@ -369,7 +373,6 @@ void game_keybinds(int key) {
 			if(is_passable(g_gamestate->player->entity->coords->x-1, g_gamestate->player->entity->coords->y)){
 				move_player(-1, 0);
 				g_gamestate->player->last_direction = 2;
-				smokeChecker();
 			}  
 	
 	} else if (key == keybinds[3]) {
@@ -377,7 +380,6 @@ void game_keybinds(int key) {
 			if(is_passable(g_gamestate->player->entity->coords->x+1, g_gamestate->player->entity->coords->y)){
 				move_player(1, 0);
 				g_gamestate->player->last_direction = 3;
-				smokeChecker();
 			}
 
 	} else if (key == keybinds[4] || key == toupper(keybinds[4]) ) {

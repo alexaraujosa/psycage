@@ -59,6 +59,7 @@ Renderstate init_render() {
     init_color(LIGHTPLUS_GREY, 768, 768, 768);
     init_color(YELLOW_ORANGE, 870, 580, 0);
     init_color(DARKPLUS_GREY, 420, 420, 420);
+    init_color(PURPLE, 592, 0, 844);
     //DOORS
     init_pair(DOOR, COLOR_YELLOW, COLOR_BLUE);
     // PLAYER
@@ -98,6 +99,7 @@ Renderstate init_render() {
     init_pair(GREEN_BG, COLOR_WHITE, COLOR_GREEN);
     init_pair(YELLOW_BG, COLOR_WHITE, COLOR_YELLOW);
     init_pair(SMOKE, DARK_GREY, DARK_DARK_GREY);
+    init_pair(POTION, COLOR_WHITE, PURPLE);
 
     init_pair(MATRIX_BG, GREEN, DARK_GREEN);
     init_pair(MATRIX_FG, COLOR_BLACK, COLOR_BLACK);
@@ -345,19 +347,6 @@ void render_game(Gamestate gs) {
         }
     }
 
-
-    //print_light(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
-
-	// wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
-	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x - 1, '.' | A_BOLD);
-	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x + 0, '.' | A_BOLD);
-	// mvwaddch(g_renderstate->wnd, playerCoords->y - 1, playerCoords->x + 1, '.' | A_BOLD);
-	// mvwaddch(g_renderstate->wnd, playerCoords->y + 0, playerCoords->x - 1, '.' | A_BOLD);
-	// mvwaddch(g_renderstate->wnd, playerCoords->y + 0, playerCoords->x + 1, '.' | A_BOLD);
-	// mvwaddch(g_renderstate->wnd, playerCoords->y + 1, playerCoords->x - 1, '.' | A_BOLD);
-	// mvwaddch(g_renderstate->wnd, playerCoords->y + 1, playerCoords->x + 0, '.' | A_BOLD);
-	// mvwaddch(g_renderstate->wnd, playerCoords->y + 1, playerCoords->x + 1, '.' | A_BOLD);
-    // wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
 	move(playerCoords->x, playerCoords->y);
     move(projectileCoords->x, projectileCoords->y);

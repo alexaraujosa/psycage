@@ -25,7 +25,7 @@ typedef struct player {
     int radius;
 } PLAYER, *Player;
 
-enum Classes{
+enum Classes {
     Priest,
     Detective,
     Mercenary
@@ -39,5 +39,6 @@ void destroyPlayer(Player player);
 char* getClassInterface(int classe);
 void verifyPlayerRadius();
 void player_spawn(Player player, int **map, int HEIGHT, int WIDTH);
+char* stringify_class(int class);
 
 #endif

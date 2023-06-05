@@ -29,6 +29,7 @@ Player defaultPlayer() {
     player->level = 0;
     player->kills = 0;
     player->xp = 0;
+    player->last_direction = 0;
     player->class = Priest;
     player->radius = 0;
 
@@ -49,15 +50,13 @@ void levelUp(Player player, Entity entity) {
             if (player->level <= 25) {
                 entity->maxHealth += 4;
                 entity->basedamage += 2;
-             }
-            if (player->level > 25 && player->level<= 50) {
+            } else if (player->level > 25 && player->level<= 50) {
                 entity->maxHealth += 8;
                 entity->basedamage += 4;
-             }
-            if (player->level > 50 && player->level<= 75) {
+            } else if (player->level > 50 && player->level<= 75) {
                 entity->maxHealth += 12;
                 entity->basedamage += 6;
-             }
+            }
         }
     }
 }
@@ -218,5 +217,21 @@ void player_spawn(Player player, int **map, int HEIGHT, int WIDTH) {
 
         player->entity->coords->x = left_closest_x;
         player->entity->coords->y = closest_y;
+    }
+}
+
+char* stringify_class(int class) {
+    switch (class) {
+        case Priest:
+            return "Priest";
+            break;
+        case Detective:
+            return "Detective";
+            break;
+        case Mercenary:
+            return "Mercenery";
+            break;
+        default:
+            return "<undefined>";
     }
 }

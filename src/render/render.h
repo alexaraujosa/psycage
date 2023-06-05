@@ -35,7 +35,7 @@ typedef struct renderstate {
     Menu menus[MENU_STACK_MAX];
 } RENDERSTATE, *Renderstate;
 
-enum colors{
+typedef enum colors {
     // Colors
     GREY = 8,
     DARK_GREY,
@@ -99,8 +99,12 @@ enum colors{
     MOLOTOV_VISITED,
     POTION,
     MATRIX_BG,
-    MATRIX_FG
-};
+    MATRIX_FG,
+    SANITY_FULL,
+    SANITY_EMPTY,
+    SANITY_MARKER,
+    EMPTY
+} Colors;
 
 enum languages{
     en_US,

@@ -387,7 +387,71 @@ void cleanup_menu(Menu menu) {
 }
 
 
+// #define CLOCK_NUM 4
 void drawGameInterface() {
+    // static int dgiClocksBlocked = TRUE;
+    // static int toggles[4] = { 1, 1, 1, 1 };
+    // static Clock dgiClocks[CLOCK_NUM];
+    // int reqTicks = 2; // (TICKS_PER_SECOND / 2) - 1;
+    // static Colors borderColor = SANITY_EMPTY;
+
+    // if (dgiClocks[0] == NULL) {
+    //     for (int i = 0; i < CLOCK_NUM; i++) {
+    //         dgiClocks[i] = defaultClock();
+    //         // dgiClocks[i]->maxTicks = TICKS_PER_SECOND;
+    //         dgiClocks[i]->maxTicks = reqTicks + 1;
+    //         dgiClocks[i]->ticks = 0;
+    //         dgiClocks[i]->blocked = TRUE;
+
+    //         addClock(dgiClocks[i]);
+    //     }
+    // }
+
+    // if (is_player_insane(g_gamestate->player)) {
+    //     if (dgiClocksBlocked == TRUE) {
+    //         for (int i = 0; i < CLOCK_NUM; i++) {
+    //             dgiClocks[i]->blocked = FALSE;
+    //         }
+    //     }
+
+    //     for (int i = 0; i < CLOCK_NUM; i++) {
+    //         if (dgiClocks[i]->ticks == reqTicks) toggles[i] = !toggles[i];
+    //     }
+    // } else {
+    //     for (int i = 0; i < 4; i++) {
+    //         toggles[i] = 1;
+    //     }
+    // }
+
+    static int dgiClockBlocked = TRUE;
+    static int toggles[4] = { 1, 1, 1, 1 };
+    static Clock dgiClock = NULL;
+    int reqTicks = 2;
+    static Colors borderColor = SANITY_EMPTY;
+
+    if (dgiClock == NULL) {
+        dgiClock = defaultClock();
+
+        dgiClock->maxTicks = reqTicks + 1;
+        dgiClock->ticks = 0;
+        dgiClock->blocked = TRUE;
+
+        addClock(dgiClock);
+    }
+
+    if (is_player_insane(g_gamestate->player)) {
+        if (dgiClockBlocked == TRUE) {
+            dgiClock->blocked = FALSE;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if (dgiClock->ticks == reqTicks) toggles[i] = !toggles[i];
+        }
+    } else {
+        for (int i = 0; i < 4; i++) {
+            toggles[i] = 1;
+        }
+    }
 
     static char *stats[ESTATISTICAS_TOTAL] = {
         "user.interface.stats.class", 
@@ -397,19 +461,56 @@ void drawGameInterface() {
         "user.interface.stats.armor", 
         "user.interface.stats.kills",
         "user.interface.stats.item",
-        "user.interface.stats.item.damage"};
+        "user.interface.stats.item.damage"
+    };
+
+    if (is_player_insane(g_gamestate->player)) {
+        wattron(g_renderstate->wnd, COLOR_PAIR(borderColor));
+        // debug_file(dbgOut, 2, "DGI Toggles: %d | %d | %d | %d\n", toggles[0], toggles[1], toggles[2], toggles[3]);
+    }
 
     //Desenha o retângulo à esquerda do Logo
-    rectangle(g_renderstate->wnd, 0, 0, ALTURA_LOGO, g_renderstate->ncols/2 - LARGURA_LOGO/2 -1);
+    if (toggles[0]) {
+        if (is_player_insane(g_gamestate->player)) wattron(g_renderstate->wnd, COLOR_PAIR(borderColor));
+        rectangle(g_renderstate->wnd, 0, 0, ALTURA_LOGO, g_renderstate->ncols/2 - LARGURA_LOGO/2 -1);
+    } else {
+        wattron(g_renderstate->wnd, COLOR_PAIR(EMPTY));
+        rectangle(g_renderstate->wnd, 0, 0, ALTURA_LOGO, g_renderstate->ncols/2 - LARGURA_LOGO/2 -1);
+        wattroff(g_renderstate->wnd, COLOR_PAIR(EMPTY));
+    }
 
     //Desenha o retângulo à direita do Logo
-    rectangle(g_renderstate->wnd, 0, g_renderstate->ncols/2 + LARGURA_LOGO/2 +1, ALTURA_LOGO, g_renderstate->ncols);
+    if (toggles[1]) {
+        if (is_player_insane(g_gamestate->player)) wattron(g_renderstate->wnd, COLOR_PAIR(borderColor));
+        rectangle(g_renderstate->wnd, 0, g_renderstate->ncols/2 + LARGURA_LOGO/2 +1, ALTURA_LOGO, g_renderstate->ncols);
+    } else {
+        wattron(g_renderstate->wnd, COLOR_PAIR(EMPTY));
+        rectangle(g_renderstate->wnd, 0, g_renderstate->ncols/2 + LARGURA_LOGO/2 +1, ALTURA_LOGO, g_renderstate->ncols);
+        wattroff(g_renderstate->wnd, COLOR_PAIR(EMPTY));
+    }
 
     //Desenha o traço por baixo do Logo
-    rectangle(g_renderstate->wnd, ALTURA_LOGO, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
-
+    if (toggles[2]) {
+        if (is_player_insane(g_gamestate->player)) wattron(g_renderstate->wnd, COLOR_PAIR(borderColor));
+        rectangle(g_renderstate->wnd, ALTURA_LOGO, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
+    } else {
+        wattron(g_renderstate->wnd, COLOR_PAIR(EMPTY));
+        rectangle(g_renderstate->wnd, ALTURA_LOGO, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
+        wattroff(g_renderstate->wnd, COLOR_PAIR(EMPTY));
+    }
     //Retângulo à volta da janela toda
-    rectangle(g_renderstate->wnd, 0, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
+    if (toggles[3]) {
+        if (is_player_insane(g_gamestate->player)) wattron(g_renderstate->wnd, COLOR_PAIR(borderColor));
+        rectangle(g_renderstate->wnd, 0, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
+    } else { 
+        wattron(g_renderstate->wnd, COLOR_PAIR(EMPTY));
+        rectangle(g_renderstate->wnd, 0, 0, g_renderstate->nrows-1, g_renderstate->ncols-1);
+        wattroff(g_renderstate->wnd, COLOR_PAIR(EMPTY));
+    }
+    
+    if (is_player_insane(g_gamestate->player)) {
+        wattroff(g_renderstate->wnd, COLOR_PAIR(borderColor));
+    }
 
     //Print do Logo
     printer(g_renderstate->wnd, 0, g_renderstate->ncols/2 - LARGURA_LOGO/2+1);
@@ -562,5 +663,7 @@ void drawGameInterface() {
                 );
 
 
+
+    wrefresh(g_renderstate->wnd);
     return;
 }

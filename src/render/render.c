@@ -65,7 +65,10 @@ Renderstate init_render() {
     // PLAYER
 	init_pair(WHITE_PLAYER, COLOR_WHITE, COLOR_BLACK);
     init_pair(YELLOW_PLAYER, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(BLUE_PLAYER, COLOR_BLUE, COLOR_BLACK);
+    // init_pair(BLUE_PLAYER, COLOR_BLUE, COLOR_BLACK);
+    // init_pair(BLUE_PLAYER, (short)(COLOR_BLUE | A_BOLD), COLOR_CYAN);
+    init_pair(BLUE_PLAYER, (short)(COLOR_BLACK | A_BOLD), COLOR_BLUE);
+
     // DUNGEON
     init_pair(DUNGEON_WALLS, GREY, (short)(DARK_DARK_GREY | A_DIM)); 
     init_pair(DUNGEON_FLOOR, GREY, (short)(COLOR_BLACK | A_DIM));
@@ -106,6 +109,12 @@ Renderstate init_render() {
 
     init_pair(MATRIX_BG, GREEN, DARK_GREEN);
     init_pair(MATRIX_FG, COLOR_BLACK, COLOR_BLACK);
+    init_pair(SANITY_FULL, (short)(DARK_RED | A_BOLD), COLOR_RED);
+    init_pair(SANITY_EMPTY, (short)(COLOR_RED | A_BOLD), DARK_RED);
+    init_pair(SANITY_MARKER, (short)(COLOR_RED | A_BOLD), COLOR_BLACK);
+
+    init_pair(EMPTY, COLOR_BLACK, COLOR_BLACK);
+
     rs->wnd = wnd;
 
     g_renderstate = rs;
@@ -121,6 +130,7 @@ Renderstate init_render() {
 
 // Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
+    if (!g_gamestate->valid_state) return;
     
     if (map != NULL && map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
         print_loading_screen(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
@@ -130,6 +140,7 @@ void render(Gamestate gs) {
             print_random_map(ALTURA_JOGO, LARGURA_JOGO, find_map, OFFSET_Y, OFFSET_X); // map
             render_game(gs);
             print_light(g_renderstate->wnd, ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X);// RTX_ON
+            render_foreground();
         } 
 
         render_menu(gs);
@@ -258,27 +269,110 @@ void _removeMenu(MenuId menu) {
 #pragma endregion
 
 #pragma region Renderers
-void render_game(Gamestate gs) {
+#include "util/ncurses.h" // THIS HAS TO BE HERE, OTHERWISE ALL HELL BREAKS LOOSE
 
-    Coords playerCoords = gs->player->entity->coords;
-    Coords projectileCoords = gs->projectiles[0]->entity->coords;
+void render_sanity_bar(WINDOW* wnd, int startX, int startY, int percentage) {
+    // const int barWidth = 20;
+    // int filledWidth = percentage * barWidth / 100;
+    // int emptyWidth = barWidth - filledWidth;
 
+    const int barWidth = 20;
+    int filledWidth, emptyWidth;
+    percentage = (percentage < -100) ? -100 : ((percentage > 100) ? 100 : percentage);
+
+    if (percentage < 0) {
+        // filledWidth = 0;
+        // emptyWidth = (100 + percentage) * barWidth / 100;
+        filledWidth = (100 + percentage) * barWidth / 100;
+        emptyWidth = barWidth - filledWidth;
+    } else {
+        filledWidth = percentage * barWidth / 100;
+        emptyWidth = barWidth - filledWidth;
+    }
+
+    wmove(wnd, startY, startX);
+
+    wattron(wnd, COLOR_PAIR(SANITY_EMPTY));
+    rectangle(wnd, startY - 1, 0, startY + 1, 27);
+    // mvwprintw(wnd, startY, startX + 1, "%3d%%", percentage);
+    if (percentage < 0) {
+        mvwprintw(wnd, startY, startX + 1, "%3.3d%%", percentage);
+    } else {
+        mvwprintw(wnd, startY, startX + 1, " ");
+        mvwprintw(wnd, startY, startX + 2, "%3.3d%%", percentage);
+    }
+    waddch(wnd, ' ');
+    waddch(wnd, ' ');
+    wattroff(wnd, COLOR_PAIR(SANITY_EMPTY));
+
+    refresh();
+
+    wmove(wnd, startY, startX + 7);
+    if (percentage < 0) wattron(wnd, COLOR_PAIR(SANITY_EMPTY));
+    else wattron(wnd, COLOR_PAIR(SANITY_FULL));
+    for (int i = 0; i < filledWidth; i++) {
+        waddch(wnd, '-');
+    }
+    if (percentage < 0) wattroff(wnd, COLOR_PAIR(SANITY_EMPTY));
+    else wattroff(wnd, COLOR_PAIR(SANITY_FULL));
+
+    if (percentage < 0) wattron(wnd, COLOR_PAIR(SANITY_FULL));
+    else wattron(wnd, COLOR_PAIR(SANITY_EMPTY));
+    for (int i = 0; i < emptyWidth; i++) {
+        waddch(wnd, '_');
+    }
+    if (percentage < 0) wattroff(wnd, COLOR_PAIR(SANITY_FULL));
+    else wattron(wnd, COLOR_PAIR(SANITY_EMPTY));
+
+    // waddch(wnd, '|');
+    refresh();
+}
+
+void render_foreground() {
+    Coords playerCoords = g_gamestate->player->entity->coords;
+
+    render_sanity_bar(g_renderstate->wnd, 0, g_renderstate->nrows - 3, g_gamestate->player->sanity);
+
+	wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
+    move(g_renderstate->nrows - 1, 0);
+    printw("                            ");
 
     move(g_renderstate->nrows - 1, 0);
-	wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
-
-    printw("(%d, %d) %d %d | %d %d", 
+    printw(" X: %d Y: %d | %d", 
         playerCoords->x, 
-        playerCoords->y, 
-        g_renderstate->ncols, 
-        g_renderstate->nrows,
-        projectileCoords->x,
-        projectileCoords->x
+        playerCoords->y,
+        g_gamestate->player->candle_fuel
     );
 
 	wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
+}
 
+void render_game(Gamestate gs) {
+    Coords playerCoords = gs->player->entity->coords;
+    Coords projectileCoords = gs->projectiles[0]->entity->coords;
 
+    // move(g_renderstate->nrows - 1, 0);
+	// wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
+	// // printw("(%d, %d) %d %d | (%d, %d) (%d, %d) | %d | %d", 
+    // printw("(%d, %d) %d %d | %d %d", 
+    //     playerCoords->x, 
+    //     playerCoords->y, 
+    //     g_renderstate->ncols, 
+    //     g_renderstate->nrows,
+    //     projectileCoords->x,
+    //     projectileCoords->x
+    //     // g_gamestate->pointA->x, g_gamestate->pointA->y,
+    //     // g_gamestate->pointB->x, g_gamestate->pointB->y,
+    //     // g_gamestate->path_cell_count,
+    //     // g_gamestate->last_res
+    // );
+	// wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
+
+    if(g_gamestate->player->cheats->godmode == 1) {	
+        wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
+    } else {	
+        wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
+    }
 
     
 	
@@ -357,6 +451,8 @@ void render_game(Gamestate gs) {
 
 	move(playerCoords->x, playerCoords->y);
     move(projectileCoords->x, projectileCoords->y);
+
+    doupdate();
 }
 
 void render_menu(Gamestate gs) {

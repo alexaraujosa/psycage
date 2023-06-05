@@ -174,10 +174,6 @@ void deploy_molotov() {
         }
 
     map[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x] = 9;
-
-    for(int i = 0 ; i < g_gamestate->mob_count ; i++)
-        if(map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] == 9)
-            map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
         
 
     for(int i = 0 ; i < g_gamestate->chest_count ; i++)
@@ -224,6 +220,14 @@ void molotov_checker() {
 
     if(clock_trap->ticks == TICKS_PER_SECOND*TEMPO_TRAP - 1)
         remove_molotov();
+
+    return;
+}
+
+void molotov_entity_checker(Entity entity) {
+
+    if(map[entity->coords->y][entity->coords->x] == 9 && entity->health > 0)
+        damageEntity(entity, 1);
 
     return;
 }

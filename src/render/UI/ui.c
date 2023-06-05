@@ -619,7 +619,7 @@ void drawGameInterface() {
         mvwprintw(
                   g_renderstate->wnd,   
                   ALTURA_LOGO/3 + j,
-                  LARGURA_RETANGULO + LARGURA_LOGO + 2,
+                  LARGURA_RETANGULO + LARGURA_LOGO + 4,
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
     
@@ -636,14 +636,14 @@ void drawGameInterface() {
 
     mvwprintw(g_renderstate->wnd,
               ALTURA_LOGO/3 + 0,
-              LARGURA_RETANGULO + LARGURA_LOGO + 4 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.item")),
+              LARGURA_RETANGULO + LARGURA_LOGO + 6 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.item")),
               "%s  ",     g_gamestate->player->item->name
             );
 
 
     mvwprintw(g_renderstate->wnd,
               ALTURA_LOGO/3 + 1,
-              LARGURA_RETANGULO + LARGURA_LOGO + 4 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.item.damage")),
+              LARGURA_RETANGULO + LARGURA_LOGO + 6 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.item.damage")),
               "%d  ",     g_gamestate->player->item->damage
             );
 
@@ -652,13 +652,13 @@ void drawGameInterface() {
     if(g_gamestate->potion_strength == 1)
         mvwprintw(g_renderstate->wnd,
                   ALTURA_LOGO/3 + 3,
-                  LARGURA_RETANGULO + LARGURA_LOGO + 2,
+                  LARGURA_RETANGULO + LARGURA_LOGO + 4,
                   "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.potion.on")
                 );
     else
         mvwprintw(g_renderstate->wnd,
                   ALTURA_LOGO/3 + 3,
-                  LARGURA_RETANGULO + LARGURA_LOGO + 2,
+                  LARGURA_RETANGULO + LARGURA_LOGO + 4,
                   "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.potion.off")
                 );
 

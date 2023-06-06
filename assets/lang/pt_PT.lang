@@ -18,6 +18,7 @@ menu.options.keybinder.molotov=Usar Molotov
 menu.options.keybinder.ultimate=Usar Poder         
 menu.options.keybinder.pause=Abrir Menu de Pausa
 menu.options.keybinder.console=Abrir Consola      
+menu.options.keybinder.dialogs.input_failure=Tecla inválida.{__NL}Por favor tente novamente.
 menu.pause.return=   Voltar   
 menu.pause.options=   Opcoes   
 menu.pause.save=   Guardar  

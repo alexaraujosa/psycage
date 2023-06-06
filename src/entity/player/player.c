@@ -58,6 +58,7 @@ Player defaultPlayer() {
 void killCount(Player player, Entity entity) {
     if (entity->health == 0) {
         player->kills += 1;
+        get_granade();
     }
     if(player->kills % KILLS_TO_CHANGE_RADIUS == 0)
         verifyPlayerRadius();
@@ -342,5 +343,18 @@ void ultimate_checker() {
                 break;
         }
     
+    return;
+}
+
+void get_granade() {
+
+    int granade_selector = (rand()%2);
+    if((granade_selector == 0 && g_gamestate->player->trap == 0) || (granade_selector == 1 && g_gamestate->player->molotov == 0)){
+        int chance = (rand()%4);
+        if(chance == 0 && granade_selector == 0)
+            g_gamestate->player->trap = 1;
+        else if(chance == 0 && granade_selector == 1) 
+            g_gamestate->player->molotov = 1;
+    }
     return;
 }

@@ -62,5 +62,6 @@ void ultimate_reset();
 void ultimate_detective();
 void ultimate_checker();
 void killCount(Player player, Entity entity);
+void get_granade();
 
 #endif

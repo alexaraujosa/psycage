@@ -12,7 +12,8 @@ Clock defaultClock() {
 }
 
 void destroyClock(Clock clock) {
-    list_remove(g_gamestate->clocks, clock);
+    int ind = list_index(g_gamestate->clocks, clock);
+    list_remove(g_gamestate->clocks, ind);
     free(clock);
 }
 
@@ -63,7 +64,8 @@ ListNode addClock(Clock clock) {
 
 void removeClock(Clock clock) {
     if (list_has(g_gamestate->clocks, clock)) {
-        list_remove(g_gamestate->clocks, clock);
+        int ind = list_index(g_gamestate->clocks, clock);
+        list_remove(g_gamestate->clocks, ind);
     }
 }
 

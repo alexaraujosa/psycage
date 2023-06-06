@@ -49,6 +49,7 @@ void continue_game(){
 
 	if(g_gamestate->projectiles[1]->entity->coords->y != 0)	remove_trap();
     if(g_gamestate->projectiles[2]->entity->coords->y != 0)	remove_molotov();
+	resetAllClocks();
 
 	for(int y = 0; y < ALTURA_JOGO; y++){	
 		if (map == NULL) break;	

@@ -72,30 +72,30 @@ void resetClock(Clock clock) {
     clock->blocked = TRUE;
 }
 
-void resetAllClocks(Clock clock) {
+void resetAllClocks() {
     LinkedList ll = g_gamestate->clocks;
 	if (ll == NULL) return;
 
     ListNode current = ll->head;
     while (current != NULL) {
-        void* data = current->data;
+        Clock data = (Clock)current->data;
 
-        clock->ticks = 0;
-        clock->blocked = TRUE;
+        data->ticks = 0;
+        data->blocked = TRUE;
         
         current = current->next;
     }
 }
 
-void resetAllClockTicks(Clock clock) {
+void resetAllClockTicks() {
     LinkedList ll = g_gamestate->clocks;
 	if (ll == NULL) return;
 
     ListNode current = ll->head;
     while (current != NULL) {
-        void* data = current->data;
+        Clock data = (Clock)current->data;
 
-        clock->ticks = 0;
+        data->ticks = 0;
         
         current = current->next;
     }

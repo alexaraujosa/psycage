@@ -25,6 +25,7 @@ typedef struct player {
     int radius;
     int sanity;
     int candle_fuel;
+    int hasUltimate;
 } PLAYER, *Player;
 
 enum Classes {
@@ -49,5 +50,10 @@ int get_player_radius(Player player);
 int get_candle_light(Player player);
 void add_candle_fuel(Player player, int fuel);
 void reduce_candle_fuel(Player player, int fuel);
+void init_ultimate_clocks();
+void ultimate_use();
+void ultimate_reset();
+void ultimate_detective();
+void ultimate_checker();
 
 #endif

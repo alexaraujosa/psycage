@@ -29,7 +29,7 @@ typedef unsigned int useconds_t;
 
 // #define ALTURA_JOGO g_renderstate->nrows - ALTURA_LOGO - 2
 // #define LARGURA_JOGO g_renderstate->ncols - 2
-#define KEYBINDS 7
+#define KEYBINDS 10
 
 extern int ALTURA_JOGO;
 extern int LARGURA_JOGO;

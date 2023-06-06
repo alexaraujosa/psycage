@@ -380,7 +380,7 @@ void render_game(Gamestate gs) {
        g_gamestate->projectiles[1]->entity->coords->y != 0 &&
        g_gamestate->projectiles[1]->entity->coords->x != 0
     )
-        mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[1]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[1]->entity->coords->x + OFFSET_X, 'S' | COLOR_PAIR(WHITE_PLAYER));
+        mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[1]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[1]->entity->coords->x + OFFSET_X, 'T' | COLOR_PAIR(WHITE_PLAYER));
 
     if(visible[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x] == 1 &&
        g_gamestate->projectiles[2]->entity->coords->y != 0 &&
@@ -394,19 +394,22 @@ void render_game(Gamestate gs) {
 
     for(int y = 0 ; y < ALTURA_JOGO ; y++){
         for(int x = 0 ; x < LARGURA_JOGO ; x++){
+            
             if(map[y][x] == 8)
                 mvaddch(y + OFFSET_Y, x + OFFSET_X, 'T' | COLOR_PAIR(TRAP));
-            if(visible[y][x] == 2 && map[y][x] == 8)
+            if(map[y][x] == 8 && visible[y][x] == 2 )
                 mvaddch(y + OFFSET_Y, x + OFFSET_X, 'T' | COLOR_PAIR(TRAP_VISITED));
+
+            if(map[y][x] == 9)  
+                mvaddch(y + OFFSET_Y, x + OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
+
         }
     }
 
 
-    for(int y = 0 ; y < ALTURA_JOGO ; y++)
-        for(int x = 0 ; x < LARGURA_JOGO ; x++)
-            if(map[y][x] == 9)  mvaddch(y + OFFSET_Y, x + OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
+
         
-    if(visible[projectileCoords->y][projectileCoords->x] == 1)
+    if(visible[projectileCoords->y][projectileCoords->x] == 1 && projectileCoords->y != 0 && projectileCoords->x != 0)
         mvwaddch(g_renderstate->wnd, projectileCoords->y + OFFSET_Y, projectileCoords->x + OFFSET_X, 'O' | COLOR_PAIR(WHITE_PLAYER));
 
 
@@ -426,6 +429,8 @@ void render_game(Gamestate gs) {
     wattron(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
 
     for (int i = 0; i < gs->mob_count; i++) {
+        if(gs->mobs[i]->entity->health == 0)
+        wattron(g_renderstate->wnd, COLOR_PAIR(RED_BG));
         if(visible[gs->mobs[i]->entity->coords->y][gs->mobs[i]->entity->coords->x] == 1)
             mvwaddch(
                 g_renderstate->wnd, 
@@ -434,7 +439,7 @@ void render_game(Gamestate gs) {
                 '$'
             );
     }
-
+wattroff(g_renderstate->wnd, COLOR_PAIR(RED_BG));
     for (int i = 0; i < gs->chest_count; i++) {
         if(visible[gs->chests[i]->entity->coords->y][gs->chests[i]->entity->coords->x] == 1)
             mvwaddch(

@@ -38,3 +38,8 @@ void damageEntity(Entity entity, int hp) {
 void healEntity(Entity entity, int hp) {
     entity->health += imin(hp, entity->maxHealth - entity->health);
 }
+
+void healEntityUltimate(Entity entity, int hp) {
+    if(entity->maxHealth/2 + 1 > entity->health + imin(hp, entity->maxHealth - entity->health))
+        entity->health += imin(hp, entity->maxHealth - entity->health);
+}

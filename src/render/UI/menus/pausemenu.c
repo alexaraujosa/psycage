@@ -8,7 +8,7 @@
 static unsigned short int botao_selecionado_principal = 0;
 static char *botoes[BOTOES] = {"menu.pause.return", "menu.pause.save", "menu.pause.options", "menu.pause.exit"};
 
-static char *pause[ALTURA_PAUSE] = {
+static char *pausa[ALTURA_PAUSE] = {
         "  8888888b.      d8888 888     888  .d8888b.  8888888888  \0",
         "  888   Y88b    d88888 888     888 d88P  Y88b 888         \0",
         "  888    888   d88P888 888     888 Y88b.      888         \0",
@@ -44,7 +44,7 @@ void draw_PauseMenu(Menu menu) {
 
     for(int i = 0 ; i < ALTURA_PAUSE ; i++)
         for(int j = 0 ; j < LARGURA_PAUSE ; j++)
-            mvwprintw(menu->wnd, y_pause + i, x_pause + j + i, "%c", pause[i][j]);
+            mvwprintw(menu->wnd, y_pause + i, x_pause + j + i, "%c", pausa[i][j]);
 
     wattroff(menu->wnd, A_BOLD);
 

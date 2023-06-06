@@ -136,6 +136,9 @@ void draw_OptionsKeybinderMenu(Menu menu){
         "menu.options.keybinder.left", 
         "menu.options.keybinder.right", 
         "menu.options.keybinder.projectile", 
+        "menu.options.keybinder.trap",
+        "menu.options.keybinder.molotov",
+        "menu.options.keybinder.ultimate",
         "menu.options.keybinder.pause",
         "menu.options.keybinder.console"
     };
@@ -143,29 +146,47 @@ void draw_OptionsKeybinderMenu(Menu menu){
     box(menu->wnd, 0 , 0);
 
 
-    for(int i = 0, j = 0, separador = 0 ; i < BOTOES_KEYBINDER ; i++, separador += 1) {
+    for(int i = 0, j = 0, separador = 0; i < BOTOES_KEYBINDER/2 + 1 ; i++, separador++) {
 
         if(i == botao_selecionado_keybinder) 
             wattron(menu->wnd, A_REVERSE);
         
-        if(i == 0)
+        if(i == 0) {
             mvwprintw(menu->wnd, 
-                    ALTURA_OPTIONS_KEYBINDER/3,
-                    LARGURA_OPTIONS_KEYBINDER - strlen(get_localized_string(g_renderstate->language, keybinder[0]))/2,
+                    1,
+                    LARGURA_OPTIONS_KEYBINDER - strlen(get_localized_string(g_renderstate->language, keybinder[i]))/2,
                     "%s", get_localized_string(g_renderstate->language, keybinder[0])
                     );
-        else
-            mvwprintw(menu->wnd, 
-                  ALTURA_OPTIONS_KEYBINDER/3 + separador + i,
-                  LARGURA_OPTIONS_KEYBINDER - strlen(get_localized_string(g_renderstate->language, keybinder[i]))/2,
-                  "%s  -  %c", get_localized_string(g_renderstate->language, keybinder[i]), keybinds[j]
-                );
+        }
 
+        else {
+            mvwprintw(menu->wnd, 
+              3 + separador + j,
+              LARGURA_OPTIONS_KEYBINDER/4,
+              "%s  -  %c", get_localized_string(g_renderstate->language, keybinder[i]), keybinds[j]
+            );
+        }
+    
         if(i == botao_selecionado_keybinder)
             wattroff(menu->wnd, A_REVERSE);
         
         if(i != 0 && j < KEYBINDS)
             j++;
+    }
+
+    for(int i = BOTOES_KEYBINDER/2 + 1, separador = 1, j = 0 ; i < BOTOES_KEYBINDER ; i++, separador++, j++) {
+        
+        if(i == botao_selecionado_keybinder) 
+            wattron(menu->wnd, A_REVERSE);
+        
+        mvwprintw(menu->wnd, 
+              3 + separador + j,
+              LARGURA_OPTIONS_KEYBINDER*1.2,
+              "%s  -  %c", get_localized_string(g_renderstate->language, keybinder[i]), keybinds[i-1]
+            );
+        
+        if(i == botao_selecionado_keybinder)
+            wattroff(menu->wnd, A_REVERSE);
     }
 
 
@@ -238,6 +259,20 @@ void handle_OptionsKeybinderMenu_keybinds(int key){
                     scanf("%c", &temp);
                     keybinds[6] = (int) temp;
                     break;
+
+                case 8 :
+                    scanf("%c", &temp);
+                    keybinds[7] = (int) temp;
+                    break;
+                case 9 :
+                    scanf("%c", &temp);
+                    keybinds[8] = (int) temp;
+                    break;
+                case 10 :
+                    scanf("%c", &temp);
+                    keybinds[9] = (int) temp;
+                    break;
+
             }
 
             break;

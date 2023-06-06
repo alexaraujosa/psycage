@@ -123,8 +123,6 @@ void remove_trap() {
 
     contagem_trap = 0;
     g_gamestate->projectiles[1]->entity->coords->y = g_gamestate->projectiles[1]->entity->coords->x = 0;
-    clock_trap->blocked = 1;
-    clock_trap->ticks = 0;
 
     return;
 }
@@ -210,8 +208,6 @@ void remove_molotov() {
 
     contagem_molotov = 0;
     g_gamestate->projectiles[2]->entity->coords->y = g_gamestate->projectiles[2]->entity->coords->x = 0;
-    clock_molotov->blocked = 1;
-    clock_molotov->ticks = 0;
     
     return;
 }

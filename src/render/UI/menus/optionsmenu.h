@@ -3,7 +3,7 @@
 
 #include "../ui.h"
 
-#define BOTOES_KEYBINDER 8
+#define BOTOES_KEYBINDER 11
 #define ESPACAMENTO_KEYBINDER 2
 #define LARGURA_OPTIONS_KEYBINDER g_renderstate->ncols/4
 #define ALTURA_OPTIONS_KEYBINDER g_renderstate->nrows/4

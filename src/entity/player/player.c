@@ -13,7 +13,12 @@
 #define MIN_RADIUS_DETECTIVE 4
 #define MIN_RADIUS_MERCENARY 5
 
+#define KILLS_TO_ULTIMATE 20
+#define TIME_ULTIMATE 20
+
 #define KILLS_TO_CHANGE_RADIUS 15
+
+Clock clock_ultimate = NULL;
 
 Player defaultPlayer() {
     Player player = (Player)malloc(sizeof(PLAYER));
@@ -39,6 +44,7 @@ Player defaultPlayer() {
     player->radius = 0;
     player->sanity = 100;
     player->candle_fuel = 5;
+    player->hasUltimate = 0;
 
     player->item = get_random_item();
 
@@ -74,6 +80,8 @@ void killCount(Player player, Entity entity) {
     }
     if(player->kills % KILLS_TO_CHANGE_RADIUS == 0)
         verifyPlayerRadius();
+    if(player->kills % KILLS_TO_ULTIMATE == 0)
+        g_gamestate->player->hasUltimate = 1;
 }
 
 void killXp(Player player) {
@@ -264,4 +272,74 @@ void add_candle_fuel(Player player, int fuel) {
 void reduce_candle_fuel(Player player, int fuel) {
     player->candle_fuel -= fuel;
     if (player->candle_fuel < 0) player->candle_fuel = 0;
+}
+
+void init_ultimate_clocks() {
+    clock_ultimate = defaultClock();
+    clock_ultimate->maxTicks *= TIME_ULTIMATE;
+    clock_ultimate->blocked = 1;
+    addClock(clock_ultimate);
+
+    return;
+}
+
+void ultimate_use() {
+
+    if(g_gamestate->player->class == Priest)
+        ultimate_priest();
+    else
+        clock_ultimate->blocked = 0;
+
+    return;
+}
+
+void ultimate_reset() {
+    clock_ultimate->blocked = 1;
+    clock_ultimate->ticks = 0;
+    g_gamestate->player->hasUltimate = 0;
+
+    return;
+}
+
+void ultimate_priest() {
+
+    for(int i = 0 ; i < g_gamestate->mob_count ; i++)
+        //killMob;
+
+    g_gamestate->player->hasUltimate = 0;
+
+    return;
+}
+
+void ultimate_detective() {
+
+    for(int i = 0 ; i < g_gamestate->mob_count ; i++)
+        visible[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 1;
+
+    return;
+}
+
+void ultimate_mercenary() {
+
+    healEntityUltimate(g_gamestate->player->entity, 1);
+
+    return;
+}
+
+
+void ultimate_checker() {
+
+    if(clock_ultimate->ticks == TICKS_PER_SECOND*TIME_ULTIMATE - 1) {
+        ultimate_reset();
+    } else if (clock_ultimate->ticks > 0 && g_gamestate->player->hasUltimate == 1)
+        switch(g_gamestate->player->class) {
+            case Detective:
+                ultimate_detective();
+                break;
+            case Mercenary:
+                ultimate_mercenary();
+                break;
+        }
+    
+    return;
 }

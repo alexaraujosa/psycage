@@ -9,9 +9,12 @@ int keybinds[] = {
 		KEY_DOWN,
 		KEY_LEFT,
 		KEY_RIGHT,
-		114,		// 'r'
-		112,		// 'p'
-		92			// '\\'
+		114,		// 'r' | Use Projectile
+		107,		// 'k' | Use Trap
+		106,		// 'j' | Use Molotov
+		108,		// 'l' | Use Ultimate
+		112,		// 'p' | Open Pause Menu
+		92			// '\\'| Open Console
 };
 
 int ALTURA_JOGO;
@@ -171,6 +174,7 @@ Gamestate init_gameloop() {
 
 	init_potions_clock();
 	init_grenades_clock();
+	init_ultimate_clocks();
 
 	return gs;
 }
@@ -323,6 +327,8 @@ void tick() {
 			ALTURA_JOGO, 
 			LARGURA_JOGO
 		); 
+		
+		ultimate_checker();
 
 		// Doors
 		if(g_gamestate->mob_count == 0){
@@ -406,34 +412,65 @@ void game_keybinds(int key) {
 	godmode_code_checker(key);
 	vision_code_checker(key);
 
-	if(key == 'x') {
-            if(g_gamestate->projectiles[2]->entity->coords->x == 0 && g_gamestate->projectiles[2]->entity->coords->y == 0){
-                g_gamestate->projectiles[2]->entity->coords->x = g_gamestate->player->entity->coords->x;
-                g_gamestate->projectiles[2]->entity->coords->y = g_gamestate->player->entity->coords->y;
-            }
-            if (g_gamestate->player->last_direction == 0) {
-                    g_gamestate->projectiles[2]->dx = 0;
-                    g_gamestate->projectiles[2]->dy = -1;
-            }
-            if (g_gamestate->player->last_direction == 1) {
-                    g_gamestate->projectiles[2]->dx = 0;
-                    g_gamestate->projectiles[2]->dy = 1;
-            }
-            if (g_gamestate->player->last_direction == 2) {
-                    g_gamestate->projectiles[2]->dx = -1;
-                    g_gamestate->projectiles[2]->dy = 0;
-            }
-               if (g_gamestate->player->last_direction == 3) {
-                    g_gamestate->projectiles[2]->dx = 1;
-                    g_gamestate->projectiles[2]->dy = 0;
-            }
-    }
+	if(key == 'k')
+		g_gamestate->player->kills++;
+
+	
+	
+	if(key == 'j')
+		g_gamestate->player->hasUltimate = 1;
+
+
+
 
 	if(key == 'z')
 		g_gamestate->mob_count = 0; //continue_game();
 
     // Movement Controls
-    if(key == 'i') {
+    
+
+
+	if(key == keybinds[0] || key == toupper(keybinds[0])) {
+		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y-1)){
+			move_player(0, -1);
+			g_gamestate->player->last_direction = 0; 
+		}
+	} else if (key == keybinds[1] || key == toupper(keybinds[1])) {	
+		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y+1)){
+			move_player(0, 1);
+			g_gamestate->player->last_direction = 1; 
+		}
+	} else if (key == keybinds[2] || key == toupper(keybinds[2])) {
+			if(is_passable(g_gamestate->player->entity->coords->x-1, g_gamestate->player->entity->coords->y)){
+				move_player(-1, 0);
+				g_gamestate->player->last_direction = 2;
+			}  
+	} else if (key == keybinds[3] || key == toupper(keybinds[3])) {
+			if(is_passable(g_gamestate->player->entity->coords->x+1, g_gamestate->player->entity->coords->y)){
+				move_player(1, 0);
+				g_gamestate->player->last_direction = 3;
+			}
+	} else if (key == keybinds[4] || key == toupper(keybinds[4]) ) {
+			g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->player->entity->coords->x;
+			g_gamestate->projectiles[0]->entity->coords->y = g_gamestate->player->entity->coords->y;
+
+		    if (g_gamestate->player->last_direction == 0) {
+				g_gamestate->projectiles[0]->dx = 0;
+				g_gamestate->projectiles[0]->dy = -1;
+			}
+			if (g_gamestate->player->last_direction == 1) {
+				g_gamestate->projectiles[0]->dx = 0;
+				g_gamestate->projectiles[0]->dy = 1;
+			}
+			if (g_gamestate->player->last_direction == 2) {
+				g_gamestate->projectiles[0]->dx = -1;
+				g_gamestate->projectiles[0]->dy = 0;
+			}
+			if (g_gamestate->player->last_direction == 3) {
+				g_gamestate->projectiles[0]->dx = 1;
+				g_gamestate->projectiles[0]->dy = 0;
+			}
+	} else if(key == keybinds[5] || key == toupper(keybinds[5])) {
             if(g_gamestate->projectiles[1]->entity->coords->x == 0 && g_gamestate->projectiles[1]->entity->coords->y == 0){
                 g_gamestate->projectiles[1]->entity->coords->x = g_gamestate->player->entity->coords->x;
                 g_gamestate->projectiles[1]->entity->coords->y = g_gamestate->player->entity->coords->y;
@@ -454,63 +491,33 @@ void game_keybinds(int key) {
                     g_gamestate->projectiles[1]->dx = 1;
                     g_gamestate->projectiles[1]->dy = 0;
             }
-    }
-
-		// Movement Controls
-	if(key == keybinds[0]) {
-
-		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y-1)){
-			move_player(0, -1);
-			g_gamestate->player->last_direction = 0; 
-		}
-
-	} else if (key == keybinds[1]) {	
-
-		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y+1)){
-			move_player(0, 1);
-			g_gamestate->player->last_direction = 1; 
-		}
-
-	} else if (key == keybinds[2]) {
-
-			if(is_passable(g_gamestate->player->entity->coords->x-1, g_gamestate->player->entity->coords->y)){
-				move_player(-1, 0);
-				g_gamestate->player->last_direction = 2;
-			}  
-	
-	} else if (key == keybinds[3]) {
-
-			if(is_passable(g_gamestate->player->entity->coords->x+1, g_gamestate->player->entity->coords->y)){
-				move_player(1, 0);
-				g_gamestate->player->last_direction = 3;
-			}
-
-	} else if (key == keybinds[4] || key == toupper(keybinds[4]) ) {
-
-			g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->player->entity->coords->x;
-			g_gamestate->projectiles[0]->entity->coords->y = g_gamestate->player->entity->coords->y;
-
-		    if (g_gamestate->player->last_direction == 0) {
-				g_gamestate->projectiles[0]->dx = 0;
-				g_gamestate->projectiles[0]->dy = -1;
-			}
-			if (g_gamestate->player->last_direction == 1) {
-				g_gamestate->projectiles[0]->dx = 0;
-				g_gamestate->projectiles[0]->dy = 1;
-			}
-			if (g_gamestate->player->last_direction == 2) {
-				g_gamestate->projectiles[0]->dx = -1;
-				g_gamestate->projectiles[0]->dy = 0;
-			}
-			if (g_gamestate->player->last_direction == 3) {
-				g_gamestate->projectiles[0]->dx = 1;
-				g_gamestate->projectiles[0]->dy = 0;
-			}
-
-	} else if (key == keybinds[5] || key == toupper(keybinds[5])) {
+    } else if(key == keybinds[6] || key == toupper(keybinds[6])) {
+            if(g_gamestate->projectiles[2]->entity->coords->x == 0 && g_gamestate->projectiles[2]->entity->coords->y == 0){
+                g_gamestate->projectiles[2]->entity->coords->x = g_gamestate->player->entity->coords->x;
+                g_gamestate->projectiles[2]->entity->coords->y = g_gamestate->player->entity->coords->y;
+            }
+            if (g_gamestate->player->last_direction == 0) {
+                    g_gamestate->projectiles[2]->dx = 0;
+                    g_gamestate->projectiles[2]->dy = -1;
+            }
+            if (g_gamestate->player->last_direction == 1) {
+                    g_gamestate->projectiles[2]->dx = 0;
+                    g_gamestate->projectiles[2]->dy = 1;
+            }
+            if (g_gamestate->player->last_direction == 2) {
+                    g_gamestate->projectiles[2]->dx = -1;
+                    g_gamestate->projectiles[2]->dy = 0;
+            }
+               if (g_gamestate->player->last_direction == 3) {
+                    g_gamestate->projectiles[2]->dx = 1;
+                    g_gamestate->projectiles[2]->dy = 0;
+            }
+    } else if (key == keybinds[7] || key == toupper(keybinds[7])) {
+		if(g_gamestate->player->hasUltimate)
+			ultimate_use(); 
+	} else if (key == keybinds[8] || key == toupper(keybinds[8])) {
 		displayMenu(MENU_PAUSE);
-
-	} else if (key == keybinds[6]) 
+	} else if (key == keybinds[9]) 
 		displayMenu(MENU_CONSOLE);
 
 	

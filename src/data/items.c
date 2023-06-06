@@ -143,8 +143,8 @@ DataItemNode get_item_by_name(char* name) {
 DataItemNode get_random_item() {
     static int itens_len = 18;
     static char *itens[] = {
-        "GlovesTier1", "GlovesTier2", "GlovesTier3", "HelmetTier1", "HelmetTier2", "HelmetTier3", "BeltTier1", 
-        "BeltTier2", "BeltTier3", "Broken_Sword", "VestTier1", "VestTier2", "VestTier3", "SoldierGloves", 
+        "Gloves_Tier1", "Gloves_Tier2", "Gloves_Tier3", "Helmet_Tier1", "Helmet_Tier2", "Helmet_Tier3", "Belt_Tier1", 
+        "Belt_Tier2", "Belt_Tier3", "Broken_Sword", "Vest_Tier1", "Vest_Tier2", "Vest_Tier3", "SoldierGloves", 
         "SoldierHelmet", "SoldierBelt", "SoldierVest", "PactOfInsanity"
     };
 

@@ -49,7 +49,7 @@ Player defaultPlayer() {
     player->molotov = 0;
     player->trap = 0;
 
-    player->item = get_random_item();
+    player->item = get_item_by_id("0010");
 
     return player;
 }

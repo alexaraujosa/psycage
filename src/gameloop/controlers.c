@@ -204,7 +204,7 @@ void reset_player_values() {
 	// Player Cheats
 	g_gamestate->player->cheats->godmode = g_gamestate->player->cheats->vision = 0;
 	// Player Item
-	g_gamestate->player->item = get_random_item();
+	g_gamestate->player->item = get_item_by_id("0010");
 	// Player Values
     g_gamestate->player->level = 0;
     g_gamestate->player->kills = 0;

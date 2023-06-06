@@ -548,12 +548,6 @@ void game_keybinds(int key) {
 	if(key == '5')
 		displayMenu(MENU_MAIN_MENU);
 
-	if(key == 'g') {
-	    if(g_gamestate->player->class == Priest) {
-             g_gamestate->player->entity->health += imin((g_gamestate->player->entity->health)/4, g_gamestate->player->entity->maxHealth - g_gamestate->player->entity->health);
-		 	}
-	}
-
 	if(key == 'h') {
 		if((g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y+1 && 
                g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x) ||

@@ -464,7 +464,7 @@ void _executeCommand(int cmd, void* override) {
         if (re_matchp(regex, console_input, &len) != -1) {
             debug_file(dbgOut, 1, "-- No arguments\n");
 
-            addMessage("DLM Console, version 1.4.0");
+            addMessage("DLM Console, version 2.5.1");
             addMessage("These commands are defined internally. Type 'help' to see this list.");
             addMessage("Type 'help' [command] to see more info about a command.");
             addMessage("Arguments in the form [arg] are required and arguments in the form <arg> are optional.");

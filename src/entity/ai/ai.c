@@ -185,8 +185,7 @@ void addRandomItemToMob(Mob mob) {
     mob->item = get_item_by_name(mob_itens[index]);
 }
 
-void damageMob(Mob mob, int hp, int index) {
-
+void damageMob(Mob mob, int hp) {
     if(mob->entity->health > 0)
         damageEntity(mob->entity, hp);
     else {
@@ -196,35 +195,31 @@ void damageMob(Mob mob, int hp, int index) {
     return;
 }
 
-void MobAliveChecker(Mob mob, int index) {
-
-        
-            if((mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y+1 && 
-               mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x) ||
-               (mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y-1 && 
-               mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x) ||
-               (mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y && 
-               mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x+1) ||
-               (mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y && 
-               mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x-1)
-            )    
-                damageMob(mob, g_gamestate->player->entity->basedamage + g_gamestate->player->item->damage, index);
-        
-
-
-    
-
+void MobAliveChecker(Mob mob) {
+    if(
+        (
+            mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y+1 
+            && mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x
+        )  || (
+            mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y-1 
+            && mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x
+        ) || (
+            mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y 
+            && mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x+1
+        ) || (
+            mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y 
+            && mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x-1
+        )
+    ) damageMob(mob, g_gamestate->player->entity->basedamage + g_gamestate->player->item->damage);
 }
 
 void killMob(Mob mob) {
-
     mob->entity->coords->y = 0;
     mob->entity->coords->x = 5;
     mob->hasAI = FALSE;
     map[mob->entity->coords->y][mob->entity->coords->x] = map_footprint[mob->entity->coords->y][mob->entity->coords->x];
     killCount(g_gamestate->player, mob->entity);
     g_gamestate->mob_count--;
-
 
     return;
 }

@@ -316,15 +316,27 @@ void handle_OptionsKeybinderMenu_keybinds(int key){
                     break;
 
                 case 8 :
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[7] = (int) temp;
                     break;
                 case 9 :
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[8] = (int) temp;
                     break;
                 case 10 :
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[9] = (int) temp;
                     break;
 

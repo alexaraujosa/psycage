@@ -26,5 +26,6 @@ Entity defaultEntity();
 void destroyEntity(Entity entity);
 void damageEntity(Entity entity, int hp);
 void healEntity(Entity entity, int hp);
+void healEntityUltimate(Entity entity, int hp);
 
 #endif

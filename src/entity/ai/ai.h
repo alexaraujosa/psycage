@@ -33,6 +33,8 @@ int attemptMoveMob(Coords playerCoords, Mob mob, int** map, int width, int heigh
 int addMobToMap(Mob mob, int** map, int width, int height);
 void addRandomItemToMob(Mob mob);
 void destroyMob(Mob mob);
+void MobAliveChecker(Mob mob);
+void killMob(Mob mob);
 int _isObstacle(int cell);
 
 #endif

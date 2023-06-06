@@ -25,6 +25,7 @@ void remove_trap();
 void move_molotov(int dx, int dy);
 void molotov_checker();
 void remove_molotov();
+void molotov_entity_checker(Entity entity);
 void reset_contagem();
 
 #endif

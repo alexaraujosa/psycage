@@ -272,8 +272,10 @@ void use_candle_fuel(Player player, int fuel) {
     reduce_candle_fuel(player, amount);
     add_to_current_candle(player, amount);
 
-	int sanity = (rand() % 15) + 5;
-	restore_sanity(g_gamestate->player, sanity);
+    if (!is_player_insane(player)) {
+        int sanity = (rand() % 15) + 5;
+	    restore_sanity(g_gamestate->player, sanity);
+    }
 }
 
 void init_ultimate_clocks() {
@@ -281,16 +283,6 @@ void init_ultimate_clocks() {
     clock_ultimate->maxTicks *= TIME_ULTIMATE;
     clock_ultimate->blocked = 1;
     addClock(clock_ultimate);
-
-    return;
-}
-
-void ultimate_use() {
-
-    if(g_gamestate->player->class == Priest)
-        ultimate_priest();
-    else
-        clock_ultimate->blocked = 0;
 
     return;
 }
@@ -304,7 +296,6 @@ void ultimate_reset() {
 }
 
 void ultimate_priest() {
-
     for(int i = 0 ; i < g_gamestate->mob_begin ; i++)
         killMob(g_gamestate->mobs[i]);
 
@@ -314,7 +305,6 @@ void ultimate_priest() {
 }
 
 void ultimate_detective() {
-
     for(int i = 0 ; i < g_gamestate->mob_begin ; i++)
         if(g_gamestate->mobs[i]->entity->coords->y != 0 && g_gamestate->mobs[i]->entity->coords->x != 5)
             visible[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 1;
@@ -323,15 +313,21 @@ void ultimate_detective() {
 }
 
 void ultimate_mercenary() {
-
     healEntityUltimate(g_gamestate->player->entity, 1);
 
     return;
 }
 
+void ultimate_use() {
+    if(g_gamestate->player->class == Priest)
+        ultimate_priest();
+    else
+        clock_ultimate->blocked = 0;
+
+    return;
+}
 
 void ultimate_checker() {
-
     if(clock_ultimate->ticks == TICKS_PER_SECOND*TIME_ULTIMATE - 1) {
         ultimate_reset();
     } else if (clock_ultimate->ticks > 0 && g_gamestate->player->hasUltimate == 1)

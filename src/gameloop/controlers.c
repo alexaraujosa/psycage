@@ -1,8 +1,17 @@
 #include "controlers.h"
 
+void addCandleToMap() {
+	int cellX = -1, cellY = -1;
+    
+    while ((cellX == -1 && cellY == -1) || _isObstacle(map[cellY][cellX])) {
+        cellX = (int)floor(((double) rand() / RAND_MAX) * (LARGURA_JOGO - 1));
+        cellY = (int)floor(((double) rand() / RAND_MAX) * (ALTURA_JOGO - 1));
+    }
+
+    map[cellY][cellX] = 6;
+}
 
 void start_game() {
-
 	if (g_renderstate->activeMenus > 0) closeMenu(g_renderstate->menus[0]->id);
 	
 	// g_gamestate->input_initialized = 1;
@@ -45,15 +54,19 @@ void start_game() {
 	for(int i = 0 ; i < g_gamestate->chest_count ; i++)
 	    addChestToMap(g_gamestate->chests[i], map, LARGURA_JOGO, ALTURA_JOGO);
 
+	
+
 	player_spawn(g_gamestate->player, map, ALTURA_JOGO, LARGURA_JOGO); 
 	create_potion();
+
+	for (int i = 0; i < CANDLES_NUM; i++) {
+		addCandleToMap();
+	}
 
 	return;
 }
 
-
 void continue_game(){
-
 	if(g_gamestate->projectiles[1]->entity->coords->y != 0)	remove_trap();
     if(g_gamestate->projectiles[2]->entity->coords->y != 0)	remove_molotov();
 	resetAllClocks();
@@ -74,18 +87,16 @@ void continue_game(){
 	
 
 	while(!valid_map(ALTURA_JOGO, LARGURA_JOGO)){
-		
 		for(int y = 0; y < ALTURA_JOGO-1; y++){
-			
 			if (map == NULL) break;
         		
 			free(map[y]);
 		}
+
 		free(map);
 
 		find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); 
 	}
-
 	
 	for (int i = 0; i < ALTURA_JOGO; i++) {
 		for (int j = 0; j < LARGURA_JOGO; j++) {
@@ -104,7 +115,6 @@ void continue_game(){
 	}
 
 	player_spawn(g_gamestate->player, map, ALTURA_JOGO, LARGURA_JOGO); 
-	
 
 	g_gamestate->chest_count = 1;
 	for (int i = 0; i < g_gamestate->chest_count; i++) {
@@ -207,9 +217,10 @@ void reset_projectiles_values() {
     	g_gamestate->projectiles[i]->entity->health = 12;
     	g_gamestate->projectiles[i]->entity->armor = 0;
     	g_gamestate->projectiles[i]->entity->basedamage = 4;
+
 		// Projectile Values
-    g_gamestate->projectiles[i]->dx = 0;
-    g_gamestate->projectiles[i]->dy = 0;
+		g_gamestate->projectiles[i]->dx = 0;
+		g_gamestate->projectiles[i]->dy = 0;
 	}
 
 	return;
@@ -253,7 +264,6 @@ void reset_chests_values() {
 }
 
 void default_values() {
-
 	reset_player_values();
 	reset_projectiles_values();
 	reset_mobs_values();

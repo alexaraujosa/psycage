@@ -1,9 +1,9 @@
 #ifndef __RL_CONTROLERS_H
 #define __RL_CONTROLERS_H
 
-
 #include "gameloop.h"
 
+#define CANDLES_NUM 10
 
 void start_game();
 void continue_game();

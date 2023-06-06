@@ -266,12 +266,12 @@ void tick() {
 				cClock->blocked = FALSE;
 			}
 
-			if (g_gamestate->player->candle_fuel > 0) {
+			if (g_gamestate->player->current_candle > 0) {
 				if (cClock->ticks == (5 * TICKS_PER_SECOND) - 1) {
 					debug_file(dbgOut, 2, "Attempted to reduce one candle fuel.\n");
 
-					reduce_candle_fuel(g_gamestate->player, 1);
-					if (g_gamestate->player->candle_fuel == 0) {
+					reduce_from_current_candle(g_gamestate->player, 1);
+					if (g_gamestate->player->current_candle == 0) {
 						debug_file(dbgOut, 2, "No candle fuel. Starting to reduce sanity\n");
 						// cClock->blocked = TRUE;
 					}
@@ -318,6 +318,20 @@ void tick() {
 		if(map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 7)
 			use_random_potion();
 
+		if(map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 6) {
+			// int candle_val = (rand() % 3) + 1;
+			// int sanity = (rand() % 20) + 5;
+
+			// add_candle_fuel(g_gamestate->player, candle_val);
+			// restore_sanity(g_gamestate->player, sanity);
+
+			int candle_val = (rand() % 3) + 1;
+			add_candle_fuel(g_gamestate->player, candle_val);
+
+			map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] = 
+				map_footprint[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x];
+		}
+
 		// RTX_ON
 		calculate_visibility(
 			g_gamestate->player->entity->coords->x, 
@@ -334,7 +348,7 @@ void tick() {
 		// Doors
 		if(g_gamestate->mob_count == 0){
 
-			static d = 1;
+			static int d = 1;
 			if(d > 0){
 				doors(
 					g_gamestate->player->entity->coords->x, 
@@ -524,7 +538,7 @@ void game_keybinds(int key) {
 	
 
 
-		// Seppuku
+	// Seppuku
 	if(key == 'q')
 		EXIT = TRUE;
 
@@ -555,8 +569,9 @@ void game_keybinds(int key) {
 	}
 
 	if (key == 'c') {
-		if (is_player_insane(g_gamestate->player)) g_gamestate->player->sanity = 99;
-		else g_gamestate->player->sanity = 0;
+		// if (is_player_insane(g_gamestate->player)) g_gamestate->player->sanity = 99;
+		// else g_gamestate->player->sanity = 0;
+		use_candle_fuel(g_gamestate->player, 1);
 	}
 
 }
@@ -573,6 +588,8 @@ void menu_keybinds(int key) {
 				closeMenu(MENU_MAIN_MENU);
 				break;
 			}
+
+			break;
 		}
 		default: {
 			Menu active_menu = getActiveMenu();

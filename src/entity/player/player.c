@@ -281,8 +281,8 @@ void ultimate_reset() {
 
 void ultimate_priest() {
 
-    for(int i = 0 ; i < g_gamestate->mob_count ; i++)
-        //killMob;
+    for(int i = 0 ; i < g_gamestate->mob_begin ; i++)
+        killMob(g_gamestate->mobs[i]);
 
     g_gamestate->player->hasUltimate = 0;
 
@@ -291,8 +291,9 @@ void ultimate_priest() {
 
 void ultimate_detective() {
 
-    for(int i = 0 ; i < g_gamestate->mob_count ; i++)
-        visible[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 1;
+    for(int i = 0 ; i < g_gamestate->mob_begin ; i++)
+        if(g_gamestate->mobs[i]->entity->coords->y != 0 && g_gamestate->mobs[i]->entity->coords->x != 5)
+            visible[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 1;
 
     return;
 }

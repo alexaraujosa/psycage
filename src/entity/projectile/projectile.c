@@ -92,6 +92,7 @@ void deploy_trap() {
             map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
     
     clock_trap->blocked = 0;
+    g_gamestate->player->trap = 0;
 
     return;
 }
@@ -165,6 +166,7 @@ void deploy_molotov() {
             map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
     
     clock_molotov->blocked = 0;
+    g_gamestate->player->molotov = 0;
 
     return;
 }

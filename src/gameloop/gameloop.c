@@ -305,12 +305,12 @@ void tick() {
 		if(g_gamestate->projectiles[0]->entity->coords->x != 0 && g_gamestate->projectiles[0]->entity->coords->y != 0)
 			move_projectile(g_gamestate->projectiles[0]->dx, g_gamestate->projectiles[0]->dy);	
 
-		if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0) {
+		if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0 && g_gamestate->player->trap != 0) {
             move_trap(g_gamestate->projectiles[1]->dx, g_gamestate->projectiles[1]->dy); 	
 			trap_checker();
 		}
 
-		if(g_gamestate->projectiles[2]->entity->coords->x != 0 && g_gamestate->projectiles[2]->entity->coords->y != 0) {
+		if(g_gamestate->projectiles[2]->entity->coords->x != 0 && g_gamestate->projectiles[2]->entity->coords->y != 0 && g_gamestate->player->molotov != 0) {
             move_molotov(g_gamestate->projectiles[2]->dx, g_gamestate->projectiles[2]->dy);
             molotov_checker();        
         }

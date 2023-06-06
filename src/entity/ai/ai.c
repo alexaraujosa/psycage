@@ -220,22 +220,20 @@ void killMob(Mob mob) {
     mob->entity->coords->y = 0;
     mob->entity->coords->x = 5;
     killCount(g_gamestate->player, mob->entity);
-    levelUp();
+    levelUp(mob);
     g_gamestate->mob_count--;
 
 
     return;
 }
 
-void levelUp() {
-    //killXp(g_gamestate->player);
+void levelUp(Mob mob) {
     if (g_gamestate->player->level <= 99) {
         if (g_gamestate->player->kills % 5 == 0) {
             g_gamestate->player->level += 1;
-            //g_gamestate->player->xp = 0;
+            mob->entity->basedamage += 4;
+            mob->entity->maxHealth += 6;
 
-			// 	g_gamestate->mob->entity->basedamage += 4;
-			// 	g_gamestate->mob->entity->maxHealth += 6;
 			   if(strcmp(g_gamestate->player->item->id, "0007") == 0 || strcmp(g_gamestate->player->item->id, "0008") == 0 || strcmp(g_gamestate->player->item->id, "0009") == 0 
 			   || strcmp(g_gamestate->player->item->id, "0016") == 0 || strcmp(g_gamestate->player->item->id, "0018") == 0){
                  if(g_gamestate->player->class == Priest){

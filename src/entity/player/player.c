@@ -80,7 +80,7 @@ void destroyPlayer(Player player) {
     return;
 }
 
-int getLastDirection(Player player) {  //gpt diz que é int
+int getLastDirection(Player player) {
     return player->last_direction;
 }
 

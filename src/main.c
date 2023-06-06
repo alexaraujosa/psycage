@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
     // Initialize renderer
     debug_file(dbgOut, 0, "Initializing renderer...\n");
     Renderstate rs = init_render();
+    IGNORE_ARG(rs);
     debug_file(dbgOut, 0, "Renderer initialized successfully.\n");
 
     // Initialize items

@@ -25,6 +25,7 @@ typedef struct player {
     int radius;
     int sanity;
     int candle_fuel;
+    int current_candle;
     int hasUltimate;
 } PLAYER, *Player;
 
@@ -50,6 +51,9 @@ int get_player_radius(Player player);
 int get_candle_light(Player player);
 void add_candle_fuel(Player player, int fuel);
 void reduce_candle_fuel(Player player, int fuel);
+void add_to_current_candle(Player player, int fuel);
+void reduce_from_current_candle(Player player, int fuel);
+void use_candle_fuel(Player player, int fuel);
 void init_ultimate_clocks();
 void ultimate_use();
 void ultimate_reset();

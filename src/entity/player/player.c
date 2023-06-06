@@ -43,7 +43,8 @@ Player defaultPlayer() {
     player->class = Priest;
     player->radius = 0;
     player->sanity = 100;
-    player->candle_fuel = 5;
+    player->candle_fuel = 0;
+    player->current_candle = 5;
     player->hasUltimate = 0;
 
     player->item = get_random_item();
@@ -224,9 +225,9 @@ int get_player_radius(Player player) {
 }
 
 int get_candle_light(Player player) {
-    if (player->candle_fuel == 0) return 0;
+    if (player->current_candle == 0) return 0;
 
-    int max_class_radius;
+    int max_class_radius = 1;
     switch (player->class) {
         case Priest:
             max_class_radius = MAX_RADIUS_PRIEST;
@@ -239,17 +240,40 @@ int get_candle_light(Player player) {
             break;
     }
 
-    return (player->candle_fuel * max_class_radius) / MAX_CANDLE_FUEL;
+    return (player->current_candle * max_class_radius) / MAX_CANDLE_FUEL;
 }
 
 void add_candle_fuel(Player player, int fuel) {
     player->candle_fuel += fuel;
-    if (player->candle_fuel > MAX_CANDLE_FUEL) player->candle_fuel = MAX_CANDLE_FUEL;
+    // if (player->candle_fuel > MAX_CANDLE_FUEL) player->candle_fuel = MAX_CANDLE_FUEL;
 }
 
 void reduce_candle_fuel(Player player, int fuel) {
     player->candle_fuel -= fuel;
     if (player->candle_fuel < 0) player->candle_fuel = 0;
+}
+
+void add_to_current_candle(Player player, int fuel) {
+    player->current_candle += fuel;
+    if (player->current_candle > MAX_CANDLE_FUEL) player->current_candle = MAX_CANDLE_FUEL;
+}
+
+void reduce_from_current_candle(Player player, int fuel) {
+    player->current_candle -= fuel;
+    if (player->current_candle < 0) player->current_candle = 0;
+}
+
+void use_candle_fuel(Player player, int fuel) {
+    if (player->candle_fuel < fuel) return;
+
+    int maxAmount = MAX_CANDLE_FUEL - player->current_candle;
+    int amount = imin(fuel, maxAmount);
+
+    reduce_candle_fuel(player, amount);
+    add_to_current_candle(player, amount);
+
+	int sanity = (rand() % 15) + 5;
+	restore_sanity(g_gamestate->player, sanity);
 }
 
 void init_ultimate_clocks() {

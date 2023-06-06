@@ -13,6 +13,7 @@ void addCandleToMap() {
 
 void start_game() {
 	if (g_renderstate->activeMenus > 0) closeMenu(g_renderstate->menus[0]->id);
+	reset_contagem();
 	
 	// g_gamestate->input_initialized = 1;
 	// g_gamestate->clock = 0;

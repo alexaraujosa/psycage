@@ -226,3 +226,10 @@ void molotov_entity_checker(Entity entity) {
 
     return;
 }
+
+void reset_contagem() {
+    contagem_molotov = 0;
+    contagem_trap = 0;
+
+    return;
+}

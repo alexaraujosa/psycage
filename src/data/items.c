@@ -136,7 +136,7 @@ DataItemNode get_item_by_name(char* name) {
         }
     }
 
-    return NULL; 
+    return hm_get(items, "0000"); 
 }
 
 

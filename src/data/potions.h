@@ -7,6 +7,7 @@
 
 
 /* FUNCTION SIGNATURES */
+void init_potions_clock();
 void create_potion();
 void use_random_potion();
 void remove_potion_strength_effect();

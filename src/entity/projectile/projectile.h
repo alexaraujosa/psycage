@@ -22,5 +22,8 @@ void move_trap(int dx, int dy);
 void deploy_trap();
 void trap_checker();
 void remove_trap();
+void move_molotov(int dx, int dy);
+void molotov_checker();
+void remove_molotov();
 
 #endif

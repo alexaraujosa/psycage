@@ -12,7 +12,7 @@
 Clock clock_trap = NULL;
 Clock clock_molotov = NULL;
 
-static int raioAnterior = 0;
+// static int raioAnterior = 0;
 static int contagem_molotov = 0, contagem_trap = 0;
 
 Projectile defaultProjectile() {
@@ -137,22 +137,6 @@ void trap_checker() {
 
 
 
-
-void move_molotov(int dx, int dy) {
-
-        if(is_passable(g_gamestate->projectiles[2]->entity->coords->x + dx, g_gamestate->projectiles[2]->entity->coords->y + dy) &&
-         contagem_molotov < DISTANCIA_ATIRAR_MOLOTOV) 
-        {
-		    g_gamestate->projectiles[2]->entity->coords->x += dx;
-		    g_gamestate->projectiles[2]->entity->coords->y += dy;
-            contagem_molotov++;
-        }
-        else
-            deploy_molotov();
-
-    return;
-}
-
 void deploy_molotov() {
 
     for(int y = RAIO_MOLOTOV ; y >= -RAIO_MOLOTOV ; y--)
@@ -179,6 +163,21 @@ void deploy_molotov() {
             map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
     
     clock_molotov->blocked = 0;
+
+    return;
+}
+
+void move_molotov(int dx, int dy) {
+
+        if(is_passable(g_gamestate->projectiles[2]->entity->coords->x + dx, g_gamestate->projectiles[2]->entity->coords->y + dy) &&
+         contagem_molotov < DISTANCIA_ATIRAR_MOLOTOV) 
+        {
+		    g_gamestate->projectiles[2]->entity->coords->x += dx;
+		    g_gamestate->projectiles[2]->entity->coords->y += dy;
+            contagem_molotov++;
+        }
+        else
+            deploy_molotov();
 
     return;
 }

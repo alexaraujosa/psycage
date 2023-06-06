@@ -195,6 +195,33 @@ void draw_OptionsKeybinderMenu(Menu menu){
 void tick_OptionsKeybinderMenu() {
     return;
 }
+
+void inputCollectionFailure() {
+    g_dialog_keybinds = NULL;
+    g_dialog_text = get_localized_string(g_renderstate->language, "menu.options.keybinder.input_failure");
+
+    int gsl = 0, gsw = 0;
+    get_multiline_stats(
+        g_dialog_text,
+        &gsl,
+        &gsw
+    );
+
+    g_ui_size[0] = gsl + 4;
+    g_ui_size[1] = gsw + 5;
+    g_dialog_control[0] = gsw + 3;
+    g_dialog_control[1] = gsl;
+    g_dialog_control[3] = 0;
+
+    char**** _page_data = malloc(sizeof(char****));
+    int page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
+
+    g_dialog_control[2] = page_count;
+    g_dialog_page_data = _page_data;
+
+    displayMenu(MENU_DIALOG);
+}
+
 void handle_OptionsKeybinderMenu_keybinds(int key){
 
     if(botao_selecionado_keybinder == 0 && key == KEY_UP) {
@@ -218,7 +245,7 @@ void handle_OptionsKeybinderMenu_keybinds(int key){
             botao_selecionado_keybinder++;
             break;
 
-        case 10 : case 13 : 
+        case 10 : case 13 : {
             unsigned char temp;
             switch(botao_selecionado_keybinder) {
                 case 0 : 
@@ -226,37 +253,65 @@ void handle_OptionsKeybinderMenu_keybinds(int key){
                     break;
 
                 case 1 : 
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+
                     keybinds[0] = (int) temp;
                     break;
 
                 case 2 : 
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[1] = (int) temp;
                     break;
 
                 case 3 : 
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[2] = (int) temp;
                     break;
 
                 case 4 :
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[3] = (int) temp;
                     break;
                 
                 case 5 :
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[4] = (int) temp;
                     break;
                 
                 case 6 : 
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[5] = (int) temp;
                     break;
                 
                 case 7 :
-                    scanf("%c", &temp);
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
                     keybinds[6] = (int) temp;
                     break;
 
@@ -276,7 +331,7 @@ void handle_OptionsKeybinderMenu_keybinds(int key){
             }
 
             break;
-
+        }
     }
     
 }

@@ -2,6 +2,7 @@
 #define __RL_RENDER_UI_MENU_OM_H
 
 #include "../ui.h"
+#include "./dialog.h"
 
 #define BOTOES_KEYBINDER 11
 #define ESPACAMENTO_KEYBINDER 2

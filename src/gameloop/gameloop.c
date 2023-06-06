@@ -604,18 +604,6 @@ void move_player(int dx, int dy) {
 	g_gamestate->player->entity->coords->y += dy;
 }
 
-// void move_projectile(int dx, int dy) {
-
-// 	if(is_passable(g_gamestate->projectile->entity->coords->x + dx, g_gamestate->projectile->entity->coords->y + dy)) {
-// 		g_gamestate->projectile->entity->coords->x += dx;
-// 		g_gamestate->projectile->entity->coords->y += dy;
-// 	}
-// 	else {
-// 		g_gamestate->projectile->entity->coords->x = g_gamestate->projectile->entity->coords->y = 0;
-// 	}
-
-// }
-
 void move_projectile(int dx, int dy) {
 	static int moveCount = 0;
 

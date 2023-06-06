@@ -56,7 +56,7 @@ Gamestate init_gameloop() {
     gs->projectile_count = projectile_count;
 
     debug_file(dbgOut, 0, " - Initializing clock-related variables...\n");
-	gs->input_initialized = 1;
+	gs->input_initialized = FALSE;
 	gs->clock = 0;
 	gs->block_clock = 1;
 	gs->potion_strength = 0;

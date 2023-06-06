@@ -186,15 +186,13 @@ void draw_SaveInfo(Menu menu) {
     // Handle Cache
     _sm_ensure_cache();
 
-    // char* title_transl = get_args_localized_string(g_renderstate->language, "menu.save.slot", botao_selecionado_principal);
     char* _title_transl = cached_translations[0].value;
     int transl_size = strlen(_title_transl) + 1;
 
     char* title_transl = (char*)malloc(transl_size);
     snprintf(title_transl, transl_size, _title_transl, botao_selecionado_principal);
 
-    mvwprintw(menu->wnd, 
-        //getmaxy(menu->wnd)/4 + 1,
+    mvwprintw(menu->wnd,
         2,
         getmaxx(menu->wnd)/2 - strlen(title_transl)/2,
         "%s", title_transl
@@ -202,21 +200,18 @@ void draw_SaveInfo(Menu menu) {
 
     // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES_INFOS ; i++, separador += 1) {
-
-        // if(i == effect_infos) wattron(menu->wnd, A_BOLD | A_DIM | A_REVERSE);
         if(i == botao_selecionado_infos) wattron(menu->wnd, A_BOLD | A_DIM | A_REVERSE);
 
         char* transl = NULL;
-        if (i > 1) {
+        if (!g_gamestate->input_initialized && i == 1) {
+            transl = cached_translations[1].value;
+        } else if (i > 1) {
             if (verify_Save(botao_selecionado_principal)) {
-                // transl = get_localized_string(g_renderstate->language, "menu.save.infos.not_available");
                 transl = cached_translations[1].value;
             } else {
-                // transl = get_localized_string(g_renderstate->language, botoes_infos[i]); //get_args_localized_string(g_renderstate->language, botoes_infos[i], i);
                 transl = cached_translations[2 + i].value;
             }
         } else {
-            // transl = get_localized_string(g_renderstate->language, botoes_infos[i]);
             transl = cached_translations[2 + i].value;
         }
         
@@ -369,6 +364,15 @@ int hsmk_delete(int key) {
     }
 }
 
+int hsmk_load(int key) {
+    g_dialog_keybinds = NULL;
+    g_gamestate->valid_state = TRUE;
+    g_gamestate->input_initialized = TRUE;
+    closeMenu(g_renderstate->menus[0]->id);
+
+    return 0;
+}
+
 void handle_SaveMenu_keybinds(int key) {
     if(save_selecionado == 0) {
         if(botao_selecionado_principal == 0 && key == KEY_UP) {
@@ -424,7 +428,8 @@ void handle_SaveMenu_keybinds(int key) {
     } else {
         if(botao_selecionado_infos == 0 && key == KEY_UP) {
             if (verify_Save(botao_selecionado_principal)) {
-                botao_selecionado_infos = 1;
+                if (!g_gamestate->input_initialized) botao_selecionado_infos = 0;
+                else botao_selecionado_infos = 1;
                 // effect_infos = 1;
             } else {
                 botao_selecionado_infos = BOTOES_INFOS - 1;
@@ -448,12 +453,14 @@ void handle_SaveMenu_keybinds(int key) {
                 break;
 
             case KEY_DOWN :
-                if (verify_Save(botao_selecionado_principal) && botao_selecionado_infos == 1) {
-                    botao_selecionado_infos = 0;
-                    // effect_infos = 0;
+                if (verify_Save(botao_selecionado_principal)) {
+                    // if (botao_selecionado_infos == 1) botao_selecionado_infos = 0;
+                    if (!g_gamestate->input_initialized) botao_selecionado_infos = 0;
+                    else if (botao_selecionado_infos == 1) botao_selecionado_infos = 0;
+                    else botao_selecionado_infos++;;
                 } else {
                     botao_selecionado_infos++;
-                    // effect_infos++;
+                    // if (!g_gamestate->input_initialized && botao_selecionado_infos == 1) botao_selecionado_infos = 2;
                 }
                 break;
 
@@ -626,7 +633,8 @@ void handle_SaveMenu_keybinds(int key) {
                             g_ui_size[1] = gsw + 5;
                             g_dialog_control[0] = gsw + 3;
                             g_dialog_control[1] = gsl;
-                            
+                            g_dialog_keybinds = &hsmk_load;
+
                             g_dialog_control[3] = 1;
                             page_count = calculate_dialog_metadata(g_dialog_text, _page_data);
                             g_dialog_control[2] = page_count;

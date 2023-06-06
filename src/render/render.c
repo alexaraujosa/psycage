@@ -133,10 +133,9 @@ Renderstate init_render() {
 void render(Gamestate gs) {
     if (!g_gamestate->valid_state) return;
     
-    if (map != NULL && map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
+    if (g_gamestate->input_initialized && map != NULL && map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
         print_loading_screen(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
-    }
-    else{
+    } else {
         if(isInMenu() == 0){
             print_random_map(ALTURA_JOGO, LARGURA_JOGO, find_map, OFFSET_Y, OFFSET_X); // map
             render_game(gs);

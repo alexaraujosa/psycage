@@ -64,6 +64,9 @@ void start_game() {
 		addCandleToMap();
 	}
 
+	g_gamestate->valid_state = TRUE;
+	g_gamestate->input_initialized = TRUE;
+
 	return;
 }
 
@@ -132,6 +135,7 @@ void continue_game(){
 
 void end_game() {
 	if (!g_gamestate->valid_state) return;
+	if (!g_gamestate->input_initialized) goto end_game_final;
 
 	// -- Gamestate
 
@@ -159,35 +163,37 @@ void end_game() {
 	// Free chests
 	for(int i = 0 ; i < g_gamestate->chest_count ; i++)
 		destroyChest(g_gamestate->chests[i]);
-	
-	// Free gamestate
-	free(g_gamestate);
+
+	end_game_final: {
+		// Free gamestate
+		free(g_gamestate);
 
 
-	// -- Renderstate
+		// -- Renderstate
 
-	// Free menus
-	if (g_renderstate->activeMenus > 0) closeMenu(g_renderstate->menus[0]->id);
+		// Free menus
+		if (g_renderstate->activeMenus > 0) closeMenu(g_renderstate->menus[0]->id);
 
-	// Free locales
-	// Por adicionar !!!!!!!!!!!!!!
+		// Free locales
+		// Por adicionar !!!!!!!!!!!!!!
 
-	// Free window
-	endwin();
+		// Free window
+		endwin();
 
-	// Free renderstate
-	free(g_renderstate);
+		// Free renderstate
+		free(g_renderstate);
 
-	g_gamestate->valid_state = FALSE;
-	EXIT = TRUE;
+		g_gamestate->valid_state = FALSE;
+		EXIT = TRUE;
 
 
-	// -- General
+		// -- General
 
-	// Free items
-	// Por adicionar !!!!!!!!!!
+		// Free items
+		// Por adicionar !!!!!!!!!!
 
-	return;
+		return;
+	}
 }
 
 void reset_player_values() {

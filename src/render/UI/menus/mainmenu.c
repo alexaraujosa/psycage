@@ -6,7 +6,7 @@
 #define LARGURA_CAGE 56
 #define ALTURA_CAGE 31
 
-static int ingame = 0;
+// static int ingame = 0;
 
 extern int EXIT;
 
@@ -130,7 +130,7 @@ void handle_MainMenu_keybinds(int key) {
         case 10 : case 13 : 
             switch(botao_selecionado_principal) {
                 case 0 : 
-                    ingame = 1;
+                    // ingame = 1;
                     displayMenu(MENU_CHARACTERS);
                     break;
 
@@ -148,7 +148,8 @@ void handle_MainMenu_keybinds(int key) {
             break;
         case 'Q':
         case 'q': {
-            if (ingame) {
+            // if (ingame) {
+            if (g_gamestate->input_initialized) {
                 closeMenu(MENU_MAIN_MENU);
                 drawGameInterface();
             }

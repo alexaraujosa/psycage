@@ -20,11 +20,7 @@ static char *pausa[ALTURA_PAUSE] = {
                                                        
 };
 
-
-
-
 void draw_PauseMenu(Menu menu) {
-
     // Get the width of the widest button
     char *botaoMaior = tamanho_maxPalavra(BOTOES, botoes);
     unsigned short int tamanhoBotaoMaior = strlen(botaoMaior);
@@ -34,9 +30,10 @@ void draw_PauseMenu(Menu menu) {
     unsigned short int y_pause = yMAX   - ALTURA_PAUSE*4/3;
 
     // Create the rectangle that connects the ASCII ART and the Logo
-    rectangle(menu->wnd,
-              ALTURA_LOGO                , x_pause - ALTURA_PAUSE, 
-              y_pause + ALTURA_PAUSE/2 -1, x_pause + LARGURA_PAUSE + ALTURA_PAUSE
+    rectangle(
+        menu->wnd,
+        ALTURA_LOGO                , x_pause - ALTURA_PAUSE, 
+        y_pause + ALTURA_PAUSE/2 -1, x_pause + LARGURA_PAUSE + ALTURA_PAUSE
     );
 
     // Prints the ASCII stored in the array pause in bold
@@ -50,87 +47,70 @@ void draw_PauseMenu(Menu menu) {
 
     // Create the rectangle around the buttons
     rectangle(
-              menu->wnd, 
-              yMAX/2 - ALTURA_PAUSE/2           , xMAX/2 - tamanhoBotaoMaior/2 - 1, 
-              yMAX/2 - ALTURA_PAUSE/2 + BOTOES*2, xMAX/2 + tamanhoBotaoMaior/2 
-             );
+        menu->wnd, 
+        yMAX/2 - ALTURA_PAUSE/2           , xMAX/2 - tamanhoBotaoMaior/2 - 1, 
+        yMAX/2 - ALTURA_PAUSE/2 + BOTOES*2, xMAX/2 + tamanhoBotaoMaior/2 
+    );
 
     // Print the logo
     printer(menu->wnd, yMAX/4 - ALTURA_LOGO, xMAX/2 - LARGURA_LOGO/2);
 
     // Prints the buttons (The selected one is highlighted)
     for(int i = 0, separador = 0 ; i < BOTOES ; i++, separador += 1) {
-
-        if(i == botao_selecionado_principal)
-            wattron(menu->wnd, A_REVERSE);
+        if(i == botao_selecionado_principal) wattron(menu->wnd, A_REVERSE);
 
         mvwprintw(menu->wnd, 
-                  yMAX/2 - ALTURA_PAUSE/2 + separador + i + 1 ,
-                  xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
-                  "%s", get_localized_string(g_renderstate->language, botoes[i])
-                );
+            yMAX/2 - ALTURA_PAUSE/2 + separador + i + 1,
+            xMAX/2 - strlen(get_localized_string(g_renderstate->language, botoes[i]))/2,
+            "%s", get_localized_string(g_renderstate->language, botoes[i])
+        );
         
-        if(i == botao_selecionado_principal)
-            wattroff(menu->wnd, A_REVERSE);
-
+        if(i == botao_selecionado_principal) wattroff(menu->wnd, A_REVERSE);
     }
-
 }
 
 void tick_PauseMenu() {
     return;
 }
 
-
 void handle_PauseMenu_keybinds(int key) {
-
-
     if(botao_selecionado_principal == 0 && key == KEY_UP) {
-
         botao_selecionado_principal = BOTOES - 1;
 
         return;
     }
 
     if(botao_selecionado_principal == BOTOES-1 && key == KEY_DOWN) {
-
         botao_selecionado_principal = 0;
 
         return;
     }
     
     switch(key) {
-
         case KEY_UP :
             botao_selecionado_principal--;
             break;
-
-
         case KEY_DOWN :
             botao_selecionado_principal++;
             break;
-
-
-        case 10 : case 13 : switch(botao_selecionado_principal) {
-
-                            case 0 : 
-                                closeMenu(MENU_PAUSE);
-                                break;
-                            
-                            case 1 :
-                                displayMenu(MENU_SAVE);
-                                break;
-
-                            case 2 : 
-                                displayMenu(MENU_OPTIONS); 
-                                break;
-                            case 3 : 
-                                closeMenu(g_renderstate->menus[0]->id);
-                                displayMenu(MENU_MAIN_MENU); 
-                                break;
-
-                        }
-
+        case 10 : case 13 : 
+            switch(botao_selecionado_principal) {
+                case 0 : 
+                    closeMenu(MENU_PAUSE);
+                    break;          
+                case 1 :
+                    displayMenu(MENU_SAVE);
+                    break;
+                case 2 : 
+                    displayMenu(MENU_OPTIONS); 
+                    break;
+                case 3 : 
+                    closeMenu(g_renderstate->menus[0]->id);
+                    displayMenu(MENU_MAIN_MENU); 
+                    g_gamestate->input_initialized = FALSE;
+                    break;
+            }
+            break;
     }
     
 }

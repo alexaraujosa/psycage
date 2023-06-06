@@ -31,7 +31,7 @@ typedef struct renderstate {
     int nrows;
     int ncols;
     int activeMenus;
-    int language;   // 0 - en_US || 1 - pt_PT
+    DataLocale language;   // 0 - en_US || 1 - pt_PT
     Menu menus[MENU_STACK_MAX];
 } RENDERSTATE, *Renderstate;
 
@@ -98,6 +98,7 @@ typedef enum colors {
     MOLOTOV,
     MOLOTOV_VISITED,
     POTION,
+    CANDLE,
     MATRIX_BG,
     MATRIX_FG,
     SANITY_FULL,
@@ -106,10 +107,10 @@ typedef enum colors {
     EMPTY
 } Colors;
 
-enum languages{
-    en_US,
-    pt_PT
-};
+// enum languages{
+//     en_US,
+//     pt_PT
+// };
 
 
 // Global Renderstate
@@ -130,6 +131,7 @@ int isInMenu();
 void _removeMenu(MenuId menu);
 
 // Renderers
+void render_foreground();
 void render_game(Gamestate gs);
 void render_menu(Gamestate gs);
 

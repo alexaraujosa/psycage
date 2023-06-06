@@ -40,6 +40,10 @@ void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
                 if(visible[y][x] == 2)
                     mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(DUNGEON_BLOOD_VISITED));
             }
+            if(map[y][x] == 6)
+                mvaddch(y + beginY, x + beginX, 'i' | COLOR_PAIR(CANDLE));
+            if(map[y][x] == 6)
+                mvaddch(y + beginY, x + beginX, 'i' | COLOR_PAIR(CANDLE));
         }
         
         wprintw(g_renderstate->wnd, "\n");
@@ -55,39 +59,42 @@ void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
 void print_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
     
     // Print the map
-    for (int j = 0; j < HEIGHT; j++) {
+    for (int y = 0; y < HEIGHT; y++) {
         
-        for (int i = 0; i < WIDTH; i++) {
+        for (int x = 0; x < WIDTH; x++) {
             
-            if (map[j][i] == 1) {
-                mvaddch(j + beginY,i + beginX, '#' | COLOR_PAIR(SEWERS_WALLS));
+            if (map[y][x] == 1) {
+                mvaddch(y + beginY,x + beginX, '#' | COLOR_PAIR(SEWERS_WALLS));
 
-                if(visible[j][i] == 2)
-                    mvaddch(j + beginY, i + beginX, '#' | COLOR_PAIR(SEWERS_WALLS_VISITED));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '#' | COLOR_PAIR(SEWERS_WALLS_VISITED));
             }
-            if (map[j][i] == 3) {
-                mvaddch(j + beginY, i + beginX, ' ' | COLOR_BLACK);
+            if (map[y][x] == 3) {
+                mvaddch(y + beginY, x + beginX, ' ' | COLOR_BLACK);
             }
-            if (map[j][i] == 2) {
-                mvaddch(j + beginY, i + beginX, '~' | COLOR_PAIR(SEWERS_BLOOD));
+            if (map[y][x] == 2) {
+                mvaddch(y + beginY, x + beginX, '~' | COLOR_PAIR(SEWERS_BLOOD));
         
-                if(visible[j][i] == 2)
-                    mvaddch(j + beginY, i + beginX, '~' | COLOR_PAIR(SEWERS_BLOOD_VISITED));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '~' | COLOR_PAIR(SEWERS_BLOOD_VISITED));
             }
-            if (map[j][i] == 0){
-                mvaddch(j + beginY, i + beginX, 'H' | COLOR_PAIR(SEWERS_FLOOR));
+            if (map[y][x] == 0){
+                mvaddch(y + beginY, x + beginX, 'H' | COLOR_PAIR(SEWERS_FLOOR));
 
-                if(visible[j][i] == 2)
-                    mvaddch(j + beginY, i + beginX, 'H' | COLOR_PAIR(SEWERS_FLOOR_VISITED));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, 'H' | COLOR_PAIR(SEWERS_FLOOR_VISITED));
             }
-            if (map[j][i] == 4){
-                mvaddch(j + beginY, i + beginX, 'D' | COLOR_PAIR(DOOR));
+            if (map[y][x] == 4){
+                mvaddch(y + beginY, x + beginX, 'D' | COLOR_PAIR(DOOR));
             }
-            if(map[j][i] == 7) {
-                mvaddch(j + beginY, i + beginX, 'P' | COLOR_PAIR(POTION));
-                if(visible[j][i] == 2)
-                    mvaddch(i + beginY, i + beginX, '~' | COLOR_PAIR(SEWERS_BLOOD_VISITED));
+            if(map[y][x] == 7) {
+                mvaddch(y + beginY, x + beginX, 'P' | COLOR_PAIR(POTION));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '~' | COLOR_PAIR(SEWERS_BLOOD_VISITED));
             }
+            
+            if(map[y][x] == 6)
+                mvaddch(y + beginY, x + beginX, 'i' | COLOR_PAIR(CANDLE));
         }
     
         wprintw(g_renderstate->wnd, "\n");
@@ -135,6 +142,8 @@ void print_asylum(int HEIGHT, int WIDTH, int beginY, int beginX) {
                 if(visible[y][x] == 2)
                     mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(ASYLUM_BLOOD_VISITED));
             }
+            if(map[y][x] == 6)
+                mvaddch(y + beginY, x + beginX, 'i' | COLOR_PAIR(CANDLE));
         }
         
         wprintw(g_renderstate->wnd, "\n");

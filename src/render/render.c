@@ -24,7 +24,7 @@ Renderstate init_render() {
     getmaxyx(wnd,nrows,ncols);
     rs->nrows = nrows;
     rs->ncols = ncols;
-    rs->language = en_US;
+    rs->language = EN_US;//en_US;
 
 	cbreak();
 	noecho();
@@ -106,6 +106,7 @@ Renderstate init_render() {
     init_pair(MOLOTOV, ORANGE, DARK_RED);
     init_pair(MOLOTOV_VISITED, DARK_ORANGE, DARK_DARK_RED);
     init_pair(POTION, COLOR_WHITE, PURPLE);
+    init_pair(CANDLE, COLOR_YELLOW, ORANGE);
 
     init_pair(MATRIX_BG, GREEN, DARK_GREEN);
     init_pair(MATRIX_FG, COLOR_BLACK, COLOR_BLACK);
@@ -178,7 +179,7 @@ Menu displayMenu(MenuId menu) {
     if (nmenu == NULL) {
         debug_file(dbgOut, 1, "- Unable to create menu. Exiting.");
         EXIT = TRUE;
-        return;
+        return NULL;
     }
 
     g_renderstate->menus[g_renderstate->activeMenus++] = nmenu;
@@ -293,7 +294,7 @@ void render_sanity_bar(WINDOW* wnd, int startX, int startY, int percentage) {
     wmove(wnd, startY, startX);
 
     wattron(wnd, COLOR_PAIR(SANITY_EMPTY));
-    rectangle(wnd, startY - 1, 0, startY + 1, 27);
+    rectangle(wnd, startY - 1, startX, startY + 1, startX + 27);
     // mvwprintw(wnd, startY, startX + 1, "%3d%%", percentage);
     if (percentage < 0) {
         mvwprintw(wnd, startY, startX + 1, "%3.3d%%", percentage);
@@ -331,16 +332,27 @@ void render_sanity_bar(WINDOW* wnd, int startX, int startY, int percentage) {
 void render_foreground() {
     Coords playerCoords = g_gamestate->player->entity->coords;
 
-    render_sanity_bar(g_renderstate->wnd, 0, g_renderstate->nrows - 3, g_gamestate->player->sanity);
+    int posX = 0;
+    // int posX = g_renderstate->ncols - 28;
+
+    if (
+        (playerCoords->x > 0 && playerCoords->x <= 29)
+        && (playerCoords->y > ALTURA_JOGO - 4 && playerCoords->y <= ALTURA_JOGO)
+    ) {
+        posX = g_renderstate->ncols - 28;
+    }
+
+    render_sanity_bar(g_renderstate->wnd, posX, g_renderstate->nrows - 3, g_gamestate->player->sanity);
 
 	wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
-    move(g_renderstate->nrows - 1, 0);
+    move(g_renderstate->nrows - 1, posX);
     printw("                            ");
 
-    move(g_renderstate->nrows - 1, 0);
-    printw(" X: %d Y: %d | %d", 
+    move(g_renderstate->nrows - 1, posX);
+    printw(" X: %d Y: %d | %d %d", 
         playerCoords->x, 
         playerCoords->y,
+        g_gamestate->player->current_candle,
         g_gamestate->player->candle_fuel
     );
 
@@ -414,10 +426,8 @@ void render_game(Gamestate gs) {
 
 
 
-    if(g_gamestate->player->cheats->godmode == 1)	
-        wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
-    else	
-        wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
+    if(g_gamestate->player->cheats->godmode == 1) wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
+    else wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     
 	mvwaddch(g_renderstate->wnd, playerCoords->y + OFFSET_Y, playerCoords->x + OFFSET_X, '@');
 

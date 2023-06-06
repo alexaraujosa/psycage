@@ -879,9 +879,9 @@ void _executeCommand(int cmd, void* override) {
             snprintf(
                 out, MAX_CONSOLE_INPUT, 
                 "Player { entity=<Entity>; item=<Item>; cheats=<Cheats>; level=%d; kills=%d; xp=%d; last_direction=%d; "
-                    "class=%s; radius=%d; sanity=%d; candle_light=%d }",
+                    "class=%s; radius=%d; sanity=%d; candle_light=%d; hasUltimate=%d }",
                 player->level, player->kills, player->xp, player->last_direction, 
-                    stringify_class(player->class), player->radius, player->sanity, player->candle_fuel
+                    stringify_class(player->class), player->radius, player->sanity, player->candle_fuel, player->hasUltimate
             );
 
             addMessage(out);       
@@ -1055,6 +1055,12 @@ void _executeCommand(int cmd, void* override) {
                 "%d",
                 player->candle_fuel
             );
+        } else if (equal_strings(param, "hasUltimate")) {
+            snprintf(
+                out, MAX_CONSOLE_INPUT, 
+                "%d",
+                player->hasUltimate
+            );
         }
 
         addMessage(out);
@@ -1112,7 +1118,7 @@ void _executeCommand(int cmd, void* override) {
         snprintf(
             out, MAX_CONSOLE_INPUT, 
             "Added clock: %p",
-            clock
+            (void*)clock
         );
 
         addMessage(out);

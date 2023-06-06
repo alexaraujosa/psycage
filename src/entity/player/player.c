@@ -46,6 +46,8 @@ Player defaultPlayer() {
     player->candle_fuel = 0;
     player->current_candle = 5;
     player->hasUltimate = 0;
+    player->molotov = 0;
+    player->trap = 0;
 
     player->item = get_random_item();
 

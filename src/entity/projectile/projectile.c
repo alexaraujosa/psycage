@@ -225,7 +225,7 @@ void molotov_checker() {
 
 void molotov_entity_checker(Entity entity) {
 
-    if(map[entity->coords->y][entity->coords->x] == 9 && entity->health > 0)
+    if(map[entity->coords->y][entity->coords->x] == 9 && entity->health > 0 && g_gamestate->player->cheats->godmode == 0)
         damageEntity(entity, 1);
 
     return;

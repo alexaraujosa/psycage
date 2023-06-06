@@ -27,6 +27,8 @@ typedef struct player {
     int candle_fuel;
     int current_candle;
     int hasUltimate;
+    int molotov;
+    int trap;
 } PLAYER, *Player;
 
 enum Classes {

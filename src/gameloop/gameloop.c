@@ -285,7 +285,7 @@ void tick() {
 			}
 		}
 
-		for(int i = 0 ; i < g_gamestate->mob_count ; i++) {
+		for(int i = 0 ; i < g_gamestate->mob_begin ; i++) {
 			if(g_gamestate->mobs[i]->entity->coords->y != 0 && g_gamestate->mobs[i]->entity->coords->x != 5)
 				molotov_entity_checker(g_gamestate->mobs[i]->entity);
 		}

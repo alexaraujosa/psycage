@@ -142,14 +142,13 @@ Gamestate init_gameloop() {
 
 	for (int i = 0; i < mob_count; i++) {
 		Mob mob = defaultMob();
-		addRandomItemToMob(mob);
-
 		mobs[i] = mob;
-		// map[mob->entity->coords->y][mob->entity->coords->x] = 5;
+
 	}
 
 	gs->mobs = mobs;
 	gs->mob_count = mob_count;
+	gs->mob_begin = mob_count;
 
 	debug_file(dbgOut, 0 , " - Generating chests...\n");
     int chest_count = 1;
@@ -293,7 +292,7 @@ void tick() {
 
 		molotov_entity_checker(g_gamestate->player->entity);
 
-		for (int i = 0; i < g_gamestate->mob_count; i++) {
+		for (int i = 0; i < g_gamestate->mob_begin; i++) {
 			attemptMoveMob(
 				g_gamestate->player->entity->coords, 
 				g_gamestate->mobs[i],
@@ -330,6 +329,8 @@ void tick() {
 		
 		ultimate_checker();
 
+	for(int i = 0 ; i < g_gamestate->mob_begin ; i++)
+		MobAliveChecker(g_gamestate->mobs[i], i);	
 		// Doors
 		if(g_gamestate->mob_count == 0){
 
@@ -603,9 +604,12 @@ void move_projectile(int dx, int dy) {
 	static int moveCount = 0;
 
 	if (g_gamestate->player->class == Priest) {
-	    g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->player->entity->coords->x + dx;
-	    g_gamestate->projectiles[0]->entity->coords->y = g_gamestate->player->entity->coords->y + dy;
-
+		if (is_passable(g_gamestate->projectiles[0]->entity->coords->x + dx, g_gamestate->projectiles[0]->entity->coords->y + dy)) {
+			g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->player->entity->coords->x + dx;
+	        g_gamestate->projectiles[0]->entity->coords->y = g_gamestate->player->entity->coords->y + dy;
+		} else {
+			g_gamestate->projectiles[0]->entity->coords->x = g_gamestate->projectiles[0]->entity->coords->y = 0;
+		}
 	} else if (g_gamestate->player->class == Mercenary) {
 		if (moveCount < 5) {
 			if (is_passable(g_gamestate->projectiles[0]->entity->coords->x + dx, g_gamestate->projectiles[0]->entity->coords->y + dy)) {
@@ -674,15 +678,77 @@ void print_loading_screen(WINDOW* win, int HEIGHT, int WIDTH){
 	}
 }
 
-void destroy_mob(int x){
+void destroy_mob(int x) {
+  if (x >= g_gamestate->mob_count) return;
 
-	for (int i = 0, j = 0; i < g_gamestate->mobs; i++,j++){
-		
-		if(i == x){
-			i++;
-		}
-		g_gamestate->mobs[j] = g_gamestate->mobs[i];
-	}
-	
-	g_gamestate->mob_count--;
+  for (int i = 0; i < g_gamestate->mob_count - 1; i++) {
+    if (i >= x) {
+      destroyMob(g_gamestate->mobs[i]);
+      g_gamestate->mobs[i] = g_gamestate->mobs[i + 1];
+    }
+  }
+
+  g_gamestate->mob_count--;
 }
+
+void levelUp() {
+    if (g_gamestate->player->level <= 99) {
+        if (g_gamestate->player->xp % 5 == 0) {
+            g_gamestate->player->level += 1;
+            g_gamestate->player->xp = 0;
+			for(int i = 0; i < g_gamestate->mobs[i]; i++){
+				g_gamestate->mobs[i]->entity->basedamage += 4;
+				g_gamestate->mobs[i]->entity->maxHealth += 6;
+			}
+			   if(strcmp(g_gamestate->player->item->id, "0007") == 0 || strcmp(g_gamestate->player->item->id, "0008") == 0 || strcmp(g_gamestate->player->item->id, "0009") == 0 
+			   || strcmp(g_gamestate->player->item->id, "0016") == 0 || strcmp(g_gamestate->player->item->id, "0018") == 0){
+                 if(g_gamestate->player->class == Priest){
+						 g_gamestate->player->entity->basedamage += 2;
+                         g_gamestate->player->entity->maxHealth += 4;
+				 }
+                 if(g_gamestate->player->class == Mercenary){
+						 g_gamestate->player->entity->basedamage += 3;
+                         g_gamestate->player->entity->maxHealth += 3;
+				 }
+                 if(g_gamestate->player->class == Detective){
+						 g_gamestate->player->entity->basedamage += 4;
+                         g_gamestate->player->entity->maxHealth += 2;
+				 }
+			   }
+               if(strcmp(g_gamestate->player->item->id, "0001") == 0 || strcmp(g_gamestate->player->item->id, "0002") == 0 || strcmp(g_gamestate->player->item->id, "0003") == 0 
+			   || strcmp(g_gamestate->player->item->id, "0010") == 0 || strcmp(g_gamestate->player->item->id, "0014") == 0){
+                 if(g_gamestate->player->class == Priest){
+					     g_gamestate->player->entity->basedamage += 4;
+                         g_gamestate->player->entity->maxHealth += 4;
+				 }
+                 if(g_gamestate->player->class == Mercenary){
+						 g_gamestate->player->entity->basedamage += 6;
+                         g_gamestate->player->entity->maxHealth += 3;
+				 }
+                 if(g_gamestate->player->class == Detective){
+						 g_gamestate->player->entity->basedamage += 8;
+                         g_gamestate->player->entity->maxHealth += 2;
+				 }
+			   }
+               if(strcmp(g_gamestate->player->item->id, "0004") == 0 || strcmp(g_gamestate->player->item->id, "0005") == 0 || strcmp(g_gamestate->player->item->id, "0006") == 0 
+			   || strcmp(g_gamestate->player->item->id, "0011") == 0 || strcmp(g_gamestate->player->item->id, "0012") == 0 || strcmp(g_gamestate->player->item->id, "0013") == 0 
+			   || strcmp(g_gamestate->player->item->id, "0015") == 0 || strcmp(g_gamestate->player->item->id, "0017") == 0){
+                 if(g_gamestate->player->class == Priest){
+                		 g_gamestate->player->entity->basedamage += 2;
+                         g_gamestate->player->entity->maxHealth += 8;
+				 }
+                 if(g_gamestate->player->class == Mercenary){
+						 g_gamestate->player->entity->basedamage += 3;
+                         g_gamestate->player->entity->maxHealth += 6;
+				 }
+                 if(g_gamestate->player->class == Detective){
+						 g_gamestate->player->entity->basedamage += 4;
+                         g_gamestate->player->entity->maxHealth += 4;
+				 }
+			   }
+
+			}
+            g_gamestate->player->entity->health = g_gamestate->player->entity->maxHealth;
+
+        }
+    }

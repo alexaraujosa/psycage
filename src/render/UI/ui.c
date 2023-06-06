@@ -622,7 +622,6 @@ void drawGameInterface() {
                   LARGURA_RETANGULO + LARGURA_LOGO + 4,
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
-    
 
     wattroff(g_renderstate->wnd, A_BOLD);
 

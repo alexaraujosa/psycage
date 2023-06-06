@@ -23,6 +23,7 @@ typedef struct gamestate {
     Mob* mobs;
     Chest* chests;
     int mob_count;
+    int mob_begin;
     int projectile_count;
     int chest_count;
     int last_res;

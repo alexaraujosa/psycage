@@ -428,10 +428,8 @@ void render_game(Gamestate gs) {
 
     wattron(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
 
-    for (int i = 0; i < gs->mob_count; i++) {
-        if(gs->mobs[i]->entity->health == 0)
-        wattron(g_renderstate->wnd, COLOR_PAIR(RED_BG));
-        if(visible[gs->mobs[i]->entity->coords->y][gs->mobs[i]->entity->coords->x] == 1)
+    for (int i = 0; i < gs->mob_begin; i++) {
+        if(visible[gs->mobs[i]->entity->coords->y][gs->mobs[i]->entity->coords->x] == 1 && g_gamestate->mobs[i]->entity->coords->x != 5 && g_gamestate->mobs[i]->entity->coords->y != 0)
             mvwaddch(
                 g_renderstate->wnd, 
                 gs->mobs[i]->entity->coords->y + OFFSET_Y, 
@@ -446,11 +444,9 @@ wattroff(g_renderstate->wnd, COLOR_PAIR(RED_BG));
                 g_renderstate->wnd, 
                 gs->chests[i]->entity->coords->y + OFFSET_Y, 
                 gs->chests[i]->entity->coords->x + OFFSET_X, 
-                'M'
+                'C'
             );
     }
-
-    wattroff(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
 
 
 

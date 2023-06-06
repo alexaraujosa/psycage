@@ -55,5 +55,6 @@ void ultimate_use();
 void ultimate_reset();
 void ultimate_detective();
 void ultimate_checker();
+void killCount(Player player, Entity entity);
 
 #endif

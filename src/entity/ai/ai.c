@@ -1,4 +1,5 @@
 #include "ai.h"
+#include "../player/player.h"
 
 #define NUM_OBSTACLES 4
 static int obstacles[NUM_OBSTACLES] = { 1, 3, 5, 7};
@@ -177,4 +178,48 @@ void addRandomItemToMob(Mob mob) {
     int index = rand() % NUM_ITEMS;
     
     mob->item = get_item_by_name(mob_itens[index]);
+}
+
+void damageMob(Mob mob, int hp, int index) {
+
+    if(mob->entity->health > 0)
+        damageEntity(mob->entity, hp);
+    else {
+        killMob(mob);
+    }
+    
+    return;
+}
+
+void MobAliveChecker(Mob mob, int index) {
+
+        
+            if((mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y+1 && 
+               mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x) ||
+               (mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y-1 && 
+               mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x) ||
+               (mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y && 
+               mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x+1) ||
+               (mob->entity->coords->y == g_gamestate->projectiles[0]->entity->coords->y && 
+               mob->entity->coords->x == g_gamestate->projectiles[0]->entity->coords->x-1)
+            )    
+                damageMob(mob, g_gamestate->player->entity->basedamage + g_gamestate->player->item->damage, index);
+        
+
+
+    
+
+}
+
+void killMob(Mob mob) {
+
+    mob->entity->coords->y = 0;
+    mob->entity->coords->x = 5;
+    mob->hasAI = FALSE;
+    map[mob->entity->coords->y][mob->entity->coords->x] = map_footprint[mob->entity->coords->y][mob->entity->coords->x];
+    killCount(g_gamestate->player, mob->entity);
+    g_gamestate->mob_count--;
+
+
+    return;
 }

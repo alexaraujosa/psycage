@@ -35,6 +35,13 @@ void start_game() {
 		map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
 	}
 
+	for(int i = g_gamestate->mob_count ; i < g_gamestate->mob_begin ; i++) {
+		if(g_gamestate->mobs[i] != NULL)
+			free(g_gamestate->mobs[i]);
+	}
+
+	g_gamestate->mob_begin = g_gamestate->mob_count;
+
 	for(int i = 0 ; i < g_gamestate->chest_count ; i++)
 	    addChestToMap(g_gamestate->chests[i], map, LARGURA_JOGO, ALTURA_JOGO);
 
@@ -86,9 +93,9 @@ void continue_game(){
 		}
 	}
 
-	g_gamestate->mob_count = (rand() % 6) + 7;
+	g_gamestate->mob_count = g_gamestate->mob_begin = (rand() % 6) + 7;
 
-	for(int i = 0 ; i < g_gamestate->mob_count ; i++) {
+	for(int i = 0 ; i < g_gamestate->mob_begin ; i++) {
 		g_gamestate->mobs[i] = defaultMob();
 		addRandomItemToMob(g_gamestate->mobs[i]);
 		addMobToMap(g_gamestate->mobs[i], map, LARGURA_JOGO, ALTURA_JOGO);

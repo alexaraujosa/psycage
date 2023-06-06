@@ -31,6 +31,7 @@ void damageEntity(Entity entity, int hp) {
             entity->health -= hp;
         } else {
             entity->health = 0;
+            //falta colocar a mobKill aqui, isto faz com que o mob caso tenho vida 0 continue com AI
         }
     }
 }

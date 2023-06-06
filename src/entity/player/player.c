@@ -51,28 +51,6 @@ Player defaultPlayer() {
     return player;
 }
 
-void levelUp(Player player, Entity entity) {
-    if (player->level <= 99) {
-        if (player->xp % 5 == 0) {
-            player->level += 1;
-            player->xp = 0;
-            player->entity->basedamage += 1;
-            player->entity->maxHealth += 4;
-            player->entity->health = player->entity->maxHealth;
-
-            if (player->level <= 25) {
-                entity->maxHealth += 4;
-                entity->basedamage += 2;
-            } else if (player->level > 25 && player->level<= 50) {
-                entity->maxHealth += 8;
-                entity->basedamage += 4;
-            } else if (player->level > 50 && player->level<= 75) {
-                entity->maxHealth += 12;
-                entity->basedamage += 6;
-            }
-        }
-    }
-}
 
 void killCount(Player player, Entity entity) {
     if (entity->health == 0) {

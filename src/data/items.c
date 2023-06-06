@@ -1,6 +1,6 @@
 #include "items.h"
 
-#define ITEMS 20
+#define ITEMS 19
 
 extern int EXIT;
 extern char ASSET_DIR[PATH_MAX];
@@ -145,7 +145,7 @@ DataItemNode get_random_item() {
     static char *itens[] = {
         "GlovesTier1", "GlovesTier2", "GlovesTier3", "HelmetTier1", "HelmetTier2", "HelmetTier3", "BeltTier1", 
         "BeltTier2", "BeltTier3", "Broken_Sword", "VestTier1", "VestTier2", "VestTier3", "SoldierGloves", 
-        "SoldierHelmet", "SoldierBelt", "SoldierVest", "PactOfInsanity", "PacifismPact"
+        "SoldierHelmet", "SoldierBelt", "SoldierVest", "PactOfInsanity"
     };
 
     volatile int index = rand() % itens_len;

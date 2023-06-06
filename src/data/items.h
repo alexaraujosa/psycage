@@ -25,7 +25,7 @@
 #include "util/math.h"
 #include "debug.h"
 
-#define MAX_ITEM_ID_SIZE 20
+#define MAX_ITEM_ID_SIZE 19
 #define ITEM_VERSION 1
 
 typedef struct ditem_node {

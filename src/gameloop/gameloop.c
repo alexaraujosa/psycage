@@ -331,6 +331,7 @@ void tick() {
 			map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] = 
 				map_footprint[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x];
 		}
+        g_gamestate->player->entity->armor = g_gamestate->player->item->armor;
 
 		// RTX_ON
 		calculate_visibility(
@@ -552,22 +553,28 @@ void game_keybinds(int key) {
 	}
 
 	if(key == 'h') {
-	    //  if (g_gamestate->player->entity->coords->x == g_gamestate->chests->coords->x && g_gamestate->player->entity->coords->y == g_gamestate->chests->coords->y ) {
+		if((g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y+1 && 
+               g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x) ||
+               (g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y-1 && 
+               g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x) ||
+               (g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y && 
+               g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x+1) ||
+               (g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y && 
+               g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x-1)
+            ) {
+		    map[g_gamestate->chests[0]->entity->coords->y][g_gamestate->chests[0]->entity->coords->x] = map_footprint[g_gamestate->chests[0]->entity->coords->y][g_gamestate->chests[0]->entity->coords->x];
+            g_gamestate->chests[0]->entity->coords->y = 0;
+            g_gamestate->chests[0]->entity->coords->x = 6; 
 		    g_gamestate->player->item = get_random_item();
-		//  }
 		    if(strcmp(g_gamestate->player->item->id, "0018") == 0) {
 			   g_gamestate->player->entity->maxHealth = (g_gamestate->player->entity->maxHealth)/1.5;
 			   g_gamestate->player->entity->basedamage = (g_gamestate->player->entity->basedamage)*1.5;
 			}
-			if(strcmp(g_gamestate->player->item->id, "0019") == 0) {
-			   g_gamestate->player->entity->basedamage = (g_gamestate->player->entity->basedamage)/1.5;
-			   g_gamestate->player->entity->maxHealth = (g_gamestate->player->entity->maxHealth)*1.5;
-			}
 			if (g_gamestate->player->entity->maxHealth < g_gamestate->player->entity->health) {
 				g_gamestate->player->entity->health = g_gamestate->player->entity->maxHealth;
 			}
+		}
 	}
-
 	if (key == 'c') {
 		// if (is_player_insane(g_gamestate->player)) g_gamestate->player->sanity = 99;
 		// else g_gamestate->player->sanity = 0;
@@ -707,65 +714,3 @@ void destroy_mob(int x) {
 
   g_gamestate->mob_count--;
 }
-
-void levelUp() {
-    if (g_gamestate->player->level <= 99) {
-        if (g_gamestate->player->xp % 5 == 0) {
-            g_gamestate->player->level += 1;
-            g_gamestate->player->xp = 0;
-			for(int i = 0; i < g_gamestate->mobs[i]; i++){
-				g_gamestate->mobs[i]->entity->basedamage += 4;
-				g_gamestate->mobs[i]->entity->maxHealth += 6;
-			}
-			   if(strcmp(g_gamestate->player->item->id, "0007") == 0 || strcmp(g_gamestate->player->item->id, "0008") == 0 || strcmp(g_gamestate->player->item->id, "0009") == 0 
-			   || strcmp(g_gamestate->player->item->id, "0016") == 0 || strcmp(g_gamestate->player->item->id, "0018") == 0){
-                 if(g_gamestate->player->class == Priest){
-						 g_gamestate->player->entity->basedamage += 2;
-                         g_gamestate->player->entity->maxHealth += 4;
-				 }
-                 if(g_gamestate->player->class == Mercenary){
-						 g_gamestate->player->entity->basedamage += 3;
-                         g_gamestate->player->entity->maxHealth += 3;
-				 }
-                 if(g_gamestate->player->class == Detective){
-						 g_gamestate->player->entity->basedamage += 4;
-                         g_gamestate->player->entity->maxHealth += 2;
-				 }
-			   }
-               if(strcmp(g_gamestate->player->item->id, "0001") == 0 || strcmp(g_gamestate->player->item->id, "0002") == 0 || strcmp(g_gamestate->player->item->id, "0003") == 0 
-			   || strcmp(g_gamestate->player->item->id, "0010") == 0 || strcmp(g_gamestate->player->item->id, "0014") == 0){
-                 if(g_gamestate->player->class == Priest){
-					     g_gamestate->player->entity->basedamage += 4;
-                         g_gamestate->player->entity->maxHealth += 4;
-				 }
-                 if(g_gamestate->player->class == Mercenary){
-						 g_gamestate->player->entity->basedamage += 6;
-                         g_gamestate->player->entity->maxHealth += 3;
-				 }
-                 if(g_gamestate->player->class == Detective){
-						 g_gamestate->player->entity->basedamage += 8;
-                         g_gamestate->player->entity->maxHealth += 2;
-				 }
-			   }
-               if(strcmp(g_gamestate->player->item->id, "0004") == 0 || strcmp(g_gamestate->player->item->id, "0005") == 0 || strcmp(g_gamestate->player->item->id, "0006") == 0 
-			   || strcmp(g_gamestate->player->item->id, "0011") == 0 || strcmp(g_gamestate->player->item->id, "0012") == 0 || strcmp(g_gamestate->player->item->id, "0013") == 0 
-			   || strcmp(g_gamestate->player->item->id, "0015") == 0 || strcmp(g_gamestate->player->item->id, "0017") == 0){
-                 if(g_gamestate->player->class == Priest){
-                		 g_gamestate->player->entity->basedamage += 2;
-                         g_gamestate->player->entity->maxHealth += 8;
-				 }
-                 if(g_gamestate->player->class == Mercenary){
-						 g_gamestate->player->entity->basedamage += 3;
-                         g_gamestate->player->entity->maxHealth += 6;
-				 }
-                 if(g_gamestate->player->class == Detective){
-						 g_gamestate->player->entity->basedamage += 4;
-                         g_gamestate->player->entity->maxHealth += 4;
-				 }
-			   }
-
-			}
-            g_gamestate->player->entity->health = g_gamestate->player->entity->maxHealth;
-
-        }
-    }

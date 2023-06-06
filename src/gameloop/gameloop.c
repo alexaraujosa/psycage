@@ -486,7 +486,7 @@ void game_keybinds(int key) {
 				g_gamestate->projectiles[0]->dx = 1;
 				g_gamestate->projectiles[0]->dy = 0;
 			}
-	} else if(key == keybinds[5] || key == toupper(keybinds[5])) {
+	} else if((key == keybinds[5] || key == toupper(keybinds[5])) && g_gamestate->player->trap != 0) {
             if(g_gamestate->projectiles[1]->entity->coords->x == 0 && g_gamestate->projectiles[1]->entity->coords->y == 0){
                 g_gamestate->projectiles[1]->entity->coords->x = g_gamestate->player->entity->coords->x;
                 g_gamestate->projectiles[1]->entity->coords->y = g_gamestate->player->entity->coords->y;
@@ -507,7 +507,7 @@ void game_keybinds(int key) {
                     g_gamestate->projectiles[1]->dx = 1;
                     g_gamestate->projectiles[1]->dy = 0;
             }
-    } else if(key == keybinds[6] || key == toupper(keybinds[6])) {
+    } else if((key == keybinds[6] || key == toupper(keybinds[6])) && g_gamestate->player->molotov != 0) {
             if(g_gamestate->projectiles[2]->entity->coords->x == 0 && g_gamestate->projectiles[2]->entity->coords->y == 0){
                 g_gamestate->projectiles[2]->entity->coords->x = g_gamestate->player->entity->coords->x;
                 g_gamestate->projectiles[2]->entity->coords->y = g_gamestate->player->entity->coords->y;

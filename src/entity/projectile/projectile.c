@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define RAIO_TRAP 3
-#define RAIO_MOLOTOV 5
+#define RAIO_MOLOTOV 2
 #define DISTANCIA_ATIRAR_TRAP 4
 #define DISTANCIA_ATIRAR_MOLOTOV 7
 #define TEMPO_TRAP 10

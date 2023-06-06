@@ -115,17 +115,6 @@ static inline int list_remove(LinkedList list, int index) {
     return 0;
 }
 
-static inline void list_print(LinkedList list) {
-    if (list == NULL) return;
-
-    ListNode current = list->head;
-    while (current != NULL) {
-        printf("%p ", current->data);
-        current = current->next;
-    }
-    printf("\n");
-}
-
 static inline int list_index(LinkedList list, void* value) {
     if (list == NULL) return -1;
 

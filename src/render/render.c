@@ -391,13 +391,13 @@ void render_game(Gamestate gs) {
        g_gamestate->projectiles[1]->entity->coords->y != 0 &&
        g_gamestate->projectiles[1]->entity->coords->x != 0
     )
-        mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[1]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[1]->entity->coords->x + OFFSET_X, 'T' | COLOR_PAIR(WHITE_PLAYER));
+        mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[1]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[1]->entity->coords->x + OFFSET_X, 'T' | COLOR_PAIR(TRAP));
 
     if(visible[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x] == 1 &&
        g_gamestate->projectiles[2]->entity->coords->y != 0 &&
        g_gamestate->projectiles[2]->entity->coords->x != 0
     )
-        mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[2]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[2]->entity->coords->x + OFFSET_X, 'X' | COLOR_PAIR(WHITE_PLAYER));
+        mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[2]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[2]->entity->coords->x + OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
 
 
 

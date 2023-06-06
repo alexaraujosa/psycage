@@ -22,8 +22,6 @@ void damageEntity(Entity entity, int hp) {
     if (entity->armor >= hp) {
         entity->armor -= hp;
     } else {
-        // entity->armor = 0;
-
         if (entity->health >= (unsigned long long)hp) {
             hp -= entity->armor;
 
@@ -31,7 +29,6 @@ void damageEntity(Entity entity, int hp) {
             entity->health -= hp;
         } else {
             entity->health = 0;
-            //falta colocar a mobKill aqui, isto faz com que o mob caso tenho vida 0 continue com AI
         }
     }
 }

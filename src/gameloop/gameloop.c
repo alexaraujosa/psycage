@@ -285,12 +285,8 @@ void tick() {
 			}
 		}
 
-		for(int i = 0 ; i < g_gamestate->mob_begin ; i++) {
-			if(g_gamestate->mobs[i]->entity->coords->y != 0 && g_gamestate->mobs[i]->entity->coords->x != 5)
-				molotov_entity_checker(g_gamestate->mobs[i]->entity);
-		}
-
-		molotov_entity_checker(g_gamestate->player->entity);
+		molotov_mob_checker();
+		molotov_player_checker();
 
 		for (int i = 0; i < g_gamestate->mob_begin; i++) {
 			attemptMoveMob(
@@ -305,12 +301,12 @@ void tick() {
 		if(g_gamestate->projectiles[0]->entity->coords->x != 0 && g_gamestate->projectiles[0]->entity->coords->y != 0)
 			move_projectile(g_gamestate->projectiles[0]->dx, g_gamestate->projectiles[0]->dy);	
 
-		if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0 && g_gamestate->player->trap != 0) {
+		if(g_gamestate->projectiles[1]->entity->coords->x != 0 && g_gamestate->projectiles[1]->entity->coords->y != 0) {
             move_trap(g_gamestate->projectiles[1]->dx, g_gamestate->projectiles[1]->dy); 	
 			trap_checker();
 		}
 
-		if(g_gamestate->projectiles[2]->entity->coords->x != 0 && g_gamestate->projectiles[2]->entity->coords->y != 0 && g_gamestate->player->molotov != 0) {
+		if(g_gamestate->projectiles[2]->entity->coords->x != 0 && g_gamestate->projectiles[2]->entity->coords->y != 0) {
             move_molotov(g_gamestate->projectiles[2]->dx, g_gamestate->projectiles[2]->dy);
             molotov_checker();        
         }
@@ -331,7 +327,6 @@ void tick() {
 			map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] = 
 				map_footprint[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x];
 		}
-        g_gamestate->player->entity->armor = g_gamestate->player->item->armor;
 
 		// RTX_ON
 		calculate_visibility(
@@ -569,6 +564,7 @@ void game_keybinds(int key) {
 			if (g_gamestate->player->entity->maxHealth < g_gamestate->player->entity->health) {
 				g_gamestate->player->entity->health = g_gamestate->player->entity->maxHealth;
 			}
+        	g_gamestate->player->entity->armor = g_gamestate->player->item->armor;
 		}
 	}
 	if (key == 'c') {

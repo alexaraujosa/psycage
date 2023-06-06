@@ -80,8 +80,11 @@ void deploy_trap() {
 
     map[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] = 8;
 
-    for(int i = 0 ; i < g_gamestate->mob_count ; i++){
-        if(map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] == 8) {
+    for(int i = 0 ; i < g_gamestate->mob_begin ; i++){
+        if(map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] == 8 && 
+           g_gamestate->mobs[i]->entity->coords->y != 0 && 
+           g_gamestate->mobs[i]->entity->coords->x != 5
+        ) {
             g_gamestate->mobs[i]->hasAI = FALSE;
             map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
         }
@@ -114,9 +117,11 @@ void remove_trap() {
     }
     map[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] = map_footprint[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x];
 
-    for(int i = 0 ; i < g_gamestate->mob_count ; i++) {
-        map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
-        g_gamestate->mobs[i]->hasAI = TRUE;
+    for(int i = 0 ; i < g_gamestate->mob_begin ; i++) {
+        if(g_gamestate->mobs[i]->entity->coords->y != 0 && g_gamestate->mobs[i]->entity->coords->x != 5) {
+            map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
+            g_gamestate->mobs[i]->hasAI = TRUE;
+        }
     }
 
     for(int i = 0 ; i < g_gamestate->chest_count ; i++)
@@ -225,10 +230,23 @@ void molotov_checker() {
     return;
 }
 
-void molotov_entity_checker(Entity entity) {
+void molotov_mob_checker() {
+    
+    for(int i = 0 ; i < g_gamestate->mob_begin ; i++) {
+        if(
+            map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] == 9 && 
+            g_gamestate->mobs[i]->entity->health > 0 && 
+            g_gamestate->mobs[i]->entity->coords->y != 0 &&
+            g_gamestate->mobs[i]->entity->coords->x != 5
+            )
+            damageMob(g_gamestate->mobs[i], 1);
+    }
 
-    if(map[entity->coords->y][entity->coords->x] == 9 && entity->health > 0 && g_gamestate->player->cheats->godmode == 0)
-        damageEntity(entity, 1);
+    return;
+}
+void molotov_player_checker() {
+    if(map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 9 && g_gamestate->player->entity->health > 0)
+        damageEntity(g_gamestate->player->entity, 1);
 
     return;
 }

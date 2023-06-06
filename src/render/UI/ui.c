@@ -652,7 +652,7 @@ void drawGameInterface() {
     mvwprintw(g_renderstate->wnd,
               1,
               LARGURA_RETANGULO + LARGURA_LOGO + 6 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.item")),
-              "%s  ",     g_gamestate->player->item->name
+              "%s    ",     g_gamestate->player->item->name
             );
 
 

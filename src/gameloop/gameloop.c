@@ -344,7 +344,7 @@ void tick() {
 		ultimate_checker();
 
 	for(int i = 0 ; i < g_gamestate->mob_begin ; i++)
-		MobAliveChecker(g_gamestate->mobs[i], i);	
+		MobAliveChecker(g_gamestate->mobs[i]);	
 		// Doors
 		if(g_gamestate->mob_count == 0){
 

@@ -122,6 +122,8 @@ void remove_trap() {
         map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
 
     contagem_trap = 0;
+    clock_trap->blocked = 1;
+    clock_trap->ticks = 0;
     g_gamestate->projectiles[1]->entity->coords->y = g_gamestate->projectiles[1]->entity->coords->x = 0;
 
     return;
@@ -206,6 +208,8 @@ void remove_molotov() {
         map[g_gamestate->chests[i]->entity->coords->y][g_gamestate->chests[i]->entity->coords->x] = 5;
 
     contagem_molotov = 0;
+    clock_molotov->blocked = 1;
+    clock_molotov->ticks = 0;
     g_gamestate->projectiles[2]->entity->coords->y = g_gamestate->projectiles[2]->entity->coords->x = 0;
     
     return;

@@ -33,10 +33,10 @@ void destroyMob(Mob mob) {
 }
 
 int attemptDamagePlayer(Mob mob) {
-    if (!mob->hasAI) {
-        debug_file(dbgOut, 2, "Mob (X %d, Y %d) cannot damage because it has no AI\n", mob->entity->coords->x, mob->entity->coords->y);
-        return 1;
-    }
+    // if (!mob->hasAI) {
+    //     debug_file(dbgOut, 2, "Mob (X %d, Y %d) cannot damage because it has no AI\n", mob->entity->coords->x, mob->entity->coords->y);
+    //     return 1;
+    // }
 
     debug_file(dbgOut, 2, "Attempting to damage player, mob (X %d, Y %d).\n", mob->entity->coords->x, mob->entity->coords->y);
 

@@ -45,37 +45,40 @@ int main(int argc, char *argv[]) {
     BIN_PATH = dirname(BIN_PATH_TMP);
     BIN_PATH_LEN = strlen(BIN_PATH);
 
-    strncpy(ASSET_DIR, BIN_PATH, BIN_PATH_LEN);
+    // strcpy_s(ASSET_DIR, BIN_PATH, BIN_PATH_LEN - 1);
+    memcpy(ASSET_DIR, BIN_PATH, BIN_PATH_LEN * sizeof(char));
     strcat(ASSET_DIR, "/assets");
 
     // Setup Debug Log File
-	char dbgout_path[PATH_MAX];
-    snprintf(dbgout_path, sizeof(dbgout_path), "%.*s/logs/dbg-", BIN_PATH_LEN, BIN_PATH);
+	// char dbgout_path[PATH_MAX];
+    // snprintf(dbgout_path, sizeof(dbgout_path), "%.*s/logs/dbg-", BIN_PATH_LEN, BIN_PATH);
 
-	time_t now = time(NULL);
-    struct tm* tmInfo = localtime(&now);
-    size_t dateFormatSize = 20;
-    size_t new_dbgout_len = BIN_PATH_LEN + sizeof("/logs/dbg-") - 1 + dateFormatSize;
+	// time_t now = time(NULL);
+    // struct tm* tmInfo = localtime(&now);
+    // size_t dateFormatSize = 20;
+    // size_t new_dbgout_len = BIN_PATH_LEN + sizeof("/logs/dbg-") - 1 + dateFormatSize;
 
-    char* new_dbgout_path = malloc(new_dbgout_len);
-    if (new_dbgout_path == NULL) {
-        fprintf(stderr, "Unable to initialize game: Failed to generate log path.\n");
-        return 1;
-    }
-    strcpy(new_dbgout_path, dbgout_path);
-    strftime(new_dbgout_path + new_dbgout_len - dateFormatSize, dateFormatSize, "%Y-%m-%dT%H:%M:%S", tmInfo);
-    strcat(new_dbgout_path, ".log");
+    // char* new_dbgout_path = malloc(new_dbgout_len);
+    // if (new_dbgout_path == NULL) {
+    //     fprintf(stderr, "Unable to initialize game: Failed to generate log path.\n");
+    //     return 1;
+    // }
+    // strcpy(new_dbgout_path, dbgout_path);
+    // strftime(new_dbgout_path + new_dbgout_len - dateFormatSize, dateFormatSize, "%Y-%m-%dT%H:%M:%S", tmInfo);
+    // strcat(new_dbgout_path, ".log");
 
-	if (createParentFolder(new_dbgout_path) != 0) {
-        printf("Unable to initialize game: Unable to create log folder.\n");
-        exit(1);
-    }
+	// if (createParentFolder(new_dbgout_path) != 0) {
+    //     printf("Unable to initialize game: Unable to create log folder.\n");
+    //     exit(1);
+    // }
 
-    dbgOut = fopen(new_dbgout_path, "a");
-    if (dbgOut == NULL) {
-        printf("Unable to initialize game: Unable to open log file.\n");
-        exit(1);
-    }
+    // dbgOut = fopen(new_dbgout_path, "a");
+    // if (dbgOut == NULL) {
+    //     printf("Unable to initialize game: Unable to open log file.\n");
+    //     exit(1);
+    // }
+
+    dbgOut = make_debug_file(BIN_PATH, BIN_PATH_LEN, "dbg");
 
     debug_file(dbgOut, 0, "Logger initialized.\n");
     
@@ -109,7 +112,7 @@ int main(int argc, char *argv[]) {
     }
 
     end_game();
-    free(new_dbgout_path);
+    // free(new_dbgout_path);
 
     return 0;
 }

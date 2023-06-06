@@ -36,5 +36,6 @@ void destroyMob(Mob mob);
 void MobAliveChecker(Mob mob);
 void killMob(Mob mob);
 int _isObstacle(int cell);
+void levelUp();
 
 #endif

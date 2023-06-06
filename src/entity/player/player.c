@@ -64,6 +64,8 @@ void killCount(Player player, Entity entity) {
         verifyPlayerRadius();
     if(player->kills % KILLS_TO_ULTIMATE == 0)
         g_gamestate->player->hasUltimate = 1;
+    
+    return;
 }
 
 void killXp(Player player) {

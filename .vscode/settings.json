@@ -48,7 +48,8 @@
         "cheats.h": "c",
         "clock.h": "c",
         "list.h": "c",
-        "controlers.h": "c"
+        "controlers.h": "c",
+        "potions.h": "c"
     },
     "terminal.integrated.shell.windows": "cmd.exe",
     "makefile.launchConfigurations": [

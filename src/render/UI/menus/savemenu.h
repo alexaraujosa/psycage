@@ -2,6 +2,7 @@
 #define __RL_RENDER_UI_MENU_SM_H
 
 #include "../ui.h"
+#include "./dialog.h"
 #include "../../../data/save.h"
 #include "util/ncurses.h"
 

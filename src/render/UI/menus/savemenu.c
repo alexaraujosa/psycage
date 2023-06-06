@@ -36,8 +36,8 @@ static struct sm_cache_node cached_translations[CACHE_NUM];
 
 struct sm_cache_node _sm_make_cache(int args, char* value) {
     struct sm_cache_node node = {
-        args: args,
-        value: value
+        args,
+        value
     };
 
     return node;

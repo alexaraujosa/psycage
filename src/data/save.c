@@ -6,7 +6,7 @@
 
 extern FILE* dbgOut;
 
-static unsigned short SAVE_VERSION = 4;
+static unsigned short SAVE_VERSION = 10;
 
 int get_savepath(char *save_path, int num_save) {
     int res = snprintf(save_path, PATH_MAX, "%s/saves/save%d.dat", BIN_PATH, num_save);
@@ -58,66 +58,236 @@ int delete_Save(int num_save) {
 }
 
 #pragma region Create Save
-// Primitive types
-void _save_write_int(FILE* save, int data) {
-    fwrite(&data, sizeof(int), 1, save);
+
+#pragma region Writers
+#pragma region Primitives
+int _save_write_int(FILE* save, int data) {
+    if (save == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Writing integer property to save file...\n");
+
+    if (fwrite(&data, sizeof(int), 1, save) != 1) {
+        debug_file(dbgOut, 1, "- Failed to write integer property to save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
-void _save_write_charp(FILE* save, char* data) {
-    size_t longStrLen = strlen(data);
-    fwrite(&longStrLen, sizeof(size_t), 1, save);
-    fwrite(data, sizeof(char), longStrLen, save);
+int _save_write_unsigned_int(FILE* save, unsigned int data) {
+    if (save == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Writing unsigned integer to save file...\n");
+
+    if (fwrite(&data, sizeof(unsigned int), 1, save) != 1) {
+        debug_file(dbgOut, 1, "- Failed to write unsigned integer property to save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
-void _save_write_matrix(FILE* save, int** matrix, int rows, int cols) {
-    fwrite(&rows, sizeof(int), 1, save);
-    fwrite(&cols, sizeof(int), 1, save);
+int _save_write_unsigned_long_long(FILE* save, unsigned long long data) {
+    if (save == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Writing unsigned long long to save file...\n");
+
+    if (fwrite(&data, sizeof(unsigned long long), 1, save) != 1) {
+        debug_file(dbgOut, 1, "- Failed to write unsigned long long property to save file.\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+int _save_write_matrix(FILE* save, int** matrix, int rows, int cols) {
+    debug_file(dbgOut, 1, "Writing matrix to save file...\n");
+
+    if (_save_write_int(save, rows) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'rows' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, cols) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'cols' property to save file.\n");
+        return 1;
+    }
 
     for (int i = 0; i < rows; i++) {
-        fwrite(matrix[i], sizeof(int), cols, save);
+        if (fwrite(matrix[i], sizeof(int), cols, save) != (size_t)cols) {
+            debug_file(dbgOut, 1, "- Failed to write matrix data to save file.\n");
+            return 1;
+        }
     }
+
+    return 0;
+}
+#pragma endregion
+
+#pragma region Game Structs
+int _save_write_coords(FILE* save, Coords coords) {
+    if (save == NULL || coords == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Writing coords to save file...\n");
+
+    if (_save_write_int(save, coords->x) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'x' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, coords->y) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'y' property to save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
+int _save_write_entity(FILE* save, Entity entity) {
+    if (save == NULL || entity == NULL) return 1;
 
-// Game Structs
-void _save_write_coords(FILE* save, Coords coords) {
-    _save_write_int(save, coords->x);
-    _save_write_int(save, coords->y);
+    debug_file(dbgOut, 1, "Writing entity to save file...\n");
+
+    if (_save_write_coords(save, entity->coords) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'coords' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_unsigned_int(save, entity->maxHealth) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'maxHealth' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_unsigned_long_long(save, entity->health) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'health' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, entity->armor) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'armor' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, entity->basedamage) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'basedamage' property to save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
-void _save_write_entity(FILE* save, Entity entity) {
-    _save_write_coords(save, entity->coords);
-    _save_write_int(save, entity->maxHealth);
-    _save_write_int(save, entity->health);
-    _save_write_int(save, entity->armor);
-    _save_write_int(save, entity->basedamage);
+int _save_write_player(FILE* save, Player player) {
+    if (save == NULL || player == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Writing player to save file...\n");
+
+    if (_save_write_entity(save, player->entity) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'entity' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->level) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'level' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->kills) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'kills' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->xp) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'xp' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->last_direction) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'last_direction' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->class) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'class' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->radius) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'radius' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->sanity) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'sanity' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->candle_fuel) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'candle_fuel' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->current_candle) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'current_candle' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, player->hasUltimate) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'radius' hasUltimate to save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
-void _save_write_player(FILE* save, Player player) {
-    _save_write_entity(save, player->entity);
-    _save_write_int(save, player->level);
-    _save_write_int(save, player->kills);
-    _save_write_int(save, player->xp);
-    _save_write_int(save, player->last_direction);
-    // _save_write_int(save, player->cheats);
-    _save_write_int(save, player->class);
-    _save_write_int(save, player->radius);
+int _save_write_mob(FILE* save, Mob mob) {
+    if (save == NULL || mob == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Writing mob to save file...\n");
+
+    if (_save_write_entity(save, mob->entity) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'entity' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, mob->moveCooldown) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'moveCooldown' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, mob->lastMove) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'lastMove' property to save file.\n");
+        return 1;
+    }
+
+    if (_save_write_int(save, mob->hasAI) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'hasAI' property to save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
-void _save_write_mob(FILE* save, Mob mob) {
-    _save_write_entity(save, mob->entity);
-    _save_write_int(save, mob->moveCooldown);
-    _save_write_int(save, mob->lastMove);
-    _save_write_int(save, mob->hasAI);
-}
+int _save_write_mobs(FILE* save, Mob* mobs, int count) {
+    if (save == NULL || mobs == NULL || count <= 0) return 1;
 
-void _save_write_mobs(FILE* save, Mob* mobs, int count) {
-    _save_write_int(save, count);
+    debug_file(dbgOut, 1, "Writing mobs to save file...\n");
+
+    if (_save_write_int(save, count) != 0) {
+        debug_file(dbgOut, 1, "- Failed to write 'count' property to save file.\n");
+        return 1;
+    }
 
     for (int i = 0; i < count; i++) {
-        _save_write_mob(save, mobs[i]);
+        if (_save_write_mob(save, mobs[i]) != 0) {
+            debug_file(dbgOut, 1, "- Failed to write mob %d to save file.\n", i);
+            return 1;
+        }
     }
+
+    return 0;
 }
+#pragma endregion
+#pragma endregion
 
 int create_Save(int num_save) {
     char save_path[PATH_MAX];
@@ -138,16 +308,7 @@ int create_Save(int num_save) {
         return 1;
     }
 
-    // fseek(save, 0, SEEK_SET);
-
-    // fprintf(save, "#version=1");
-
-    // fseek(save, 1, SEEK_CUR);
-
-    // fprintf(save, "OLA");
-
-    debug_file(dbgOut, 0, "Starting save data.\n");
-
+    debug_file(dbgOut, 0, "Starting save data write.\n");
 
     // Save version
     debug_file(dbgOut, 1, "- Saving version.\n");
@@ -166,11 +327,6 @@ int create_Save(int num_save) {
 
     debug_file(dbgOut, 1, "- Saving map.\n");
     _save_write_int(save, find_map);
-    // _save_write_int(save, ALTURA_JOGO);
-    // _save_write_int(save, LARGURA_JOGO);
-
-    // _save_write_matrix(save, map, ALTURA_JOGO, LARGURA_JOGO);
-    // _save_write_matrix(save, map, g_renderstate->nrows - 1, LARGURA_JOGO);
 
     debug_file(dbgOut, 1, "-- Saving map data.\n");
     _save_write_matrix(save, map, ALTURA_JOGO, LARGURA_JOGO);
@@ -179,6 +335,10 @@ int create_Save(int num_save) {
     debug_file(dbgOut, 1, "-- Saving lightmap data.\n");
     _save_write_matrix(save, visible, ALTURA_JOGO, LARGURA_JOGO);
     debug_file(dbgOut, 1, "-- Saved lightmap data.\n");
+
+    debug_file(dbgOut, 1, "-- Saving map_footprint data.\n");
+    _save_write_matrix(save, map_footprint, ALTURA_JOGO, LARGURA_JOGO);
+    debug_file(dbgOut, 1, "-- Saved map_footprint data.\n");
 
     debug_file(dbgOut, 1, "- Saved map.\n");
 
@@ -191,16 +351,45 @@ int create_Save(int num_save) {
 #pragma endregion
 
 #pragma region Load Save
-// Primitive types
-void _save_read_int(FILE* save, int* data) {
-    if (save == NULL || data == NULL) return;
 
-    fread(data, sizeof(int), 1, save);
+#pragma region Readers
+#pragma region Primitives
+int _save_read_int(FILE* save, int* data) {
+    if (save == NULL || data == NULL) return 1;
+
+    if (fread(data, sizeof(int), 1, save) != 1) {
+        debug_file(dbgOut, 1, "Failed to read integer property from save file.\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+int _save_read_unsigned_int(FILE* save, unsigned int* data) {
+    if (save == NULL || data == NULL) return 1;
+
+    if (fread(data, sizeof(unsigned int), 1, save) != 1) {
+        debug_file(dbgOut, 1, "Failed to read unsigned integer property from save file.\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+int _save_read_unsigned_long_long(FILE* save, unsigned long long* data) {
+    if (save == NULL || data == NULL) return 1;
+
+    if (fread(data, sizeof(unsigned long long), 1, save) != 1) {
+        debug_file(dbgOut, 1, "Failed to read unsigned long long property from save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
 int _save_read_matrix(FILE* save, int* rows, int* cols, int*** matrix) {
     if (fread(rows, sizeof(int), 1, save) != 1 || fread(cols, sizeof(int), 1, save) != 1) {
-        debug_file(dbgOut, 1, "Failed to read matrix dimensions from the file.\n");
+        debug_file(dbgOut, 1, "Failed to read matrix dimensions from save file.\n");
         return 1;
     }
 
@@ -226,8 +415,8 @@ int _save_read_matrix(FILE* save, int* rows, int* cols, int*** matrix) {
     debug_file(dbgOut, 1, "Attempting to load matrix with dimensions %dx%d.\n", *rows, *cols);
 
     for (int i = 0; i < *rows; i++) {
-        if (fread((*matrix)[i], sizeof(int), *cols, save) != *cols) {
-            debug_file(dbgOut, 1, "Failed to read matrix data from the file.\n");
+        if (fread((*matrix)[i], sizeof(int), *cols, save) != (size_t)(*cols)) {
+            debug_file(dbgOut, 1, "Failed to read matrix row from save file.\n");
 
             for (int j = 0; j < *rows; j++) {
                 free((*matrix)[j]);
@@ -239,58 +428,201 @@ int _save_read_matrix(FILE* save, int* rows, int* cols, int*** matrix) {
 
     return 0;
 }
+#pragma endregion
 
-// Game Structs
+#pragma region Game Structs
+int _save_read_coords(FILE* save, Coords coords) {
+    if (save == NULL || coords == NULL) return 1;
 
-void _save_read_coords(FILE* save, Coords coords) {
-    fread(&coords->x, sizeof(int), 1, save);
-    fread(&coords->y, sizeof(int), 1, save);
+    debug_file(dbgOut, 1, "Reading coords from save file...\n");
+
+    if (_save_read_int(save, &(coords->x)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'x' coordinate from save file.\n");
+        return 1;
+    }
+
+    if (_save_read_int(save, &(coords->y)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'y' coordinate from save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
-void _save_read_entity(FILE* save, Entity entity) {
-    _save_read_coords(save, entity->coords);
-    fread(&entity->maxHealth, sizeof(int), 1, save);
-    fread(&entity->health, sizeof(int), 1, save);
-    fread(&entity->armor, sizeof(int), 1, save);
-    fread(&entity->basedamage, sizeof(int), 1, save);
+int _save_read_entity(FILE* save, Entity entity) {
+    if (save == NULL || entity == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Reading entity from save file...\n");
+
+    if (_save_read_coords(save, entity->coords) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'coords' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'maxHealth' from save file...\n");
+    if (_save_read_unsigned_int(save, &(entity->maxHealth)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'maxHealth' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'health' from save file...\n");
+    if (_save_read_unsigned_long_long(save, &(entity->health)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'health' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'armor' from save file...\n");
+    if (_save_read_int(save, &(entity->armor)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'armor' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'basedamage' from save file...\n");
+    if (_save_read_int(save, &(entity->basedamage)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'basedamage' property from save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
-void _save_read_player(FILE* save, Player player) {
-    _save_read_entity(save, player->entity);
-    fread(&player->level, sizeof(int), 1, save);
-    fread(&player->kills, sizeof(int), 1, save);
-    fread(&player->xp, sizeof(int), 1, save);
-    fread(&player->last_direction, sizeof(int), 1, save);
-    // fread(&player->cheats, sizeof(int), 1, save);
-    fread(&player->class, sizeof(int), 1, save);
-    fread(&player->radius, sizeof(int), 1, save);
+int _save_read_player(FILE* save, Player player) {
+    if (save == NULL || player == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Reading player from save file...\n");
+
+    if (_save_read_entity(save, player->entity) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'entity' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'level' from save file...\n");
+    if (_save_read_int(save, &(player->level)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'level' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'kills' from save file...\n");
+    if (_save_read_int(save, &(player->kills)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'kills' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'xp' from save file...\n");
+    if (_save_read_int(save, &(player->xp)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'xp' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'last_direction' from save file...\n");
+    if (_save_read_int(save, &(player->last_direction)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'last_direction' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'class' from save file...\n");
+    if (_save_read_int(save, &(player->class)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'class' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'radius' from save file...\n");
+    if (_save_read_int(save, &(player->radius)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'radius' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'sanity' from save file...\n");
+    if (_save_read_int(save, &(player->sanity)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'radius' sanity from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'candle_fuel' from save file...\n");
+    if (_save_read_int(save, &(player->candle_fuel)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'candle_fuel' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'current_candle' from save file...\n");
+    if (_save_read_int(save, &(player->current_candle)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'current_candle' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'hasUltimate' from save file...\n");
+    if (_save_read_int(save, &(player->hasUltimate)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'hasUltimate' property from save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
-void _save_read_mob(FILE* save, Mob mob) {
-    _save_read_entity(save, mob->entity);
-    fread(&mob->moveCooldown, sizeof(int), 1, save);
-    fread(&mob->lastMove, sizeof(int), 1, save);
-    fread(&mob->hasAI, sizeof(int), 1, save);
+int _save_read_mob(FILE* save, Mob mob) {
+    if (save == NULL || mob == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Reading mob from save file...\n");
+
+    if (_save_read_entity(save, mob->entity) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'entity' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'moveCooldown' from save file...\n");
+    if (_save_read_int(save, &(mob->moveCooldown)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'moveCooldown' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'lastMove' from save file...\n");
+    if (_save_read_int(save, &(mob->lastMove)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'lastMove' property from save file.\n");
+        return 1;
+    }
+
+    debug_file(dbgOut, 1, "- Reading 'hasAI' from save file...\n");
+    if (_save_read_int(save, &(mob->hasAI)) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'hasAI' property from save file.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
 int _save_read_mobs(FILE* save, Mob** dest, int* mobCount) {
+    if (save == NULL || dest == NULL || mobCount == NULL) return 1;
+
+    debug_file(dbgOut, 1, "Reading mobs from save file...\n");
+
     int count = 0;
-    fread(&count, sizeof(int), 1, save);
+    if (_save_read_int(save, &count) != 0) {
+        debug_file(dbgOut, 1, "- Failed to read 'count' property from save file.\n");
+        return 1;
+    }
 
     Mob* mobs = (Mob*)malloc(count * sizeof(Mob));
     if (mobs == NULL) {
-        debug_file(dbgOut, 1, "Unable to read mob array from file: Unable to allocate memory for %d elements.\n", count);
+        debug_file(dbgOut, 1, "- Unable to allocate memory for %d elements.\n", count);
         return 1;
     }
 
     for (int i = 0; i < count; i++) {
         mobs[i] = defaultMob();
-        _save_read_mob(save, mobs[i]);
+        if (_save_read_mob(save, mobs[i]) != 0) {
+            debug_file(dbgOut, 1, "- Failed to read mob at index %d from save file.\n", i);
+            free(mobs);
+            return 1;
+        }
     }
 
     *mobCount = count;
     *dest = mobs;
+
+    return 0;
 }
+#pragma endregion
+#pragma endregion
 
 int load_save(int num_save) {
     char save_path[PATH_MAX];
@@ -302,6 +634,8 @@ int load_save(int num_save) {
     FILE *save = fopen(save_path, "rb");
 
     struct save_data* sd = (struct save_data*)malloc(sizeof(struct save_data));
+
+    debug_file(dbgOut, 0, "Starting save data load.\n");
 
     // Save version
     debug_file(dbgOut, 1, "- Loading version.\n");
@@ -323,7 +657,7 @@ int load_save(int num_save) {
     destroyPlayer(g_gamestate->player);
     g_gamestate->player = pl;
 
-    debug_file(dbgOut, 1, "- Loaded version.\n");
+    debug_file(dbgOut, 1, "- Loaded player.\n");
 
     // Mobs
     debug_file(dbgOut, 1, "- Loading mobs.\n");
@@ -341,35 +675,14 @@ int load_save(int num_save) {
 
     debug_file(dbgOut, 1, "- Loaded mobs.\n");
 
-    // debug_file(dbgOut, 2, "- Clearning old map data...\n");
-    // debug_file(dbgOut, 2, "-- Clearning old light map...\n");
+    // debug_file(dbgOut, 2, "- Cleaning old map data...\n");
+    
+    // debug_file(dbgOut, 2, "-- Cleaning old map footprint...\n");
     // for (int i = 0; i < ALTURA_JOGO; i++) {
-    //     if (visible[i] == NULL) continue; // Blame Jorge for this
-    //     free(visible[i]);
+    //     free(map_footprint[i]);
     // }
-    // free(visible);
-    // visible = NULL;
-
-    debug_file(dbgOut, 2, "- Cleaning old map data...\n");
-    
-    debug_file(dbgOut, 2, "-- Cleaning old light map...\n");
-    
-    // Did I mention I hate Jorge's map? I hate Jorge's map.
-    for (int i = 0; i < ALTURA_JOGO; i++) {
-        if (visible[i] == NULL) continue; // Blame Jorge for this
-        free(visible[i]);
-    }
-    free(visible);
-
-    visible = NULL;
-    debug_file(dbgOut, 2, "-- Cleaned old light map...\n");
-    
-    debug_file(dbgOut, 2, "-- Cleaning old map footprint...\n");
-    for (int i = 0; i < ALTURA_JOGO; i++) {
-        free(map_footprint[i]);
-    }
-    free(map_footprint);
-    debug_file(dbgOut, 2, "- Cleaned old map data.\n");
+    // free(map_footprint);
+    // debug_file(dbgOut, 2, "- Cleaned old map data.\n");
 
     debug_file(dbgOut, 1, "- Loading map.\n");
     int nfind_map = -1;
@@ -384,20 +697,11 @@ int load_save(int num_save) {
     }
 
     find_map = nfind_map;
-    ALTURA_JOGO = nrows; // - 1 - ALTURA_LOGO;
+    ALTURA_JOGO = nrows;
     LARGURA_JOGO = ncols;
     map = nmap;
 
     debug_file(dbgOut, 1, "- Loaded map.\n");
-
-    // debug_file(dbgOut, 0, " - Regenerating light map...\n");
-    // debug_file(dbgOut, 2, "-- Clearning old light map...\n");
-    // for (int i = 0; i < g_renderstate->nrows-1; i++) {
-    //     free(visible[i]);
-    // }
-    // free(visible);
-    // visible = NULL;
-
 
     debug_file(dbgOut, 0, "-- Clearing light map...\n");
     if (visible != NULL) {
@@ -422,50 +726,42 @@ int load_save(int num_save) {
 
     debug_file(dbgOut, 0, "-- Loaded light map.\n");
 
-    // debug_file(dbgOut, 0, "-- Generating new light map...\n");
-    // init_light_map(ALTURA_JOGO, LARGURA_JOGO);
-
-	// init_light_map(g_renderstate->nrows-1, g_renderstate->ncols-2);
-
-
-
-    // debug_file(dbgOut, 1, "- Regenerating map footprint...\n");
-    // debug_file(dbgOut, 2, "-- Clearning old map footprint...\n");
+    // debug_file(dbgOut, 2, "-- Generating new map footprint...\n");
+	// map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));
     // for (int i = 0; i < ALTURA_JOGO; i++) {
-    //     free(map_footprint[i]);
+    //     map_footprint[i] = (int *)malloc((LARGURA_JOGO) * sizeof(int));
     // }
-    // free(map_footprint);
 
-    debug_file(dbgOut, 2, "-- Generating new map footprint...\n");
-	map_footprint = (int **)malloc((ALTURA_JOGO) * sizeof(int *));
+	// for (int i = 0; i < ALTURA_JOGO; i++) {
+	// 	for (int j = 0; j < (LARGURA_JOGO); j++) {
+	// 		if (map[i][j] != 5) map_footprint[i][j] = map[i][j];
+    //         else map_footprint[i][j] = 0;
+	// 	}
+	// }
+
+    debug_file(dbgOut, 2, "-- Cleaning old map footprint...\n");
     for (int i = 0; i < ALTURA_JOGO; i++) {
-        map_footprint[i] = (int *)malloc((LARGURA_JOGO) * sizeof(int));
+        free(map_footprint[i]);
+    }
+    free(map_footprint);
+    debug_file(dbgOut, 2, "-- Cleaned old map data.\n");
+
+    debug_file(dbgOut, 0, "-- Loading map footprint...\n");
+    int** mapf = NULL;
+    int mf_rows = 0, mf_cols = 0;
+
+    if (_save_read_matrix(save, &mf_rows, &mf_cols, &mapf)) {
+        debug_file(dbgOut, 0, "Error while loading save file %s: Cannot load map footprint.\n", save_path);
+        return 1;
     }
 
-	for (int i = 0; i < ALTURA_JOGO; i++) {
-		for (int j = 0; j < (LARGURA_JOGO); j++) {
-			if (map[i][j] != 5) map_footprint[i][j] = map[i][j];
-            else map_footprint[i][j] = 0;
-		}
-	}
+    map_footprint = mapf;
+
+    debug_file(dbgOut, 0, "-- Loaded map footprint.\n");
 
     debug_file(dbgOut, 0, "Read save file %s, version=%d\n", save_path, sd->version);
 
-    // debug_file(
-    //     dbgOut, 
-    //     0, 
-    //     "Read save file %s with data\n - version=%d\n - Player X: %d Y: %d\n", 
-    //     save_path, 
-    //     sd->version, 
-    //     pl->entity->coords->x, pl->entity->coords->y
-    // );
-
-    // debug_file(dbgOut, 1, " - Mobs:\n");
-    // for (int i = 0; i < count; i++) {
-    //     debug_file(dbgOut, 0, " -- X: %d Y: %d.\n", mobs[i]->entity->coords->x, mobs[i]->entity->coords->y);
-    // }
-
-
+    return 0;
 }
 #pragma endregion
 

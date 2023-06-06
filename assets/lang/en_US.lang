@@ -88,3 +88,5 @@ user.interface.stats.molotov=Molotovs:
 user.interface.stats.item=Current Item:
 user.interface.stats.potion.on=Double Damage [ON] 
 user.interface.stats.potion.off=Double Damage [OFF]
+user.interface.stats.ultimate.on=Ultimate available  
+user.interface.stats.ultimate.off=Ultimate unavailable

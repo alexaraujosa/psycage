@@ -682,6 +682,19 @@ void drawGameInterface() {
               LARGURA_RETANGULO + LARGURA_LOGO + 6 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.molotov")),
               "%d  ",     g_gamestate->player->molotov
             );
+    
+    if(g_gamestate->player->hasUltimate == 0)
+        mvwprintw(g_renderstate->wnd,
+              1 + 5,
+              LARGURA_RETANGULO + LARGURA_LOGO + 4,
+              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.off")
+            );
+    else if(g_gamestate->player->hasUltimate == 1)
+        mvwprintw(g_renderstate->wnd,
+              1 + 5,
+              LARGURA_RETANGULO + LARGURA_LOGO + 4,
+              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.on")
+            );
 
     wrefresh(g_renderstate->wnd);
     return;

@@ -88,3 +88,5 @@ user.interface.stats.molotov=Molotovs:
 user.interface.stats.item=Item Atual:  
 user.interface.stats.potion.on=Dano em dobro [ON] 
 user.interface.stats.potion.off=Dano em dobro [OFF]
+user.interface.stats.ultimate.on=Ultimate disponivel  
+user.interface.stats.ultimate.off=Ultimate indisponivel

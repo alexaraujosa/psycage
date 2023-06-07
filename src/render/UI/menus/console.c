@@ -226,7 +226,7 @@ void addMessage(const char* msg) {
 void addCommandToHistory(const char* command) {
     if (strlen(command) == 0) return;
 
-    if (history_len >= MAX_HISTORY_COMMANDS) free(history[history_len]);
+    if (history_len == MAX_HISTORY_COMMANDS - 1) free(history[history_len]);
     else history_len++;
     
     for (int i = MAX_HISTORY_COMMANDS - 1; i > 0; i--) {
@@ -345,7 +345,7 @@ struct pattern {
     int cmd;
 };
 
-#define PATTERNS 19
+#define PATTERNS 20
 struct pattern shadow_patterns[PATTERNS];
 struct pattern patterns[PATTERNS];
 
@@ -417,9 +417,12 @@ void _makeProcessorPatterns() {
     patterns[18] = _makeProcessorPattern("^viewclock 0x[0-9a-zA-Z]+$", "viewclock", 19);
     shadow_patterns[18] = _makeProcessorPattern("^viewclock", "viewclock", 19);
 
+    patterns[19] = _makeProcessorPattern("^setsanity -?[0-9]+$", "setsanity", 20);
+    shadow_patterns[19] = _makeProcessorPattern("^setsanity", "setsanity", 20);
+
 }
 
-void _executeCommand(int cmd, void* override) {
+void _executeCommand(int cmd, char* override) {
     int len;
     re_t regex;
 
@@ -471,20 +474,21 @@ void _executeCommand(int cmd, void* override) {
             addMessage("");
             addMessage("addclock       | Adds a new clock and returns it's address.");
             addMessage("clear          | Clears the console output.");
-            addMessage("damagePlayer   | Damages the player.");
+            addMessage("damagePlayer   | [CHEAT] Damages the player.");
             addMessage("exit           | Closes the console terminal.");
             addMessage("getitembyid    | Fetches an item through it's ID.");
             addMessage("getitembyname  | Fetches an item through it's name.");
             addMessage("getplayerprop  | Fetches a property stored on the player.");
             addMessage("gettranslation | Fetches a translation through it's translation key.");
             addMessage("getwindows     | Fetches the number of windows created.");
-            addMessage("godmode        | (De)activates the GodMode.");
-            addMessage("healPlayer     | Heals the player.");
+            addMessage("godmode        | [CHEAT] (De)activates the GodMode.");
+            addMessage("healPlayer     | [CHEAT] Heals the player.");
             addMessage("history        | Views or restores a previous command.");  
             addMessage("help           | Displays this message.");  
-            addMessage("kill           | Kills the player.");
+            addMessage("kill           | [CHEAT] Kills the player.");
             addMessage("removeclock    | Removes a clock by it's address.");
             addMessage("reset          | [CHEAT] Resets the console.");
+            addMessage("setsanity      | [CHEAT] Changes the sanity.");
             addMessage("maxfov         | [CHEAT] (De)activates the Max FOV.");
             addMessage("viewclock      | Fetches the data of a clock by it's address.");  
             return;
@@ -496,7 +500,8 @@ void _executeCommand(int cmd, void* override) {
             if (override != NULL) {
                 debug_file(dbgOut, 1, "-- Arguments overriden\n");
 
-                strncpy(command, (char*)override, 50);
+                // strcpy_s(command, override, 49);
+                strncpy(command, override, 49);
             } else {
                 if (!sscanf(console_input, "help %s", command)) {
                     debug_file(dbgOut, 1, "-- Failed to parse argument\n");
@@ -624,6 +629,12 @@ void _executeCommand(int cmd, void* override) {
                 addMessage("Arguments:");
                 addMessage("    ADDR: a clock address.");
                 return;
+            } else if (strcmp(command, "setsanity") == 0) {
+                addMessage("setsanity: setsanity [NUM]");
+                addMessage("    changes the value of the player's sanity to NUM.");
+                addMessage("Arguments:");
+                addMessage("    NUM: a number between -100 and 100.");
+                return;
             } else {
                 char out[MAX_CONSOLE_INPUT];
                 sprintf(out, "%s: no help for command found", command);
@@ -654,12 +665,14 @@ void _executeCommand(int cmd, void* override) {
 
             debug_file(dbgOut, 1, "-- Arguments: %d\n", flag);
 
-            if (strcmp(flag, "1") == 0) {
+            // if (strcmp(flag, "1") == 0) {
+            if (flag[0] == '1') {
                 g_gamestate->player->cheats->godmode = 1;
                 godmode_Health();
                 addMessage("GodMode activated.");
                 return;
-            } else if (strcmp(flag, "0") == 0) {
+            // } else if (strcmp(flag, "0") == 0) {
+            } else if (flag[0] == '0') {
                 g_gamestate->player->cheats->godmode = 0;
                 godmode_Health();
                 addMessage("GodMode deactivated.");
@@ -847,12 +860,14 @@ void _executeCommand(int cmd, void* override) {
 
             debug_file(dbgOut, 1, "-- Arguments: %d\n", flag);
 
-            if (strcmp(flag, "1") == 0) {
+            // if (strcmp(flag, "1") == 0) {
+            if (flag[0] == '1') {
                 g_gamestate->player->cheats->vision = 1;
                 vision_Radius();
                 addMessage("Max FOV activated.");
                 return;
-            } else if (strcmp(flag, "0") == 0) {
+            // } else if (strcmp(flag, "0") == 0) {
+            } else if (flag[0] == '0') {
                 g_gamestate->player->cheats->vision = 0;
                 vision_Radius();
                 addMessage("Max FOV deactivated.");
@@ -1158,6 +1173,21 @@ void _executeCommand(int cmd, void* override) {
         }
 
         addMessage("No clock found.");
+    } else if (cmd == 20) {
+        int num;
+        if (!sscanf(console_input, "setsanity %d", &num)) {
+            addMessage("Invalid value.");
+            return;
+        }
+
+        if (num < -100 || num > 100) {
+            addMessage("Number not in range.");
+            return;
+        }
+
+        g_gamestate->player->sanity = num;
+        addMessage("Sanity changed.");
+        return;
     }
 }
 

@@ -448,7 +448,10 @@ void render_game(Gamestate gs) {
     }
 wattroff(g_renderstate->wnd, COLOR_PAIR(RED_BG));
     for (int i = 0; i < gs->chest_count; i++) {
-        if(visible[gs->chests[i]->entity->coords->y][gs->chests[i]->entity->coords->x] == 1 && g_gamestate->chests[i]->entity->coords->x != 6 && g_gamestate->chests[i]->entity->coords->y != 0)
+        if (
+            visible[gs->chests[i]->entity->coords->y][gs->chests[i]->entity->coords->x] == 1 
+            && g_gamestate->chests[i]->entity->coords->x != 6 && g_gamestate->chests[i]->entity->coords->y != 0
+        )
             mvwaddch(
                 g_renderstate->wnd, 
                 gs->chests[i]->entity->coords->y + OFFSET_Y, 

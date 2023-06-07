@@ -86,7 +86,7 @@ void _sm_ensure_cache() {
         // - General
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.not_found");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 0] = _sm_make_cache(
             TRUE, dialog_text
@@ -95,7 +95,7 @@ void _sm_ensure_cache() {
         // - Deletion
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.deleting");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 1] = _sm_make_cache(
             TRUE, dialog_text
@@ -103,7 +103,7 @@ void _sm_ensure_cache() {
 
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.delete_failure");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 2] = _sm_make_cache(
             TRUE, dialog_text
@@ -111,7 +111,7 @@ void _sm_ensure_cache() {
 
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.delete_success");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 3] = _sm_make_cache(
             TRUE, dialog_text
@@ -119,7 +119,7 @@ void _sm_ensure_cache() {
 
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.delete_confirm");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 4] = _sm_make_cache(
             TRUE, dialog_text
@@ -128,7 +128,7 @@ void _sm_ensure_cache() {
         // - Saving
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.saving");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 5] = _sm_make_cache(
             TRUE, dialog_text
@@ -136,7 +136,7 @@ void _sm_ensure_cache() {
 
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.save_failure");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 6] = _sm_make_cache(
             TRUE, dialog_text
@@ -144,7 +144,7 @@ void _sm_ensure_cache() {
 
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.save_success");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 7] = _sm_make_cache(
             TRUE, dialog_text
@@ -153,7 +153,7 @@ void _sm_ensure_cache() {
         // - Loading
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.loading");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 8] = _sm_make_cache(
             TRUE, dialog_text
@@ -161,7 +161,7 @@ void _sm_ensure_cache() {
 
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.load_failure");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 9] = _sm_make_cache(
             TRUE, dialog_text
@@ -169,7 +169,7 @@ void _sm_ensure_cache() {
 
         orig_text = get_localized_string(g_renderstate->language, "menu.saves.infos.dialogs.load_success");
         dialog_text = (char*)malloc(strlen(orig_text)*sizeof(char));
-        strcpy(dialog_text, orig_text);
+        strncpy(dialog_text, orig_text, strlen(orig_text));
         // replace_substring(dialog_text, "{__NL}", "\n");
         cached_translations[2 + BOTOES_INFOS + BOTOES_PRINCIPAL + 10] = _sm_make_cache(
             TRUE, dialog_text
@@ -365,6 +365,8 @@ int hsmk_delete(int key) {
 }
 
 int hsmk_load(int key) {
+    IGNORE_ARG(key);
+
     g_dialog_keybinds = NULL;
     g_gamestate->valid_state = TRUE;
     g_gamestate->input_initialized = TRUE;

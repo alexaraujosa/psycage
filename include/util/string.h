@@ -2,6 +2,7 @@
 #define __RL_UTIL_STRING_H
 
 #include <ctype.h>
+#include <errno.h>
 #include "common.h"
 
 inline int strlen_cp(char* str) {
@@ -129,6 +130,31 @@ static inline void truncateString(char* str, size_t maxLength) {
 static inline int equal_strings(const char* str1, const char* str2) {
     return strcmp(str1, str2) == 0;
 }
+
+#ifndef __STDC_LIB_EXT1__
+static inline int strcpy_s(char* dest, const char* src, size_t dest_size) {
+    if (dest == NULL || src == NULL || dest_size == 0) {
+        if (dest != NULL && dest_size > 0) {
+            dest[0] = '\0';  // Nullify the destination string
+        }
+        return EINVAL;  // Invalid argument(s)
+    }
+
+    size_t src_length = strlen(src);
+    if (src_length + 1 > dest_size) {
+        // Source string is too long for the destination buffer
+        dest[0] = '\0';  // Nullify the destination string
+        return ERANGE;  // Destination buffer is not large enough
+    }
+
+    // Copy the source string to the destination
+    for (size_t i = 0; i <= src_length; ++i) {
+        dest[i] = src[i];
+    }
+
+    return 0;  // Success
+}
+#endif
 
 
 

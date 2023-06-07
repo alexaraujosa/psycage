@@ -54,7 +54,9 @@ void load_locales() {
 
         char locale_path[PATH_MAX];
         memset(locale_path, 0, PATH_MAX * sizeof(char));
-        strncpy(locale_path, locales_path, strlen(locales_path));
+        // strncpy(locale_path, locales_path, strlen(locales_path));
+        // strcpy_s(locale_path, locales_path, strlen(locale_path) - 1);
+        strncpy(locale_path, locales_path, PATH_MAX - 1);
         strcat(locale_path, locale_meta[i].location);
         strcat(locale_path, ".lang");
 

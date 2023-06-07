@@ -635,16 +635,19 @@ int load_save(int num_save) {
 
     struct save_data* sd = (struct save_data*)malloc(sizeof(struct save_data));
 
-    debug_file(dbgOut, 0, "Starting save data load.\n");
+    debug_file(dbgOut, 1, "Starting save data load.\n");
 
     // Save version
     debug_file(dbgOut, 1, "- Loading version.\n");
-    fread(&sd->version, sizeof(unsigned short), 1, save);
+    if (fread(&sd->version, sizeof(unsigned short), 1, save) != 1) {
+        debug_file(dbgOut, 1, "Unable to read save version.\n", save_path);
+        return 1;
+    }
     debug_file(dbgOut, 1, "- Loaded version.\n");
 
     debug_file(dbgOut, 1, "- Verifying save version.\n");
     if (sd->version != SAVE_VERSION) {
-        debug_file(dbgOut, 0, "Error while loading save file %s: Invalid version.\n", save_path);
+        debug_file(dbgOut, 1, "Error while loading save file %s: Invalid version.\n", save_path);
         return 1;
     }
     debug_file(dbgOut, 1, "- Save version is valid.\n");
@@ -686,7 +689,10 @@ int load_save(int num_save) {
 
     debug_file(dbgOut, 1, "- Loading map.\n");
     int nfind_map = -1;
-    fread(&nfind_map, sizeof(int), 1, save);
+    if (fread(&nfind_map, sizeof(int), 1, save) != 1) {
+        debug_file(dbgOut, 1, "Unable to map type.\n", save_path);
+        return 1;
+    }
 
     int nrows, ncols;
     int** nmap = NULL;

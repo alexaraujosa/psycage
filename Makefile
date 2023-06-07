@@ -16,6 +16,10 @@ EXECUTABLE	:= main
 
 all: $(BIN)/$(EXECUTABLE)
 
+build: clean all
+build: clear
+build: $(BIN)/$(EXECUTABLE)
+
 run: clean all
 	clear
 	./$(BIN)/$(EXECUTABLE)

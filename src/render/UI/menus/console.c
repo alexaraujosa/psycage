@@ -345,7 +345,7 @@ struct pattern {
     int cmd;
 };
 
-#define PATTERNS 20
+#define PATTERNS 21
 struct pattern shadow_patterns[PATTERNS];
 struct pattern patterns[PATTERNS];
 
@@ -420,6 +420,8 @@ void _makeProcessorPatterns() {
     patterns[19] = _makeProcessorPattern("^setsanity -?[0-9]+$", "setsanity", 20);
     shadow_patterns[19] = _makeProcessorPattern("^setsanity", "setsanity", 20);
 
+    patterns[20] = _makeProcessorPattern("^give [a-zA-Z0-9_]+ [0-9]+$", "give", 21);
+    shadow_patterns[20] = _makeProcessorPattern("^give", "give", 21);
 }
 
 void _executeCommand(int cmd, char* override) {
@@ -481,6 +483,7 @@ void _executeCommand(int cmd, char* override) {
             addMessage("getplayerprop  | Fetches a property stored on the player.");
             addMessage("gettranslation | Fetches a translation through it's translation key.");
             addMessage("getwindows     | Fetches the number of windows created.");
+            addMessage("give           | [CHEAT] Gives items.");
             addMessage("godmode        | [CHEAT] (De)activates the GodMode.");
             addMessage("healPlayer     | [CHEAT] Heals the player.");
             addMessage("history        | Views or restores a previous command.");  
@@ -634,6 +637,13 @@ void _executeCommand(int cmd, char* override) {
                 addMessage("    changes the value of the player's sanity to NUM.");
                 addMessage("Arguments:");
                 addMessage("    NUM: a number between -100 and 100.");
+                return;
+            } else if (strcmp(command, "give") == 0) {
+                addMessage("give: give [ITEM] [NUM]");
+                addMessage("    gives NUM of ITEM.");
+                addMessage("Arguments:");
+                addMessage("    ITEM: an item of a name.");
+                addMessage("    NUM:  a positive number.");
                 return;
             } else {
                 char out[MAX_CONSOLE_INPUT];
@@ -1181,6 +1191,40 @@ void _executeCommand(int cmd, char* override) {
 
         g_gamestate->player->sanity = num;
         addMessage("Sanity changed.");
+        return;
+    } else if (cmd == 21) {
+        char item[50];
+        int num;
+        if (!sscanf(console_input, "give %s %d", item, &num)) {
+            addMessage("Cannot get value.");
+            return;
+        }
+
+        if (num < 0) {
+            addMessage("NUM must be a positive number.");
+            return;
+        }
+
+        if (strcmp(item, "molotov") == 0) {
+            g_gamestate->player->molotov += num;
+        } else if (strcmp(item, "trap") == 0) {
+            g_gamestate->player->trap += num;
+        } else if (strcmp(item, "candle_fuel") == 0) {
+            add_candle_fuel(g_gamestate->player, num);
+        } else {
+            addMessage("Unknown item.");
+            return;
+        }
+
+        char out[MAX_CONSOLE_INPUT] = { 0 };
+        snprintf(
+            out, MAX_CONSOLE_INPUT, 
+            "Added %d of %s",
+            num, item
+        );
+
+        addMessage(out);
+
         return;
     }
 }

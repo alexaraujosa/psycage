@@ -31,8 +31,9 @@ void print_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
                     mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(DUNGEON_BLOOD_VISITED));
             }
             if (map[y][x] == 4){
-                
                 mvaddch(y + beginY, x + beginX, 'D' | COLOR_PAIR(DOOR));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(DUNGEON_BLOOD_VISITED));
             }
 
             if(map[y][x] == 7) {
@@ -86,6 +87,8 @@ void print_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
             }
             if (map[y][x] == 4){
                 mvaddch(y + beginY, x + beginX, 'D' | COLOR_PAIR(DOOR));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(DUNGEON_BLOOD_VISITED));
             }
             if(map[y][x] == 7) {
                 mvaddch(y + beginY, x + beginX, 'P' | COLOR_PAIR(POTION));
@@ -136,6 +139,8 @@ void print_asylum(int HEIGHT, int WIDTH, int beginY, int beginX) {
             }
             if(map[y][x] == 4){
                 mvaddch(y + beginY, x + beginX, 'D' | COLOR_PAIR(DOOR));
+                if(visible[y][x] == 2)
+                    mvaddch(y + beginY, x + beginX, '*' | COLOR_PAIR(DUNGEON_BLOOD_VISITED));
             }
             if(map[y][x] == 7) {
                 mvaddch(y + beginY, x + beginX, 'P' | COLOR_PAIR(POTION));

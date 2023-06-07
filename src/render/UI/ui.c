@@ -13,7 +13,7 @@
 
 //#define LARGURA_RETANGULO 52
 #define LARGURA_RETANGULO g_renderstate->ncols/3
-#define ESTATISTICAS_TOTAL 11
+#define ESTATISTICAS_TOTAL 10
 #define ESTATISTICAS_ESQUERDA 6
 
 int g_ui_size[2] = { 0 };
@@ -462,7 +462,6 @@ void drawGameInterface() {
         "user.interface.stats.kills",
         "user.interface.stats.item",
         "user.interface.stats.item.damage",
-        "user.interface.stats.candles",
         "user.interface.stats.trap",
         "user.interface.stats.molotov"
     };
@@ -544,20 +543,6 @@ void drawGameInterface() {
                   LARGURA_RETANGULO*0.6,
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
-
-    if(g_gamestate->player->hasUltimate == 0)
-        mvwprintw(g_renderstate->wnd,
-              ALTURA_LOGO - 1,
-              LARGURA_RETANGULO/3,
-              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.off")
-            );
-
-    else if(g_gamestate->player->hasUltimate == 1)
-        mvwprintw(g_renderstate->wnd,
-              ALTURA_LOGO - 1,
-              LARGURA_RETANGULO/3,
-              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.on")
-            );
 
 
     wattroff(g_renderstate->wnd, A_BOLD);
@@ -642,16 +627,30 @@ void drawGameInterface() {
 
     if(g_gamestate->potion_strength == 1)
         mvwprintw(g_renderstate->wnd,
-                  1 + 5,
+                  1 + 4,
                   LARGURA_RETANGULO + LARGURA_LOGO + 4,
                   "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.potion.on")
                 );
     else
         mvwprintw(g_renderstate->wnd,
-                  1 + 5,
+                  1 + 4,
                   LARGURA_RETANGULO + LARGURA_LOGO + 4,
                   "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.potion.off")
                 );
+
+    if(g_gamestate->player->hasUltimate == 0)
+        mvwprintw(g_renderstate->wnd,
+              1 + 5,
+              LARGURA_RETANGULO + LARGURA_LOGO + 4,
+              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.off")
+            );
+
+    else if(g_gamestate->player->hasUltimate == 1)
+        mvwprintw(g_renderstate->wnd,
+              1 + 5,
+              LARGURA_RETANGULO + LARGURA_LOGO + 4,
+              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.on")
+            );
 
     wattroff(g_renderstate->wnd, A_BOLD);
 
@@ -679,20 +678,13 @@ void drawGameInterface() {
 
     mvwprintw(g_renderstate->wnd,
               1 + 2,
-              LARGURA_RETANGULO + LARGURA_LOGO + 6 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.candles")),
-              "%d  ",     g_gamestate->player->current_candle
-            );
-
-
-    mvwprintw(g_renderstate->wnd,
-              1 + 3,
               LARGURA_RETANGULO + LARGURA_LOGO + 6 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.trap")),
               "%d  ",     g_gamestate->player->trap
             );
 
 
     mvwprintw(g_renderstate->wnd,
-              1 + 4,
+              1 + 3,
               LARGURA_RETANGULO + LARGURA_LOGO + 6 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.molotov")),
               "%d  ",     g_gamestate->player->molotov
             );

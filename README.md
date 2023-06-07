@@ -1,5 +1,9 @@
 # Roguelite
 
+# Usage
+1. `make run`
+2. Pray.
+
 ## Debugger
 The VSCode debugger is completely and utterly fucked. To debug, manually use gdb.
 
@@ -37,3 +41,8 @@ In case gdb decides to fuck up as well:
 6. It should output `All heap blocks were freed -- no leaks are possible`
 7. Run the command in gdb: `monitor v.kill`
 8. Exit gdb.
+
+# Notice
+If you feel offended by any of these comments, feel free to fuck off elsewhere, preferably Twitter.
+
+*For legal reasons, all offensive statements are a joke and should not be treated outside of the context of such.*

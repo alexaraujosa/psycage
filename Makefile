@@ -1,6 +1,6 @@
 CC        := gcc
 # C_FLAGS := -Wall -Wextra -pedantic -O2
-_C_FLAGS := -Wall -Wextra -pedantic
+_C_FLAGS := -Wall -Wextra -pedantic -O2
 C_OPT_FLAGS := -O2
 C_DEBUG_FLAGS := -Og -g -DRL_DEBUG -fkeep-inline-functions
 C_FLAGS := $(_C_FLAGS) $(C_OPT_FLAGS)
@@ -13,6 +13,8 @@ LIB		:= lib
 LIBRARIES	:=-lm -lpanel -lcurses #lncursesw
 EXECUTABLE	:= main
 
+install: 
+	sudo apt-get install libncurses5-dev libncursesw5-dev gdb valgrind
 
 all: $(BIN)/$(EXECUTABLE)
 

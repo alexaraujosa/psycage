@@ -2,6 +2,10 @@
  * RENDER MODULE                                               *
  *                                                             *
  * This module handles the rendering of all parts of the game. *
+ *                                                             *
+ * NOTE: Follow my advice, don't look any further if you want  *
+ * to remain sane. You'd have less damage if you stared into an*
+ * Elder Scroll.                                               *
  ***************************************************************/
 
 #ifndef __RL_RENDER_H

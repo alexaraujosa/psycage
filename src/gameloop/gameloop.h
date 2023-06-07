@@ -4,6 +4,9 @@
  * This module handles the entity behavior, both for player    *
  *   controlled characters, mobs, dropped items and all other  *
  *   miscelaneous entities                                     *
+ *                                                             *
+ * NOTE: Bring a hazmat suit for this one, cause it makes      *
+ * Chernobyl look like a mere rock in comparison.              *
  ***************************************************************/
 
 #ifndef __RL_GAMELOOP_H

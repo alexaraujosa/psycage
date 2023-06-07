@@ -1,3 +1,11 @@
+/***************************************************************
+ * LIGHT MODULE                                                *
+ *                                                             *
+ * This module handles the lightmap.                           *
+ *                                                             *
+ * NOTE: FUCK YOU JORGE!                                       *
+ ***************************************************************/
+
 #ifndef __RL_LIGHTS_H
 #define __RL_LIGHTS_H
 

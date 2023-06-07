@@ -1,3 +1,14 @@
+/***************************************************************
+ * SAVE MODULE                                                 *
+ *                                                             *
+ * This module handles the creation, loading and deltion of    *
+ * save data.                                                  *
+ *                                                             *
+ * FAIR WARNING: This shit is more unstable than my own head,  *
+ * so pray if you have to debug anything in here, cause you    *
+ * won't. You'll just cry.                                     *
+ ***************************************************************/
+
 #ifndef __RL_DATA_SAVE_H
 #define __RL_DATA_SAVE_H
 

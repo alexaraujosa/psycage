@@ -1,3 +1,15 @@
+/***************************************************************
+ * CLOCK MODULE                                                *
+ *                                                             *
+ * This module handles the creation and handling of the dynamic*
+ * clock system.                                               *
+ *                                                             *
+ * NOTE: During the creation of this module, we discovered     *
+ * first hand that time does indeed move at different speeds   *
+ * cause how the fuck did time go by so fast while making this *
+ * thing?                                                      *
+ ***************************************************************/
+
 #ifndef __RL_GAMELOOP_CLOCK_H
 #define __RL_GAMELOOP_CLOCK_H
 

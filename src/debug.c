@@ -16,7 +16,7 @@ FILE* make_debug_file(char* bin, int bin_len, char* filename) {
     char* new_dbgfile_path = malloc(new_dbgout_len);
     if (new_dbgfile_path == NULL) {
         fprintf(stderr, "Unable to initialize game: Failed to generate log path.\n");
-        return 1;
+        return NULL;
     }
     strcpy(new_dbgfile_path, dbgfile_path);
     strftime(new_dbgfile_path + new_dbgout_len - dateFormatSize, dateFormatSize, "%Y-%m-%dT%H:%M:%S", tmInfo);

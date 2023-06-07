@@ -1,3 +1,14 @@
+/***************************************************************
+ * AI MODULE                                                   *
+ *                                                             *
+ * This module handles all functionality for the mobs.         *
+ *                                                             *
+ * FAIR WARNING: This is called Artificial Intelligence for a  *
+ * reason, because this motherlovin' son of a gun seems to     *
+ * have a mind of it's own and do all kinds of unexpected      *
+ * shit.                                                       *
+ ***************************************************************/
+
 #ifndef __RL_ENTITY_AI_H
 #define __RL_ENTITY_AI_H
 

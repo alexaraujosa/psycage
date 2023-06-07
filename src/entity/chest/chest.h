@@ -2,6 +2,11 @@
  * CHEST MODULE                                                *
  *                                                             *
  * This module handles the existing chest in the game.         *
+ *                                                             *
+ * NOTE: This module is like a Mystery Box: If you're lucky it *
+ * will be easy to use and debug. If you're unlucky then you're*
+ * all kinds of fucked, cause the stack trace will be long     *
+ * enough to reach Australia.                                  *
  ***************************************************************/
 
 #ifndef __RL_CHEST_H

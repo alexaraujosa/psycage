@@ -2,6 +2,9 @@
  * PROJECTILE MODULE                                           *
  *                                                             *
  * This module handles the projectile behavior.                *
+ *                                                             *
+ * NOTE: The creation of this module was on itself a shot in   *
+ * our own feet.                                               *
  ***************************************************************/
 
 #ifndef __RL_PROJECTILE_H

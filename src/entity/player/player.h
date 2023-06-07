@@ -2,6 +2,9 @@
  * PLAYER MODULE                                               *
  *                                                             *
  * This module handles the player behavior.                    *
+ *                                                             *
+ * FAIR WARNING: The behavior of a player cannot be predicted, *
+ * and neither can the behavior of this thing can.             *
  ***************************************************************/
 
 #ifndef __RL_PLAYER_H

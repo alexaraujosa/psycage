@@ -1,3 +1,12 @@
+/***************************************************************
+ * CONTROLERS MODULE                                           *
+ *                                                             *
+ * This module handles the control flux of the game itself.    *
+ *                                                             *
+ * NOTE: At least this module is controlling something, cause  *
+ * I definitely aren't.                                        *
+ ***************************************************************/
+
 #ifndef __RL_CONTROLERS_H
 #define __RL_CONTROLERS_H
 

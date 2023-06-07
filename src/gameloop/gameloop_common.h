@@ -1,3 +1,12 @@
+/***************************************************************
+ * GAMELOOP COMMON MODULE                                      *
+ *                                                             *
+ * This module defines properties required by multiple sources.*
+ *                                                             *
+ * NOTE: If I could define torture, I'd define it as having to *
+ * deal with this fucker during debugging.                     *
+ ***************************************************************/
+
 #ifndef __RL_GAMELOOP_COMMON_H
 #define __RL_GAMELOOP_COMMON_H
 

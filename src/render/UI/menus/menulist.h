@@ -1,3 +1,11 @@
+/***************************************************************
+ * MENU LIST                                                   *
+ *                                                             *
+ * This file contains the IDs of every menu, as well as the    *
+ * definitions of their structures.                            *
+ *                                                             *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_MENULIST_H
 #define __RL_RENDER_UI_MENULIST_H
 

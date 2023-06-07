@@ -1,3 +1,11 @@
+/***************************************************************
+ * POTIONS MODULE                                              *
+ *                                                             *
+ * This module handles the usage and placement of potions on   *
+ * the map.                                                    *
+ *                                                             *
+ ***************************************************************/
+
 #ifndef __RL_DATA_POTIONS_H
 #define __RL_DATA_POTIONS_H
 

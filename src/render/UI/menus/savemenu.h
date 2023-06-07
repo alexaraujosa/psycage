@@ -1,3 +1,12 @@
+/***************************************************************
+ * SAVE MENU                                                   *
+ *                                                             *
+ * This menu handles the UI for the save screen.               *
+ *                                                             *
+ * NOTE: You can save your game, but nothing can save you from *
+ * the one that's standing behind you.                         *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_MENU_SM_H
 #define __RL_RENDER_UI_MENU_SM_H
 

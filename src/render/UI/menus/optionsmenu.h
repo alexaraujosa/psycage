@@ -1,3 +1,13 @@
+/***************************************************************
+ * OPTIONS MENU                                                *
+ *                                                             *
+ * This menu handles the options for the game.                 *
+ *                                                             *
+ * NOTE: Think of this menu as your friends and the suffering  *
+ * as your family. Cause you can chose your friends, but you're*
+ * stuck with your family till your death.                     *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_MENU_OM_H
 #define __RL_RENDER_UI_MENU_OM_H
 

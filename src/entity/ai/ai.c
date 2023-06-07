@@ -36,7 +36,7 @@ Mob defaultMob() {
     mob->hasAI = TRUE;
 
     // mob->hitChance = 3;
-    mob->hitCooldown = 5;
+    mob->hitCooldown = 1;
     mob->lastHit = 0;
 
     return mob;

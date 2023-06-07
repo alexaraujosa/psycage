@@ -1,3 +1,10 @@
+/***************************************************************
+ * CHARACTERS MENU                                             *
+ *                                                             *
+ * This menu handles the character selection before a new game.*
+ *                                                             *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_MENU_CM_H
 #define __RL_RENDER_UI_MENU_CM_H
 

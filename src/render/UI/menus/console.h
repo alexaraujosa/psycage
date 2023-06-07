@@ -1,3 +1,12 @@
+/***************************************************************
+ * CONSOLE MENU                                                *
+ *                                                             *
+ * This menu handles the entirety of the in-game console.      *
+ *                                                             *
+ * NOTE: Don't worry, I don't have the patience to read all    *
+ * this either.                                                *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_MENU_CONSOLE_H
 #define __RL_RENDER_UI_MENU_CONSOLE_H
 

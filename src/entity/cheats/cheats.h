@@ -1,3 +1,12 @@
+/***************************************************************
+ * CHEAT MODULE                                                *
+ *                                                             *
+ * This module handles all cheats in the game.                 *
+ *                                                             *
+ * NOTE: If you need this thing to be able to beat the game,   *
+ * you might need to rethink your life choices.                *
+ ***************************************************************/
+
 #ifndef __RL_CHEATS_H
 #define __RL_CHEATS_H
 

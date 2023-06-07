@@ -1,3 +1,11 @@
+/***************************************************************
+ * DEAD MENU                                                   *
+ *                                                             *
+ * This menu handles the UI for the player's death.            *
+ *                                                             *
+ * NOTE: Oh, look. That's what I want to be when I grow up!    *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_MENU_DM_H
 #define __RL_RENDER_UI_MENU_DM_H
 

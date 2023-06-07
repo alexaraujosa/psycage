@@ -1,3 +1,10 @@
+/***************************************************************
+ * UI MODULE                                                   *
+ *                                                             *
+ * This module handles the management of all menus.            *
+ *                                                             *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_H
 #define __RL_RENDER_UI_H
 

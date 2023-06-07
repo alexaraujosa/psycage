@@ -1,3 +1,11 @@
+/***************************************************************
+ * PAUSE MENU                                                  *
+ *                                                             *
+ * This menu handles the UI for the pause screen.              *
+ *                                                             *
+ * NOTE: Can I get this thing for life?                        *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_MENU_PM_H
 #define __RL_RENDER_UI_MENU_PM_H
 

@@ -1,3 +1,13 @@
+/***************************************************************
+ * DIALOG MENU                                                 *
+ *                                                             *
+ * This menu handles the UI for the popup dialog windows.      *
+ *                                                             *
+ * NOTE: A wise man once said that all problems should be      *
+ * solved with dialog. That's why I keep my baseball bat named *
+ * 'dialog' near me at all times.                              *
+ ***************************************************************/
+
 #ifndef __RL_RENDER_UI_MENU_D_H
 #define __RL_RENDER_UI_MENU_D_H
 

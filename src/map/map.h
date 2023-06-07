@@ -2,6 +2,9 @@
  * MAP MODULE                                                  *
  *                                                             *
  * This module handles the creation and manipulation of maps.  *
+ *                                                             *
+ * NOTE: WHAT KIND OF HELLSPAWN DID YOU DESSECRATE GOD'S GREEN *
+ * EARTH WITH, JORGE, WTF?!                                    *
  ***************************************************************/
 
 #ifndef __RL_MAP_H

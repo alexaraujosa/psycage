@@ -544,6 +544,14 @@ void drawGameInterface() {
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
 
+    mvwprintw(
+        g_renderstate->wnd,
+        ALTURA_LOGO - 1,
+        2,
+        "%s", 
+        get_localized_string(g_renderstate->language, "user.interface.stats.candles")
+    );
+
 
     wattroff(g_renderstate->wnd, A_BOLD);
 
@@ -607,6 +615,15 @@ void drawGameInterface() {
         );
 
 
+    mvwprintw(
+        g_renderstate->wnd,
+        ALTURA_LOGO - 1,
+        2 + 2 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.candles")),
+        "%2d | %2d", 
+        g_gamestate->player->current_candle, g_gamestate->player->candle_fuel
+    );
+
+
 /*************************************
  *                                   *
  *       Retângulo da Direita        *
@@ -665,7 +682,7 @@ void drawGameInterface() {
     mvwprintw(g_renderstate->wnd,
               1,
               LARGURA_RETANGULO + LARGURA_LOGO + 6 + strlen(get_localized_string(g_renderstate->language, "user.interface.stats.item")),
-              "%s    ",     g_gamestate->player->item->name
+              "%s         ",     g_gamestate->player->item->name
             );
 
 

@@ -326,11 +326,9 @@ void render_foreground() {
     printw("                            ");
 
     move(g_renderstate->nrows - 1, posX);
-    printw(" X: %d Y: %d | %d %d", 
+    printw(" X: %d Y: %d", 
         playerCoords->x, 
-        playerCoords->y,
-        g_gamestate->player->current_candle,
-        g_gamestate->player->candle_fuel
+        playerCoords->y
     );
 
 	wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));

@@ -22,13 +22,14 @@ void start_game() {
 	g_gamestate->paused = FALSE;
 
 	// init_light_map(ALTURA_JOGO, LARGURA_JOGO);
-	for(int i = 0 ; i < ALTURA_JOGO ; i++)
-        for(int j = 0 ; j < LARGURA_JOGO ; j++)
+	for (int i = 0 ; i < ALTURA_JOGO ; i++)
+        for (int j = 0 ; j < LARGURA_JOGO ; j++)
             visible[i][j] = 0;
+
 	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X);
 
-	for(int i = 0 ; i < ALTURA_JOGO ; i++)
-		for(int j = 0 ; j < LARGURA_JOGO ; j++)
+	for (int i = 0 ; i < ALTURA_JOGO ; i++)
+		for (int j = 0 ; j < LARGURA_JOGO ; j++)
 			map_footprint[i][j] = map[i][j];
 
 	g_gamestate->mob_count = 3;
@@ -45,17 +46,14 @@ void start_game() {
 		map[g_gamestate->mobs[i]->entity->coords->y][g_gamestate->mobs[i]->entity->coords->x] = 5;
 	}
 
-	for(int i = g_gamestate->mob_count ; i < g_gamestate->mob_begin ; i++) {
-		if(g_gamestate->mobs[i] != NULL)
-			free(g_gamestate->mobs[i]);
+	for (int i = g_gamestate->mob_count ; i < g_gamestate->mob_begin ; i++) {
+		if (g_gamestate->mobs[i] != NULL) free(g_gamestate->mobs[i]);
 	}
 
 	g_gamestate->mob_begin = g_gamestate->mob_count;
 
-	for(int i = 0 ; i < g_gamestate->chest_count ; i++)
+	for (int i = 0 ; i < g_gamestate->chest_count ; i++)
 	    addChestToMap(g_gamestate->chests[i], map, LARGURA_JOGO, ALTURA_JOGO);
-
-	
 
 	player_spawn(g_gamestate->player, map, ALTURA_JOGO, LARGURA_JOGO); 
 	create_potion();
@@ -70,28 +68,27 @@ void start_game() {
 	return;
 }
 
-void continue_game(){
-	if(g_gamestate->projectiles[1]->entity->coords->y != 0)	remove_trap();
-    if(g_gamestate->projectiles[2]->entity->coords->y != 0)	remove_molotov();
+void continue_game() {
+	if (g_gamestate->projectiles[1]->entity->coords->y != 0)	remove_trap();
+    if (g_gamestate->projectiles[2]->entity->coords->y != 0)	remove_molotov();
 	resetAllClocks();
 
-	for(int y = 0; y < ALTURA_JOGO; y++){	
+	for (int y = 0; y < ALTURA_JOGO; y++) {	
 		if (map == NULL) break;	
 		free(map[y]);
 	}
 	free(map);
 
 
-	for(int y = 0 ; y < ALTURA_JOGO ; y++)
-		for(int x = 0 ; x < LARGURA_JOGO ; x++)
+	for (int y = 0 ; y < ALTURA_JOGO ; y++)
+		for (int x = 0 ; x < LARGURA_JOGO ; x++)
 			visible[y][x] = 0;
 
 
 	find_map = create_random_map(ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); 
 	
-
-	while(!valid_map(ALTURA_JOGO, LARGURA_JOGO)){
-		for(int y = 0; y < ALTURA_JOGO-1; y++){
+	while (!valid_map(ALTURA_JOGO, LARGURA_JOGO)) {
+		for (int y = 0; y < ALTURA_JOGO-1; y++) {
 			if (map == NULL) break;
         		
 			free(map[y]);
@@ -128,6 +125,13 @@ void continue_game(){
 
 	g_gamestate->potion_strength = 0;
 	create_potion();
+
+	for (int i = 0; i < CANDLES_NUM; i++) {
+		addCandleToMap();
+	}
+
+	// if (is_player_insane(g_gamestate->player)) g_
+	restore_sanity(g_gamestate->player, 200);
 
 	return;
 }

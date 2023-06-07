@@ -37,6 +37,8 @@ Gamestate init_gameloop() {
 	ALTURA_JOGO = g_renderstate->nrows - ALTURA_LOGO - 2;
 	LARGURA_JOGO = g_renderstate->ncols - 2;
 
+	g_gamestate = NULL;
+
     debug_file(dbgOut, 0, " - Allocating gameloop memory...\n");
 
 	Gamestate gs = (Gamestate)malloc(sizeof(GAMESTATE));
@@ -234,6 +236,8 @@ void tick() {
 				addClock(iClock);
 
 				iClockInitialized = TRUE;
+			} else {
+				iClock->blocked = FALSE;
 			}
 
 			if (iClock->ticks == TICKS_PER_SECOND - 1) {
@@ -544,27 +548,37 @@ void game_keybinds(int key) {
 		displayMenu(MENU_MAIN_MENU);
 
 	if(key == 'h') {
-		if((g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y+1 && 
-               g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x) ||
-               (g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y-1 && 
-               g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x) ||
-               (g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y && 
-               g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x+1) ||
-               (g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y && 
-               g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x-1)
-            ) {
+		if(
+			(
+				g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y+1 
+				&& g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x
+			) || (
+				g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y-1 
+				&& g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x
+			) || (
+				g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y && 
+				g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x+1
+			) || (
+				g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y && 
+				g_gamestate->chests[0]->entity->coords->x == g_gamestate->player->entity->coords->x-1
+			)
+        ) {
 		    map[g_gamestate->chests[0]->entity->coords->y][g_gamestate->chests[0]->entity->coords->x] = map_footprint[g_gamestate->chests[0]->entity->coords->y][g_gamestate->chests[0]->entity->coords->x];
             g_gamestate->chests[0]->entity->coords->y = 0;
             g_gamestate->chests[0]->entity->coords->x = 6; 
 		    g_gamestate->player->item = get_random_item();
+
 		    if(strcmp(g_gamestate->player->item->id, "0018") == 0) {
 			   g_gamestate->player->entity->maxHealth = (g_gamestate->player->entity->maxHealth)/1.5;
 			   g_gamestate->player->entity->basedamage = (g_gamestate->player->entity->basedamage)*1.5;
+			   reduce_sanity(g_gamestate->player, 50);
 			}
+
 			if (g_gamestate->player->entity->maxHealth < g_gamestate->player->entity->health) {
 				g_gamestate->player->entity->health = g_gamestate->player->entity->maxHealth;
 			}
-        	g_gamestate->player->entity->armor = g_gamestate->player->item->armor;
+
+			g_gamestate->player->entity->armor = g_gamestate->player->item->armor;
 		}
 	}
 	if (key == 'c') {

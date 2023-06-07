@@ -216,7 +216,15 @@ int is_player_insane(Player player) {
 }
 
 void restore_sanity(Player player, int sanity) {
+    if (player->sanity <= 0) {
+        if (player->sanity + sanity > 0) {
+            player->sanity = 0;
+            return;
+        }
+    }
+
     player->sanity += sanity;
+
     if (player->sanity > 100) player->sanity = 100;
 }
 

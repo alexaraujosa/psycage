@@ -556,26 +556,13 @@ void game_keybinds(int key) {
 		use_candle_fuel(g_gamestate->player, 1);
 	}
 	
-	if(key == '5')
-		displayMenu(MENU_MAIN_MENU);
-
 }
 
 void menu_keybinds(int key) {
 	if (!isInMenu()) return;
 
 	switch (key) {
-		case KEY_B2:
-		case '5': {
-			Menu active_menu = getActiveMenu();
-			if (active_menu == NULL) break;
-			if (active_menu->id == MENU_MAIN_MENU) {
-				closeMenu(MENU_MAIN_MENU);
-				break;
-			}
 
-			break;
-		}
 		default: {
 			Menu active_menu = getActiveMenu();
 			if (active_menu == NULL) break;

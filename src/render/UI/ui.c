@@ -545,6 +545,20 @@ void drawGameInterface() {
                   "%s",    get_localized_string(g_renderstate->language, stats[i])
                 );
 
+    if(g_gamestate->player->hasUltimate == 0)
+        mvwprintw(g_renderstate->wnd,
+              ALTURA_LOGO - 1,
+              LARGURA_RETANGULO/3,
+              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.off")
+            );
+
+    else if(g_gamestate->player->hasUltimate == 1)
+        mvwprintw(g_renderstate->wnd,
+              ALTURA_LOGO - 1,
+              LARGURA_RETANGULO/3,
+              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.on")
+            );
+
 
     wattroff(g_renderstate->wnd, A_BOLD);
 
@@ -683,18 +697,6 @@ void drawGameInterface() {
               "%d  ",     g_gamestate->player->molotov
             );
     
-    if(g_gamestate->player->hasUltimate == 0)
-        mvwprintw(g_renderstate->wnd,
-              1 + 5,
-              LARGURA_RETANGULO + LARGURA_LOGO + 4,
-              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.off")
-            );
-    else if(g_gamestate->player->hasUltimate == 1)
-        mvwprintw(g_renderstate->wnd,
-              1 + 5,
-              LARGURA_RETANGULO + LARGURA_LOGO + 4,
-              "%s  ",     get_localized_string(g_renderstate->language, "user.interface.stats.ultimate.on")
-            );
 
     wrefresh(g_renderstate->wnd);
     return;

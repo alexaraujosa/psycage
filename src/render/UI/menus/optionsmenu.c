@@ -140,7 +140,9 @@ void draw_OptionsKeybinderMenu(Menu menu){
         "menu.options.keybinder.molotov",
         "menu.options.keybinder.ultimate",
         "menu.options.keybinder.pause",
-        "menu.options.keybinder.console"
+        "menu.options.keybinder.console",
+        "menu.options.keybinder.chest",
+        "menu.options.keybinder.candle"
     };
 
     box(menu->wnd, 0 , 0);
@@ -338,6 +340,24 @@ void handle_OptionsKeybinderMenu_keybinds(int key){
                     }
                     
                     keybinds[9] = (int) temp;
+                    break;
+                    break;
+                case 11 :
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
+                    keybinds[10] = (int) temp;
+                    break;
+                    break;
+                case 12 :
+                    if (scanf("%c", &temp) != 1) {
+                        inputCollectionFailure();
+                        return;
+                    }
+                    
+                    keybinds[11] = (int) temp;
                     break;
 
             }

@@ -14,7 +14,9 @@ int keybinds[] = {
 		106,		// 'j' | Use Molotov
 		108,		// 'l' | Use Ultimate
 		112,		// 'p' | Open Pause Menu
-		92			// '\\'| Open Console
+		92,			// '\\'| Open Console
+		104,		// 'h' | Open Chest
+		99			// 'c' | Use Candle Fuel
 };
 
 int ALTURA_JOGO;
@@ -425,27 +427,8 @@ void handle_keybinds() {
 
 void game_keybinds(int key) {
 
-
 	godmode_code_checker(key);
 	vision_code_checker(key);
-
-	if(key == 'k')
-		g_gamestate->player->kills++;
-
-	
-	
-	if(key == 'j')
-		g_gamestate->player->hasUltimate = 1;
-
-
-
-
-	if(key == 'z')
-		g_gamestate->mob_count = 0; //continue_game();
-
-    // Movement Controls
-    
-
 
 	if(key == keybinds[0] || key == toupper(keybinds[0])) {
 		if(is_passable(g_gamestate->player->entity->coords->x, g_gamestate->player->entity->coords->y-1)){
@@ -530,24 +513,13 @@ void game_keybinds(int key) {
                     g_gamestate->projectiles[2]->dy = 0;
             }
     } else if (key == keybinds[7] || key == toupper(keybinds[7])) {
-		if(g_gamestate->player->hasUltimate)
+		if (g_gamestate->player->hasUltimate)
 			ultimate_use(); 
 	} else if (key == keybinds[8] || key == toupper(keybinds[8])) {
 		displayMenu(MENU_PAUSE);
-	} else if (key == keybinds[9]) 
+	} else if (key == keybinds[9] || key == toupper(keybinds[9])) {
 		displayMenu(MENU_CONSOLE);
-
-	
-
-
-	// Seppuku
-	if(key == 'q')
-		EXIT = TRUE;
-
-	if(key == '5')
-		displayMenu(MENU_MAIN_MENU);
-
-	if(key == 'h') {
+	} else if (key == keybinds[10] || key == toupper(keybinds[10])) {
 		if(
 			(
 				g_gamestate->chests[0]->entity->coords->y == g_gamestate->player->entity->coords->y+1 
@@ -580,12 +552,12 @@ void game_keybinds(int key) {
 
 			g_gamestate->player->entity->armor = g_gamestate->player->item->armor;
 		}
-	}
-	if (key == 'c') {
-		// if (is_player_insane(g_gamestate->player)) g_gamestate->player->sanity = 99;
-		// else g_gamestate->player->sanity = 0;
+	} else if (key == keybinds[11] || key == toupper(keybinds[11])) {
 		use_candle_fuel(g_gamestate->player, 1);
 	}
+	
+	if(key == '5')
+		displayMenu(MENU_MAIN_MENU);
 
 }
 

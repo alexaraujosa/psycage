@@ -161,11 +161,7 @@ void calculate_visibility(int x, int y, int **map, int HEIGHT, int WIDTH){
                     visible[i][j] = 2;
             }
         }
-
-        //free(visible);
     }
-
-    // init_light_map(HEIGHT, WIDTH);
     
     for (int octant = 0; octant < 8; octant++) {
         cast_light(x, y, 1, 1.0, 0.0, map, octant, HEIGHT, WIDTH);

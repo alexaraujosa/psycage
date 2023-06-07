@@ -12,15 +12,31 @@ Mob defaultMob() {
     if (mob == NULL) return NULL;
 
     mob->entity = defaultEntity();
+    
+    if (g_gamestate != NULL && g_gamestate->input_initialized) {
+        for (int i = 0; i < g_gamestate->player->level; i++) {
+            mob->entity->basedamage += 4;
+            mob->entity->maxHealth += 6;
+            mob->entity->health += 6;
+        }
+    }
+
     mob->item = get_item_by_id("0000");
 
     mob->moveCooldown = 10;
     mob->lastMove = 0;
 
+    if (g_gamestate != NULL && g_gamestate->input_initialized) {
+        for (int i = 0; i < (g_gamestate->player->level / 2); i++) {
+            if (mob->moveCooldown == 1) break;
+            mob->moveCooldown -= 1;
+        }
+    }
+
     mob->hasAI = TRUE;
 
     // mob->hitChance = 3;
-    mob->hitCooldown = 10;
+    mob->hitCooldown = 5;
     mob->lastHit = 0;
 
     return mob;
@@ -73,9 +89,11 @@ int attemptDamagePlayer(Mob mob) {
         //     debug_file(dbgOut, 2, "- Chance miss.\n");
         //     return 1;
         // }
+
+        return 0;
     }
 
-    debug_file(dbgOut, 2, "- Player is too far away. No damage can be done.\n");
+    debug_file(dbgOut, 2, "- Player is too far away. No damage can be done (%f > sqrt(2)).\n", distance);
 
     return 1;
 }
@@ -231,8 +249,20 @@ void levelUp(Mob mob) {
     if (g_gamestate->player->level <= 99) {
         if (g_gamestate->player->kills % 5 == 0) {
             g_gamestate->player->level += 1;
-            mob->entity->basedamage += 4;
-            mob->entity->maxHealth += 6;
+            // mob->entity->basedamage += 4;
+            // mob->entity->maxHealth += 6;
+
+            for (int i = 0; i < g_gamestate->mob_begin; i++) {
+                if (
+                    g_gamestate->mobs[i]->entity->coords->y != 0 
+                    && g_gamestate->mobs[i]->entity->coords->x != 5
+                    && g_gamestate->mobs[i]->entity->health != 0
+                ) {
+                    mob->entity->basedamage += 4;
+                    mob->entity->maxHealth += 6;
+                    mob->entity->health += 6;
+                } 
+            }
 
 			   if(strcmp(g_gamestate->player->item->id, "0007") == 0 || strcmp(g_gamestate->player->item->id, "0008") == 0 || strcmp(g_gamestate->player->item->id, "0009") == 0 
 			   || strcmp(g_gamestate->player->item->id, "0016") == 0 || strcmp(g_gamestate->player->item->id, "0018") == 0){

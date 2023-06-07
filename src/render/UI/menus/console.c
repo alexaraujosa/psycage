@@ -33,7 +33,7 @@ void removeCommandFromHistory(int index);
 void _processCommand();
 void _makeProcessorPatterns();
 
-#pragma region Menu functions
+
 void draw_ConsoleMenu(Menu menu) {
     int mrows = g_renderstate->nrows - 7;
     int mcols = g_renderstate->ncols - 7;
@@ -180,9 +180,9 @@ void cleanup_ConsoleMenu() {
     console_input_ind = 0;
     console_output_control[3] = 0;
 }
-#pragma endregion
 
-#pragma region CONSOLE HELPERS
+
+
 void logMessage(const char* format, ...) {
     if (consoleOut == NULL) return;
 
@@ -334,9 +334,9 @@ void nukeConsoleMenu() {
     setupConsole();
 }
 
-#pragma endregion
 
-#pragma region COMMAND PROCESSING
+
+
 
 // Patterns
 struct pattern {
@@ -921,8 +921,7 @@ void _executeCommand(int cmd, char* override) {
             addMessage("Invalid value.");
             return;
         }
-
-        #pragma region Entity
+        
         if (equal_strings(param, "entity")) {
             snprintf(
                 out, MAX_CONSOLE_INPUT, 
@@ -972,9 +971,9 @@ void _executeCommand(int cmd, char* override) {
                 player->entity->basedamage
             );
         }
-        #pragma endregion
+        
 
-        #pragma region Item
+        
         else if (equal_strings(param, "item")) {
             snprintf(
                 out, MAX_CONSOLE_INPUT, 
@@ -1008,9 +1007,9 @@ void _executeCommand(int cmd, char* override) {
                 player->item->armor
             );
         }
-        #pragma endregion
+        
 
-        #pragma region Cheats
+        
         else if (equal_strings(param, "cheats")) {
             snprintf(
                 out, MAX_CONSOLE_INPUT, 
@@ -1030,7 +1029,7 @@ void _executeCommand(int cmd, char* override) {
                 player->cheats->vision
             );
         }
-        #pragma endregion
+        
 
         else if (equal_strings(param, "level")) {
             snprintf(
@@ -1281,4 +1280,4 @@ void _processCommand() {
 
     addMessage(out);
 }
-#pragma endregion
+

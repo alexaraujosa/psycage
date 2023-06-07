@@ -11,8 +11,6 @@ Renderstate init_render() {
     rs->activeMenus = 0;
     for (int i = 0; i < MENU_STACK_MAX; i++) rs->menus[i] = NULL;
 
-    // setlocale(LC_ALL, "");
-
     // Initialize window
     debug_file(dbgOut, 0, " - Initializing window...\n");
     WINDOW *wnd = initscr();
@@ -24,17 +22,15 @@ Renderstate init_render() {
     getmaxyx(wnd,nrows,ncols);
     rs->nrows = nrows;
     rs->ncols = ncols;
-    rs->language = EN_US;//en_US;
+    rs->language = EN_US;
 
 	cbreak();
 	noecho();
     curs_set(0);
 	nonl();
     nodelay(stdscr, TRUE);
-    //timeout(100);
 	intrflush(stdscr, false);
 	keypad(stdscr, true);
-    //curs_set(0);
 
     
     // COLORS
@@ -60,13 +56,13 @@ Renderstate init_render() {
     init_color(YELLOW_ORANGE, 870, 580, 0);
     init_color(DARKPLUS_GREY, 420, 420, 420);
     init_color(PURPLE, 592, 0, 844);
+
     //DOORS
     init_pair(DOOR, COLOR_YELLOW, COLOR_BLUE);
+
     // PLAYER
 	init_pair(WHITE_PLAYER, COLOR_WHITE, COLOR_BLACK);
     init_pair(YELLOW_PLAYER, COLOR_YELLOW, COLOR_BLACK);
-    // init_pair(BLUE_PLAYER, COLOR_BLUE, COLOR_BLACK);
-    // init_pair(BLUE_PLAYER, (short)(COLOR_BLUE | A_BOLD), COLOR_CYAN);
     init_pair(BLUE_PLAYER, (short)(COLOR_BLACK | A_BOLD), COLOR_BLUE);
 
     // DUNGEON
@@ -75,14 +71,16 @@ Renderstate init_render() {
     init_pair(DUNGEON_BLOOD, DARK_RED, (short)(COLOR_BLACK | A_DIM));     
     init_pair(DUNGEON_WALLS_VISITED, DARK_GREY, (short)(DARK_DARK_GREY | A_DIM)); 
     init_pair(DUNGEON_FLOOR_VISITED, DARK_GREY, (short)(COLOR_BLACK | A_DIM));
-    init_pair(DUNGEON_BLOOD_VISITED, DARK_DARK_RED, (short)(COLOR_BLACK | A_DIM));     
+    init_pair(DUNGEON_BLOOD_VISITED, DARK_DARK_RED, (short)(COLOR_BLACK | A_DIM));
+
     // ASYLUM
     init_pair(ASYLUM_WALLS, COLOR_BLACK, (short)(COLOR_WHITE | A_DIM)); 
     init_pair(ASYLUM_FLOOR, COLOR_WHITE, (short)(LIGHT_GREY | A_DIM)); 
     init_pair(ASYLUM_BLOOD, DARK_RED, (short)(LIGHT_GREY | A_DIM));    
     init_pair(ASYLUM_WALLS_VISITED, DARK_GREY, (short)(GREY | A_DIM)); 
     init_pair(ASYLUM_FLOOR_VISITED, GREY, (short)(DARK_GREY | A_DIM)); 
-    init_pair(ASYLUM_BLOOD_VISITED, DARK_DARK_RED, (short)(DARK_GREY | A_DIM));   
+    init_pair(ASYLUM_BLOOD_VISITED, DARK_DARK_RED, (short)(DARK_GREY | A_DIM));  
+
     // SEWERS
     init_pair(SEWERS_BLOOD, COLOR_WHITE, (short)(DARK_RED | A_DIM));
     init_pair(SEWERS_FLOOR, BROWN, (short)(DARK_GREY | A_DIM)); 
@@ -90,6 +88,7 @@ Renderstate init_render() {
     init_pair(SEWERS_BLOOD_VISITED, COLOR_WHITE, (short)(DARK_DARK_RED | A_DIM));
     init_pair(SEWERS_FLOOR_VISITED, DARK_BROWN, (short)(DARK_DARK_GREY | A_DIM)); 
     init_pair(SEWERS_WALLS_VISITED, DARK_GREEN, (short)(DARK_DARK_GREEN | A_DIM));
+
     // MENUS
     init_pair(ORANGE_LOGO, ORANGE, 0);
     init_pair(LIGHT_ORANGE_LOGO, LIGHT_ORANGE, 0);
@@ -108,12 +107,16 @@ Renderstate init_render() {
     init_pair(POTION, COLOR_WHITE, PURPLE);
     init_pair(CANDLE, COLOR_YELLOW, ORANGE);
 
+    // CONSOLE
     init_pair(MATRIX_BG, GREEN, DARK_GREEN);
     init_pair(MATRIX_FG, COLOR_BLACK, COLOR_BLACK);
+
+    // SANITY METER
     init_pair(SANITY_FULL, (short)(DARK_RED | A_BOLD), COLOR_RED);
     init_pair(SANITY_EMPTY, (short)(COLOR_RED | A_BOLD), DARK_RED);
     init_pair(SANITY_MARKER, (short)(COLOR_RED | A_BOLD), COLOR_BLACK);
 
+    // EMPTY (like my life)
     init_pair(EMPTY, COLOR_BLACK, COLOR_BLACK);
 
     rs->wnd = wnd;
@@ -129,17 +132,16 @@ Renderstate init_render() {
     return rs;
 }
 
-// Warning: DO NOT use the cycle here. The game cycle is controlled by the gameloop.
 void render(Gamestate gs) {
     if (!g_gamestate->valid_state) return;
     
     if (g_gamestate->input_initialized && map != NULL && map[g_gamestate->player->entity->coords->y][g_gamestate->player->entity->coords->x] == 4){
         print_loading_screen(g_renderstate->wnd, g_renderstate->nrows, g_renderstate->ncols);
     } else {
-        if(isInMenu() == 0){
+        if(isInMenu() == 0) {
             print_random_map(ALTURA_JOGO, LARGURA_JOGO, find_map, OFFSET_Y, OFFSET_X); // map
             render_game(gs);
-            print_light(g_renderstate->wnd, ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X);// RTX_ON
+            print_light(g_renderstate->wnd, ALTURA_JOGO, LARGURA_JOGO, OFFSET_Y, OFFSET_X); // RTX_ON
             render_foreground();
         } 
 
@@ -148,7 +150,7 @@ void render(Gamestate gs) {
     refresh();
 }
 
-#pragma region Menu functions
+
 Menu getActiveMenu() {
     if (g_renderstate->activeMenus == MENU_STACK_MAX) return NULL;
 
@@ -168,11 +170,6 @@ Menu displayMenu(MenuId menu) {
     }
 
     debug_file(dbgOut, 3, "- Accepting incoming request.\n");
-
-    // Menu nmenu = (Menu)malloc(sizeof(MENU));
-    // nmenu->wnd = NULL;
-    // nmenu->id = menu;
-    // nmenu->active = 1;
 
     Menu nmenu = getMenuCacheOrCreate(menu);
     if (nmenu == NULL) {
@@ -232,19 +229,10 @@ void _removeMenu(MenuId menu) {
                             stringify_menu_id(g_renderstate->menus[j]->id)
                         );
 
-                        // del_panel(g_renderstate->menus[j]->panel);
-                        // delwin(g_renderstate->menus[j]->wnd);
-                        // free(g_renderstate->menus[j]);
-
                         deleteMenuCache(g_renderstate->menus[j]->id);
 
                         debug_file(dbgOut, 1, "-- Successfully destroyed menu.\n");
                     } else {
-                        // debug_file(dbgOut, 1, "-- Clearing menu %s.\n", stringify_menu_id(g_renderstate->menus[j]->id));
-                        // cleanup_menu(g_renderstate->menus[j]);
-
-                        // del_panel(g_renderstate->menus[j]->panel);
-                        // delwin(g_renderstate->menus[j]->wnd);
                         wclear(g_renderstate->menus[j]->wnd);
                         hide_panel(g_renderstate->menus[j]->panel);
                         g_renderstate->menus[j]->active = 0;
@@ -266,23 +254,15 @@ void _removeMenu(MenuId menu) {
         }
     }
 }
-#pragma endregion
 
-#pragma region Renderers
 #include "util/ncurses.h" // THIS HAS TO BE HERE, OTHERWISE ALL HELL BREAKS LOOSE
 
 void render_sanity_bar(WINDOW* wnd, int startX, int startY, int percentage) {
-    // const int barWidth = 20;
-    // int filledWidth = percentage * barWidth / 100;
-    // int emptyWidth = barWidth - filledWidth;
-
     const int barWidth = 20;
     int filledWidth, emptyWidth;
     percentage = (percentage < -100) ? -100 : ((percentage > 100) ? 100 : percentage);
 
     if (percentage < 0) {
-        // filledWidth = 0;
-        // emptyWidth = (100 + percentage) * barWidth / 100;
         filledWidth = (100 + percentage) * barWidth / 100;
         emptyWidth = barWidth - filledWidth;
     } else {
@@ -294,7 +274,7 @@ void render_sanity_bar(WINDOW* wnd, int startX, int startY, int percentage) {
 
     wattron(wnd, COLOR_PAIR(SANITY_EMPTY));
     rectangle(wnd, startY - 1, startX, startY + 1, startX + 27);
-    // mvwprintw(wnd, startY, startX + 1, "%3d%%", percentage);
+
     if (percentage < 0) {
         mvwprintw(wnd, startY, startX + 1, "%3.3d%%", percentage);
     } else {
@@ -324,7 +304,6 @@ void render_sanity_bar(WINDOW* wnd, int startX, int startY, int percentage) {
     if (percentage < 0) wattroff(wnd, COLOR_PAIR(SANITY_FULL));
     else wattron(wnd, COLOR_PAIR(SANITY_EMPTY));
 
-    // waddch(wnd, '|');
     refresh();
 }
 
@@ -332,7 +311,6 @@ void render_foreground() {
     Coords playerCoords = g_gamestate->player->entity->coords;
 
     int posX = 0;
-    // int posX = g_renderstate->ncols - 28;
 
     if (
         (playerCoords->x > 0 && playerCoords->x <= 29)
@@ -362,68 +340,41 @@ void render_game(Gamestate gs) {
     Coords playerCoords = gs->player->entity->coords;
     Coords projectileCoords = gs->projectiles[0]->entity->coords;
 
-    // move(g_renderstate->nrows - 1, 0);
-	// wattron(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
-	// // printw("(%d, %d) %d %d | (%d, %d) (%d, %d) | %d | %d", 
-    // printw("(%d, %d) %d %d | %d %d", 
-    //     playerCoords->x, 
-    //     playerCoords->y, 
-    //     g_renderstate->ncols, 
-    //     g_renderstate->nrows,
-    //     projectileCoords->x,
-    //     projectileCoords->x
-    //     // g_gamestate->pointA->x, g_gamestate->pointA->y,
-    //     // g_gamestate->pointB->x, g_gamestate->pointB->y,
-    //     // g_gamestate->path_cell_count,
-    //     // g_gamestate->last_res
-    // );
-	// wattroff(g_renderstate->wnd, COLOR_PAIR(BLUE_PLAYER));
-
     if(g_gamestate->player->cheats->godmode == 1) {	
         wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
     } else {	
         wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     }
 
-    
-	
     if(visible[g_gamestate->projectiles[1]->entity->coords->y][g_gamestate->projectiles[1]->entity->coords->x] == 1 && 
        g_gamestate->projectiles[1]->entity->coords->y != 0 &&
        g_gamestate->projectiles[1]->entity->coords->x != 0
-    )
-        mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[1]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[1]->entity->coords->x + OFFSET_X, 'T' | COLOR_PAIR(TRAP));
+    ) mvwaddch(
+        g_renderstate->wnd, g_gamestate->projectiles[1]->entity->coords->y + OFFSET_Y, 
+        g_gamestate->projectiles[1]->entity->coords->x + OFFSET_X, 'T' | COLOR_PAIR(TRAP)
+    );
 
     if(visible[g_gamestate->projectiles[2]->entity->coords->y][g_gamestate->projectiles[2]->entity->coords->x] == 1 &&
        g_gamestate->projectiles[2]->entity->coords->y != 0 &&
        g_gamestate->projectiles[2]->entity->coords->x != 0
-    )
-        mvwaddch(g_renderstate->wnd, g_gamestate->projectiles[2]->entity->coords->y + OFFSET_Y, g_gamestate->projectiles[2]->entity->coords->x + OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
-
-
-
-
+    ) mvwaddch(
+        g_renderstate->wnd, g_gamestate->projectiles[2]->entity->coords->y + OFFSET_Y, 
+        g_gamestate->projectiles[2]->entity->coords->x + OFFSET_X, 'Z' | COLOR_PAIR(RED_BG)
+    );
 
     for(int y = 0 ; y < ALTURA_JOGO ; y++){
         for(int x = 0 ; x < LARGURA_JOGO ; x++){
-            
-            if(map[y][x] == 8)
-                mvaddch(y + OFFSET_Y, x + OFFSET_X, 'T' | COLOR_PAIR(TRAP));
-            if(map[y][x] == 8 && visible[y][x] == 2 )
-                mvaddch(y + OFFSET_Y, x + OFFSET_X, 'T' | COLOR_PAIR(TRAP_VISITED));
-
-            if(map[y][x] == 9)  
-                mvaddch(y + OFFSET_Y, x + OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
-
+            if(map[y][x] == 8) mvaddch(y + OFFSET_Y, x + OFFSET_X, 'T' | COLOR_PAIR(TRAP));
+            if(map[y][x] == 8 && visible[y][x] == 2 ) mvaddch(y + OFFSET_Y, x + OFFSET_X, 'T' | COLOR_PAIR(TRAP_VISITED));
+            if(map[y][x] == 9) mvaddch(y + OFFSET_Y, x + OFFSET_X, 'Z' | COLOR_PAIR(RED_BG));
         }
     }
-
-
-
-        
+ 
     if(visible[projectileCoords->y][projectileCoords->x] == 1 && projectileCoords->y != 0 && projectileCoords->x != 0)
-        mvwaddch(g_renderstate->wnd, projectileCoords->y + OFFSET_Y, projectileCoords->x + OFFSET_X, 'O' | COLOR_PAIR(WHITE_PLAYER));
-
-
+        mvwaddch(
+            g_renderstate->wnd, projectileCoords->y + OFFSET_Y, 
+            projectileCoords->x + OFFSET_X, 'O' | COLOR_PAIR(WHITE_PLAYER)
+        );
 
     if(g_gamestate->player->cheats->godmode == 1) wattron(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
     else wattron(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
@@ -433,10 +384,7 @@ void render_game(Gamestate gs) {
 	wattroff(g_renderstate->wnd, COLOR_PAIR(WHITE_PLAYER));
     wattroff(g_renderstate->wnd, COLOR_PAIR(YELLOW_PLAYER));
 
-
-
     wattron(g_renderstate->wnd, COLOR_PAIR(ORANGE_LOGO));
-
     for (int i = 0; i < gs->mob_begin; i++) {
         if(visible[gs->mobs[i]->entity->coords->y][gs->mobs[i]->entity->coords->x] == 1 && g_gamestate->mobs[i]->entity->coords->x != 5 && g_gamestate->mobs[i]->entity->coords->y != 0)
             mvwaddch(
@@ -446,21 +394,18 @@ void render_game(Gamestate gs) {
                 '$'
             );
     }
-wattroff(g_renderstate->wnd, COLOR_PAIR(RED_BG));
+
     for (int i = 0; i < gs->chest_count; i++) {
         if (
             visible[gs->chests[i]->entity->coords->y][gs->chests[i]->entity->coords->x] == 1 
             && g_gamestate->chests[i]->entity->coords->x != 6 && g_gamestate->chests[i]->entity->coords->y != 0
-        )
-            mvwaddch(
-                g_renderstate->wnd, 
-                gs->chests[i]->entity->coords->y + OFFSET_Y, 
-                gs->chests[i]->entity->coords->x + OFFSET_X, 
-                'C'
-            );
+        ) mvwaddch(
+            g_renderstate->wnd, 
+            gs->chests[i]->entity->coords->y + OFFSET_Y, 
+            gs->chests[i]->entity->coords->x + OFFSET_X, 
+            'C'
+        );
     }
-
-
 
 	move(playerCoords->x, playerCoords->y);
     move(projectileCoords->x, projectileCoords->y);
@@ -484,4 +429,4 @@ void render_menu(Gamestate gs) {
 
     if (g_renderstate->activeMenus != 0) update_panels();
 }
-#pragma endregion
+

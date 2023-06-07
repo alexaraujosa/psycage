@@ -15,6 +15,8 @@ int get_savepath(char *save_path, int num_save) {
     else return 1;
 }
 
+// ENSURE SAVE
+
 int verify_Save(int num_save) {
     char save_path[PATH_MAX];
     if (get_savepath(save_path, num_save) != 0) return 1;
@@ -24,9 +26,9 @@ int verify_Save(int num_save) {
     return 1;
 }
 
+// DELETE SAVE
 
 int delete_Save(int num_save) {
-
     char save_path[PATH_MAX];
     if (get_savepath(save_path, num_save) != 0) {
         debug_file(dbgOut, 0, "Error while deleting save file (index %d): Cannot fetch saves directory path.\n", num_save);
@@ -34,21 +36,15 @@ int delete_Save(int num_save) {
     }
 
     if(verify_Save(num_save) == 0) {
+        int verifier = remove(save_path);
 
-        // if(access(save_path, F_OK) != -1) {
+        if(verifier == -1) {
+            debug_file(dbgOut, 0, "Cannot delete save file %s: unknown error.\n", save_path);
+            return 1;
+        }
 
-            int verifier = remove(save_path);
-
-            if(verifier == -1) {
-                debug_file(dbgOut, 0, "Cannot delete save file %s: unknown error.\n", save_path);
-                return 1;
-            }
-
-            debug_file(dbgOut, 0, "Successfully deleted save file %s.\n", save_path);
-            return 0;
-
-        // }
-
+        debug_file(dbgOut, 0, "Successfully deleted save file %s.\n", save_path);
+        return 0;
     } else {
         debug_file(dbgOut, 0, "Cannot delete save file %s: missing save file.\n", save_path);
         return 1;
@@ -57,10 +53,8 @@ int delete_Save(int num_save) {
     return 1;
 }
 
-#pragma region Create Save
+// WRITE SAVE
 
-#pragma region Writers
-#pragma region Primitives
 int _save_write_int(FILE* save, int data) {
     if (save == NULL) return 1;
 
@@ -122,9 +116,7 @@ int _save_write_matrix(FILE* save, int** matrix, int rows, int cols) {
 
     return 0;
 }
-#pragma endregion
 
-#pragma region Game Structs
 int _save_write_coords(FILE* save, Coords coords) {
     if (save == NULL || coords == NULL) return 1;
 
@@ -281,8 +273,6 @@ int _save_write_mobs(FILE* save, Mob* mobs, int count) {
 
     return 0;
 }
-#pragma endregion
-#pragma endregion
 
 int create_Save(int num_save) {
     char save_path[PATH_MAX];
@@ -343,12 +333,9 @@ int create_Save(int num_save) {
 
     return 0;
 }
-#pragma endregion
 
-#pragma region Load Save
+// READ SAVE
 
-#pragma region Readers
-#pragma region Primitives
 int _save_read_int(FILE* save, int* data) {
     if (save == NULL || data == NULL) return 1;
 
@@ -423,9 +410,9 @@ int _save_read_matrix(FILE* save, int* rows, int* cols, int*** matrix) {
 
     return 0;
 }
-#pragma endregion
 
-#pragma region Game Structs
+
+
 int _save_read_coords(FILE* save, Coords coords) {
     if (save == NULL || coords == NULL) return 1;
 
@@ -610,8 +597,8 @@ int _save_read_mobs(FILE* save, Mob** dest, int* mobCount) {
 
     return 0;
 }
-#pragma endregion
-#pragma endregion
+
+
 
 int load_save(int num_save) {
     char save_path[PATH_MAX];
@@ -758,6 +745,6 @@ int load_save(int num_save) {
 
     return 0;
 }
-#pragma endregion
+
 
 

@@ -32,7 +32,7 @@ void make_borders(int **matrix, int HEIGHT, int WIDTH) {
 //====================================
 // Dungeon
 //====================================
-#pragma region Dungeon
+
 
 // Initialize the map to all walls
 void init_dungeon(int HEIGHT, int WIDTH) {
@@ -175,7 +175,7 @@ void create_dungeon(int HEIGHT, int WIDTH, int beginY, int beginX){
 //==========================
 // Sewers
 //==========================
-#pragma region Sewers
+
 
 #define NUM_ROOMS 10
 #define ROOM_MIN_WIDTH 7
@@ -312,7 +312,6 @@ Room* create_room_sewers(int x, int y, int width, int height) {
     return room;
 }
 
-
 void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
     
     int split_horizontal = rand() % 2; // Split either horizontally or vertically
@@ -371,7 +370,6 @@ void split_room_sewers(Room* room, int HEIGHT, int WIDTH) {
 }
 
 void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
-    
     init_maze(HEIGHT, WIDTH);
 
     // The root_room is the starting point of the map generation process, which is a single room that occupies the entire map
@@ -414,29 +412,23 @@ void create_sewers(int HEIGHT, int WIDTH, int beginY, int beginX){
     free(rooms);
 }
 
-#pragma endregion
-
-
 //==========================
 // Asylum
 //==========================
-#pragma region Asylum
 
 #define MAX_ROOMS 20
 #define MIN_SIZE 13
 #define MAX_SIZE 15
 
 // Initialize the "map" array with all cells set to 1 (representing walls).
-void init_asylum(int HEIGHT, int WIDTH){
-    
+void init_asylum(int HEIGHT, int WIDTH) {
     // Allocate space for matrix "map"
     map = (int **)malloc(HEIGHT * sizeof(int *));
     for (int i = 0; i < HEIGHT; i++) {
         map[i] = (int *)malloc(WIDTH * sizeof(int));
     }
     
-    for (int y = 0; y < HEIGHT; y++) {
-        
+    for (int y = 0; y < HEIGHT; y++) { 
         for (int x = 0; x < WIDTH; x++) {
             
             map[y][x] = 1;
@@ -446,7 +438,6 @@ void init_asylum(int HEIGHT, int WIDTH){
 
 // Create a Room struct with random values for its x and y position, width, and height.
 Room create_room(int HEIGHT, int WIDTH) {
-    
     Room room;
 
     room.width = rand() % (MAX_SIZE - MIN_SIZE + 1) + MIN_SIZE; // random area
@@ -454,15 +445,12 @@ Room create_room(int HEIGHT, int WIDTH) {
     room.x = rand() % (abs(WIDTH - room.width-1)) + 1; // random location
     room.y = rand() % (abs(HEIGHT - room.height-1)) + 1;
 
-
     return room;
 }
 
 // Carve out the specified room in the "map" array by setting all cells inside the room to 0.
 void carve_room(Room room) {
-    
     for (int y = room.y; y < room.y + room.height; y++) {
-        
         for (int x = room.x; x < room.x + room.width; x++) {
             map[y][x] = 0;
         }
@@ -471,12 +459,10 @@ void carve_room(Room room) {
 
 // Connect two rooms by carving out a corridor between them.
 void connect_rooms(Room source, Room destination) {
-    
     int x = source.x + (source.width / 2);
     int y = source.y + (source.height / 2);
 
     while (x != destination.x + (destination.width / 2)) {
-        
         for (int i = y - 2; i <= y + 2; i++) {
             map[i][x] = 0;
         }
@@ -484,31 +470,27 @@ void connect_rooms(Room source, Room destination) {
     }
 
     while (y != destination.y + (destination.height / 2)) {
-        
         for (int i = x - 2; i <= x + 2; i++) {
             map[y][i] = 0;
         }
+
         y += (y < destination.y + (destination.height / 2)) ? 1 : -1;
     }
 }
 
-
 // Carve out corridors to connect all the rooms in the "rooms" array.
 void carve_corridors(Room rooms[], int num_rooms) {
-    
     for (int i = 0; i < num_rooms - 1; i++) {
         connect_rooms(rooms[i], rooms[i + 1]);
     }
 }
 
 void blood_stains_asylum(int HEIGHT, int WIDTH) {
-
     // Random stains in floor
     for (int y = 1; y < HEIGHT - 1; y++) {
-        
         for (int x = 1; x < WIDTH - 1; x++) {
             
-            if (map[y][x] == 0 && rand() % 100 < 12){ // % of blood
+            if (map[y][x] == 0 && rand() % 100 < 12) { // % of blood
                 map[y][x] = 2;
             }
         }
@@ -549,7 +531,7 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
             
             for (int x = 1; x < WIDTH - 1; x++) {
                 
-                if (map[y][x] == 0 || map[y][x] == 2){
+                if (map[y][x] == 0 || map[y][x] == 2) {
                     
                     map[y][x] = new_asylum[y][x];
                 }
@@ -559,7 +541,6 @@ void blood_stains_asylum(int HEIGHT, int WIDTH) {
 }
 
 void create_asylum(int HEIGHT, int WIDTH, int beginY, int beginX){
- 
     init_asylum(HEIGHT, WIDTH);
 
     Room rooms[MAX_ROOMS];
@@ -602,8 +583,7 @@ void create_asylum(int HEIGHT, int WIDTH, int beginY, int beginX){
 // Random Map
 //====================================
 
-int create_random_map(int HEIGHT, int WIDTH, int beginY, int beginX){
-
+int create_random_map(int HEIGHT, int WIDTH, int beginY, int beginX) {
     int random = rand() % 3;
 
     if(random == 0){
@@ -614,24 +594,19 @@ int create_random_map(int HEIGHT, int WIDTH, int beginY, int beginX){
         create_sewers(HEIGHT, WIDTH, beginY, beginX);
         return 2;
     }
-    //if(random == 2)
-    {
-        create_asylum(HEIGHT, WIDTH, beginY, beginX);
-        return 3;
-    }
+
+    create_asylum(HEIGHT, WIDTH, beginY, beginX);
+    return 3;
 }
 
 //====================================
 // Valid Map
 //====================================
 	
-int valid_map(int HEIGHT, int WIDTH){
-    
-    for (int y = 0; y < HEIGHT; y++){
-		
-		for (int x = 0; x < WIDTH; x++){
-			
-			if (map[y][x] == 0){
+int valid_map(int HEIGHT, int WIDTH) {
+    for (int y = 0; y < HEIGHT; y++) {
+		for (int x = 0; x < WIDTH; x++) {
+			if (map[y][x] == 0) {
 				return 1;
 			}
 		}	
@@ -645,7 +620,6 @@ int valid_map(int HEIGHT, int WIDTH){
 //====================================
 
 void doors(int x, int y, int radius, int HEIGHT, int WIDTH){
-
     COORDS door;
 
     int max_x = x + 2*radius;
@@ -657,9 +631,10 @@ void doors(int x, int y, int radius, int HEIGHT, int WIDTH){
     door.x = min_x + rand() % (max_x - min_x + 1);
     door.y = min_y + rand() % (max_y - min_y + 1);
 
-    while (door.x < 0 || door.x >= WIDTH || door.y < 0 || door.y >= HEIGHT || door.x == x || door.y == y ||
-           map[door.y][door.x] == 1 || map[door.y][door.x] == 3 || map[door.y][door.x] == 5){
-        
+    while (
+        door.x < 0 || door.x >= WIDTH || door.y < 0 || door.y >= HEIGHT || door.x == x || door.y == y 
+        || map[door.y][door.x] == 1 || map[door.y][door.x] == 3 || map[door.y][door.x] == 5
+    ) {
         door.x = min_x + rand() % (max_x - min_x + 1);
         door.y = min_y + rand() % (max_y - min_y + 1);
     }

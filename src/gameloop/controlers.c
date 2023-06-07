@@ -178,9 +178,6 @@ void end_game() {
 		// Free menus
 		if (g_renderstate->activeMenus > 0) closeMenu(g_renderstate->menus[0]->id);
 
-		// Free locales
-		// Por adicionar !!!!!!!!!!!!!!
-
 		// Free window
 		endwin();
 
@@ -189,12 +186,6 @@ void end_game() {
 
 		g_gamestate->valid_state = FALSE;
 		EXIT = TRUE;
-
-
-		// -- General
-
-		// Free items
-		// Por adicionar !!!!!!!!!!
 
 		return;
 	}

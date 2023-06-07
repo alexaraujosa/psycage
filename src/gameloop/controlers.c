@@ -212,7 +212,6 @@ void reset_player_values() {
 	// Player Values
     g_gamestate->player->level = 0;
     g_gamestate->player->kills = 0;
-    g_gamestate->player->xp = 0;
 	g_gamestate->player->sanity = 100;
 	g_gamestate->player->candle_fuel = 5;
 	g_gamestate->player->molotov = 0;

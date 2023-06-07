@@ -19,7 +19,6 @@ typedef struct player {
     Cheats cheats;
     int level;
     int kills;
-    int xp;
     int last_direction;
     int class;
     int radius;

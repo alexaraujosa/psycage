@@ -893,9 +893,9 @@ void _executeCommand(int cmd, char* override) {
 
             snprintf(
                 out, MAX_CONSOLE_INPUT, 
-                "Player { entity=<Entity>; item=<Item>; cheats=<Cheats>; level=%d; kills=%d; xp=%d; last_direction=%d; "
+                "Player { entity=<Entity>; item=<Item>; cheats=<Cheats>; level=%d; kills=%d; last_direction=%d; "
                     "class=%s; radius=%d; sanity=%d; candle_light=%d; hasUltimate=%d }",
-                player->level, player->kills, player->xp, player->last_direction, 
+                player->level, player->kills, player->last_direction, 
                     stringify_class(player->class), player->radius, player->sanity, player->candle_fuel, player->hasUltimate
             );
 
@@ -1033,12 +1033,6 @@ void _executeCommand(int cmd, char* override) {
                 out, MAX_CONSOLE_INPUT, 
                 "%d",
                 player->kills
-            );
-        } else if (equal_strings(param, "xp")) {
-            snprintf(
-                out, MAX_CONSOLE_INPUT, 
-                "%d",
-                player->xp
             );
         } else if (equal_strings(param, "last_direction")) {
             snprintf(

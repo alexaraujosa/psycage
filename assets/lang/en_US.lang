@@ -75,7 +75,6 @@ user.interface.stats.god=INFINITE
 user.interface.stats.armor=ARMOR 
 user.interface.stats.class=CLASS 
 user.interface.stats.level=LEVEL 
-user.interface.stats.xp=  XP  
 user.interface.stats.kills=KILLS 
 user.interface.stats.priest=Priest    
 user.interface.stats.detective=Detective 

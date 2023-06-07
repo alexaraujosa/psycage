@@ -38,7 +38,6 @@ Player defaultPlayer() {
     player->entity = entity;
     player->level = 0;
     player->kills = 0;
-    player->xp = 0;
     player->last_direction = 0;
     player->class = Priest;
     player->radius = 0;
@@ -66,10 +65,6 @@ void killCount(Player player, Entity entity) {
         g_gamestate->player->hasUltimate = 1;
     
     return;
-}
-
-void killXp(Player player) {
-    player->kills = player->xp;
 }
 
 void destroyPlayer(Player player) {

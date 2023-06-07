@@ -249,8 +249,6 @@ void levelUp(Mob mob) {
     if (g_gamestate->player->level <= 99) {
         if (g_gamestate->player->kills % 5 == 0) {
             g_gamestate->player->level += 1;
-            // mob->entity->basedamage += 4;
-            // mob->entity->maxHealth += 6;
 
             for (int i = 0; i < g_gamestate->mob_begin; i++) {
                 if (

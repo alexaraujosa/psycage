@@ -196,11 +196,6 @@ int _save_write_player(FILE* save, Player player) {
         return 1;
     }
 
-    if (_save_write_int(save, player->xp) != 0) {
-        debug_file(dbgOut, 1, "- Failed to write 'xp' property to save file.\n");
-        return 1;
-    }
-
     if (_save_write_int(save, player->last_direction) != 0) {
         debug_file(dbgOut, 1, "- Failed to write 'last_direction' property to save file.\n");
         return 1;
@@ -505,12 +500,6 @@ int _save_read_player(FILE* save, Player player) {
     debug_file(dbgOut, 1, "- Reading 'kills' from save file...\n");
     if (_save_read_int(save, &(player->kills)) != 0) {
         debug_file(dbgOut, 1, "- Failed to read 'kills' property from save file.\n");
-        return 1;
-    }
-
-    debug_file(dbgOut, 1, "- Reading 'xp' from save file...\n");
-    if (_save_read_int(save, &(player->xp)) != 0) {
-        debug_file(dbgOut, 1, "- Failed to read 'xp' property from save file.\n");
         return 1;
     }
 

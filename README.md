@@ -36,6 +36,8 @@ The primary objective of this project is to apply **Event-driven programming** p
 ## 👨‍💻 Contributors
 - **Alex Araújo Sá** - [Alex Sá](https://github.com/alexaraujosa)
 - **Rafael Santos Fernandes** - [DarkenLM](https://github.com/DarkenLM)
+- **Jorge Pereira** - [Jorge](https://github.com/Jorgeap64)
+- **Alexandre Dias** - [Alexandre](https://github.com/KhalexO)
 
 ## 🛠️ Technologies Used
 - **Programming Language**: C
